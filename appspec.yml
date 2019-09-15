@@ -3,3 +3,6 @@ os: linux
 files:
   - source: ./aws-spring-0.1.jar
     destination: /home/ec2-user
+hooks:
+  BeforeInstall:
+    -

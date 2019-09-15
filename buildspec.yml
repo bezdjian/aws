@@ -15,5 +15,6 @@ artifacts:
   type: jar
   files:
     - target/aws-spring-0.1.jar
+    - scripts/run_app.sh
     - appspec.yml
   discard-paths: yes
