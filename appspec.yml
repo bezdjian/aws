@@ -2,4 +2,4 @@ version: 0.0
 os: linux
 files:
   - source: ./aws-spring-0.1.jar
-    destination: /
+    destination: /home/ec2-user
