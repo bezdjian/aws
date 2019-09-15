@@ -4,5 +4,5 @@ files:
   - source: ./aws-spring-0.1.jar
     destination: /home/ec2-user
 hooks:
-  BeforeInstall:
-    -
+  AfterInstall:
+    - location: scripts/run_app.sh
