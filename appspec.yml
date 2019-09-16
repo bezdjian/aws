@@ -5,4 +5,4 @@ files:
     destination: /home/ec2-user
 hooks:
   AfterInstall:
-    - location: scripts/run_app.sh
+    - location: run_app.sh
