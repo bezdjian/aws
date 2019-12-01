@@ -1,23 +1,6 @@
-# java-hello
+# AWS Lambda function (Java-MySql-RDS connection) 
 
-This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
-
-- HelloWorldFunction/src/main - Code for the application's Lambda function.
-- events - Invocation events that you can use to invoke the function.
-- HelloWorldFunction/src/test - Unit tests for the application code. 
-- template.yaml - A template that defines the application's AWS resources.
-
-The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
-
-If you prefer to use an integrated development environment (IDE) to build and test your application, you can use the AWS Toolkit.  
-The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI to build and deploy serverless applications on AWS. The AWS Toolkit also adds a simplified step-through debugging experience for Lambda function code. See the following links to get started.
-
-* [PyCharm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [IntelliJ](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
-* [Visual Studio](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/welcome.html)
-
-## Deploy the sample application
+### Deploy the sample application
 
 The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.
 
@@ -32,13 +15,13 @@ To use the SAM CLI, you need the following tools.
 The SAM CLI uses an Amazon S3 bucket to store your application's deployment artifacts. If you don't have a bucket suitable for this purpose, create one. Replace `BUCKET_NAME` in the commands in this section with a unique bucket name.
 
 ```bash
-java-hello$ aws s3 mb s3://BUCKET_NAME
+$ aws s3 mb s3://BUCKET_NAME
 ```
 
 To prepare the application for deployment, use the `sam package` command.
 
 ```bash
-java-hello$ sam package \
+$ sam package \
     --output-template-file packaged.yaml \
     --s3-bucket BUCKET_NAME
 ```
@@ -48,7 +31,7 @@ The SAM CLI creates deployment packages, uploads them to the S3 bucket, and crea
 To deploy the application, use the `sam deploy` command.
 
 ```bash
-java-hello$ sam deploy \
+$ sam deploy \
     --template-file packaged.yaml \
     --stack-name java-hello \
     --capabilities CAPABILITY_IAM
@@ -57,7 +40,7 @@ java-hello$ sam deploy \
 After deployment is complete you can run the following command to retrieve the API Gateway Endpoint URL:
 
 ```bash
-java-hello$ aws cloudformation describe-stacks \
+$ aws cloudformation describe-stacks \
     --stack-name java-hello \
     --query 'Stacks[].Outputs[?OutputKey==`HelloWorldApi`]' \
     --output table
@@ -68,7 +51,7 @@ java-hello$ aws cloudformation describe-stacks \
 Build your application with the `sam build` command.
 
 ```bash
-java-hello$ sam build
+$ sam build
 ```
 
 The SAM CLI installs dependencies defined in `HelloWorldFunction/pom.xml`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
@@ -78,14 +61,14 @@ Test a single function by invoking it directly with a test event. An event is a 
 Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
-java-hello$ sam local invoke HelloWorldFunction --event events/event.json
+$ sam local invoke HelloWorldFunction --event events/event.json
 ```
 
 The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
 
 ```bash
-java-hello$ sam local start-api
-java-hello$ curl http://localhost:3000/
+$ sam local start-api
+$ curl http://localhost:3000/
 ```
 
 The SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
@@ -109,7 +92,7 @@ To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs`
 `NOTE`: This command works for all AWS Lambda functions; not just the ones you deploy using SAM.
 
 ```bash
-java-hello$ sam logs -n HelloWorldFunction --stack-name java-hello --tail
+$ sam logs -n HelloWorldFunction --stack-name java-hello --tail
 ```
 
 You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
@@ -119,7 +102,7 @@ You can find more information and examples about filtering Lambda function logs 
 Tests are defined in the `HelloWorldFunction/src/test` folder in this project.
 
 ```bash
-java-hello$ cd HelloWorldFunction
+$ cd HelloWorldFunction
 HelloWorldFunction$ mvn test
 ```
 
@@ -128,8 +111,8 @@ HelloWorldFunction$ mvn test
 To delete the sample application and the bucket that you created, use the AWS CLI.
 
 ```bash
-java-hello$ aws cloudformation delete-stack --stack-name java-hello
-java-hello$ aws s3 rb s3://BUCKET_NAME
+$ aws cloudformation delete-stack --stack-name java-hello
+$ aws s3 rb s3://BUCKET_NAME
 ```
 
 ## Resources
