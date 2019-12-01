@@ -2,8 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4ce79086-fd87-4815-a8d7-d98023ad7fd7" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/HelloWorldFunction/helloworld/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/HelloWorldFunction/helloworld/request/Request.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/HelloWorldFunction/helloworld/response/GatewayResponse.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/HelloWorldFunction/lib/aws-lambda-java-core-1.2.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/HelloWorldFunction/lib/jackson-annotations-2.9.10.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/HelloWorldFunction/lib/json-simple-1.1.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/HelloWorldFunction/lib/lombok-1.18.10.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/HelloWorldFunction/lib/mysql-connector-java-5.1.48.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.aws-sam/build/template.yaml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/HelloWorld-1.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/classes/helloworld/App.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/classes/helloworld/GatewayResponse.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/original-HelloWorld-1.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/surefire-reports/TEST-helloworld.AppTest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/surefire-reports/helloworld.AppTest.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HelloWorldFunction/target/test-classes/helloworld/AppTest.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -157,7 +178,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1575196446895</updated>
-      <workItem from="1575196448113" duration="9766000" />
+      <workItem from="1575196448113" duration="9912000" />
     </task>
     <servers />
   </component>
