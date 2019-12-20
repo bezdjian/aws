@@ -15,6 +15,9 @@ Resources:
       Handler: awssam.App::handleRequest
       Runtime: java8
       MemorySize: 512
+      FunctionName: java-rds-mysql
+      Description: Java app with RDS mysql connectivity.
+      Role: arn:aws:iam::397178420157:role/lambda-vpc-role
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           DB_HOST: hbdatabase.coalfqdle1sr.eu-west-2.rds.amazonaws.com
@@ -22,18 +25,18 @@ Resources:
           DB_PASS: adminadmin
           DB_PORT: 3306
       Events:
-        JavaMysql:
+        JavaMysqlApi:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /hello
             Method: get
-      #VpcConfig:
-      #  SecurityGroupIds:
-      #    - sg-b6b7a0d9
-      #  SubnetIds:
-      #    - subnet-ecaa64a0
-      #    - subnet-bb64dcc1
-      #    - subnet-32fd815b
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-b6b7a0d9
+        SubnetIds:
+          - subnet-ecaa64a0
+          - subnet-bb64dcc1
+          - subnet-32fd815b
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -45,6 +48,7 @@ Outputs:
   JavaMysqlFunction:
     Description: "JavaMysql Lambda Function ARN"
     Value: !GetAtt JavaMysqlFunction.Arn
-  JavaMysqlFunctionIamRole:
-    Description: "Implicit IAM Role created for JavaMysql function"
-    Value: !GetAtt JavaMysqlFunction.Arn
+  # Below creates a new role
+  #JavaMysqlFunctionIamRole:
+  #  Description: "Implicit IAM Role created for JavaMysql function"
+  #  #Value: !GetAtt JavaMysqlFunction.Arn

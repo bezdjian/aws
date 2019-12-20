@@ -1,8 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
 .aws-sam
-HelloWorldFunction/.aws-sam
+awssam/.aws-sam
 packaged.yaml
-.idea/sonarlint/
-HelloWorldFunction/target/generated-sources/
-HelloWorldFunction/target/generated-test-sources/
+javaMysql/target
