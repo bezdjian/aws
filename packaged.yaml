@@ -8,7 +8,7 @@ Resources:
   JavaMysqlFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://hb-lambdabucket/b6c180b7200212dbd76779c867416b34
+      CodeUri: s3://hb-lambdabucket/70772fc96459356b73ce25536207d456
       Handler: awssam.App::handleRequest
       Runtime: java8
       MemorySize: 512

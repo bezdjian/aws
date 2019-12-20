@@ -1,10 +1,11 @@
 package awssam;
 
+import awssam.request.Request;
+import awssam.response.GatewayResponse;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import awssam.request.Request;
-import awssam.response.GatewayResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 
 import java.sql.Connection;
@@ -18,24 +19,29 @@ import java.util.List;
 /**
  * Handler for requests to Lambda function.
  */
-public class App implements RequestHandler<Request, GatewayResponse> {
+public class App implements RequestHandler<JSONObject, GatewayResponse> {
 
   private Connection conn;
   private Statement stmt;
   private ResultSet resultSet;
 
-  public GatewayResponse handleRequest(final Request input, final Context context) {
+  public GatewayResponse handleRequest(final JSONObject input, final Context context) {
     LambdaLogger logger = context.getLogger();
     logger.log("\n\nContents of Input: " + input.toString() + "\n\n");
 
-    // Get time from DB server
+    ObjectMapper mapper = new ObjectMapper();
+    List<String> names = new ArrayList<>();
+    JSONObject response = new JSONObject();
+
     try {
-      logger.log("Connecting to DB...");
+      Request request = mapper.readValue(input.get("body").toString(), Request.class);
+      logger.log("\n\nContents of Request: " + request.toString() + "\n\n");
+
+      logger.log("\n\nConnecting to DB...");
       conn = createConnection();
       stmt = conn.createStatement();
       resultSet = stmt.executeQuery("SELECT * FROM Users.user");
 
-      List<String> names = new ArrayList<>();
       while (resultSet.next()) {
         String current = resultSet.getString("username");
         names.add(current);
@@ -43,10 +49,9 @@ public class App implements RequestHandler<Request, GatewayResponse> {
 
       logger.log("\n\nSuccessfully executed query.  Result: " + names.toString());
 
-      JSONObject object = new JSONObject();
-      object.put("message", "Hello " + input.getUsername() + "! The time is " + names.toString());
+      response.put("message", "Hello " + request.getFirstname() + " " + request.getLastname() + "! Users are: " + names.toString());
 
-      return new GatewayResponse(200, object.toJSONString());
+      return new GatewayResponse(200, response.toJSONString());
 
     } catch (Exception e) {
       logger.log("Caught exception: " + e.getMessage());

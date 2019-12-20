@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4ce79086-fd87-4815-a8d7-d98023ad7fd7" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/javaMysql/JavaMysql.iml" beforeDir="false" afterPath="$PROJECT_DIR$/javaMysql/JavaMysql.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/javaMysql/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/javaMysql/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/javaMysql/src/main/java/awssam/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/javaMysql/src/main/java/awssam/App.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packaged.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/packaged.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/template.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/template.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,7 +168,7 @@
       <updated>1575196446895</updated>
       <workItem from="1575196448113" duration="10005000" />
       <workItem from="1576844904852" duration="602000" />
-      <workItem from="1576845537585" duration="3718000" />
+      <workItem from="1576845537585" duration="5919000" />
     </task>
     <servers />
   </component>
@@ -217,5 +220,9 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="352" y="72" key="SettingsEditor/0.0.1920.1040/-1080.-339.1080.1880@0.0.1920.1040" timestamp="1575203103304" />
+    <state x="-3234" y="119" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1576853247324">
+      <screen x="-3840" y="-50" width="1920" height="1101" />
+    </state>
+    <state x="-3234" y="119" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/-1920.-50.1920.1177/-3840.-50.1920.1101/0.23.1680.1027@-3840.-50.1920.1101" timestamp="1576853247324" />
   </component>
 </project>
