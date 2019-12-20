@@ -1,4 +1,4 @@
-package helloworld.request;
+package awssam.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

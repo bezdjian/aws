@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HelloWorldFunction/HelloWorld.iml" filepath="$PROJECT_DIR$/HelloWorldFunction/HelloWorld.iml" />
+      <module fileurl="file://$PROJECT_DIR$/javaMysql/JavaMysql.iml" filepath="$PROJECT_DIR$/javaMysql/JavaMysql.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/java-hello.iml" filepath="$PROJECT_DIR$/.idea/java-hello.iml" />
     </modules>
   </component>

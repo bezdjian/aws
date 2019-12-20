@@ -1,4 +1,4 @@
-package helloworld.response;
+package awssam.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

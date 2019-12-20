@@ -1,10 +1,10 @@
-package helloworld;
+package awssam;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import helloworld.request.Request;
-import helloworld.response.GatewayResponse;
+import awssam.request.Request;
+import awssam.response.GatewayResponse;
 import org.json.simple.JSONObject;
 
 import java.sql.Connection;

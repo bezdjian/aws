@@ -1,11 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>helloworld</groupId>
-  <artifactId>HelloWorld</artifactId>
+  <groupId>bezdj.example</groupId>
+  <artifactId>JavaMysql</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
-  <name>A sample Hello World created for SAM CLI.</name>
+  <description>A sample Java app with Mysql RDS</description>
+  <name>java-mysql</name>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -54,6 +55,7 @@
   </dependencies>
 
   <build>
+    <finalName>${name}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
