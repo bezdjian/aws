@@ -14,9 +14,9 @@ import java.util.List;
 @Slf4j
 public class BucketService {
 
-    private final static String BUCKET_NAME = "hb-lambdabucket";
+    private static final String BUCKET_NAME = "hb-lambdabucket";
 
-    public List<String> getBucketContentNames(){
+    public List<String> getBucketContentNames() {
         final List<String> bucketContentNames = new ArrayList<>();
 
         ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(BUCKET_NAME);
@@ -24,17 +24,16 @@ public class BucketService {
         ListObjectsV2Result result = s3.listObjectsV2(request);
         log.info("***** Got the S3 bucket: " + BUCKET_NAME + " from " + s3.getRegionName());
 
-        do{
-            result.getObjectSummaries().forEach(
-                    o -> bucketContentNames.add(o.getKey() + " : " + o.getSize() / 1024)
-            );
+        do {
+            result.getObjectSummaries()
+                    .forEach(o -> bucketContentNames.add(o.getKey() + " with size: " + o.getSize() / 1024));
         } while (result.isTruncated());
 
         log.info("***** List with content names is generated");
         return bucketContentNames;
     }
 
-    protected AmazonS3 getS3Bucket(){
+    public AmazonS3 getS3Bucket() {
         return AmazonS3ClientBuilder.defaultClient();
     }
 }

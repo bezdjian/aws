@@ -1,8 +1,12 @@
 package com.example.awsspring.dto;
 
-import lombok.*;
-
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @ToString
 @AllArgsConstructor
@@ -11,7 +15,7 @@ import java.util.List;
 @Data
 public class ResponseClass {
 
-    private String message;
+    private String count;
     private List<String> bucketContentNames;
 
 }
