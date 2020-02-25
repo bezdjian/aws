@@ -1,0 +1,6 @@
+{
+    "host": "hbdatabase.coalfqdle1sr.eu-west-2.rds.amazonaws.com",
+    "user": "admin",
+    "password": "adminadmin",
+    "database": "Users"
+}

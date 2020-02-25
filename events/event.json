@@ -1,0 +1,14 @@
+{
+  "body": "{\"name\": \"aws\"}",
+  "path": "/path/to/resource",
+  "httpMethod": "POST",
+  "queryStringParameters": {
+    "foo": "bar"
+  },
+  "pathParameters": {
+    "proxy": "/path/to/resource"
+  },
+  "stageVariables": {
+    "baz": "qux"
+  }
+}
