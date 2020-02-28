@@ -1,2 +1,2 @@
 # AWS
-<h2>Repo for project with AWS services.</h2>
+<h2>Repo for projects with AWS services.</h2>
