@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "lambda-recieve-sqs"
+s3_bucket = "buckets4lambda"
+s3_prefix = "lambda-recieve-sqs"
+region = "eu-north-1"
+capabilities = "CAPABILITY_IAM"
