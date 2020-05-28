@@ -1,4 +1,4 @@
-package se.bezdjian.lambda.api.model;
+package se.sbab.sqsNotifier.api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

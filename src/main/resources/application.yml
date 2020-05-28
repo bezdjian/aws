@@ -1,0 +1,8 @@
+server:
+  port: 8080
+  servlet:
+    contextPath: /sqs-message-notifier
+
+proxy:
+  url: trend3.sbab.ad
+  port: 8080

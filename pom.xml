@@ -8,11 +8,11 @@
         <version>2.2.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>se.bezdjian</groupId>
-    <artifactId>lambda</artifactId>
+    <groupId>se.sbab</groupId>
+    <artifactId>sqs-message-notifier</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>lambda</name>
-    <description>Lambda Client project for Spring Boot</description>
+    <name>sqs-message-notifier</name>
+    <description>SQS Lambda Client project for Spring Boot</description>
 
     <properties>
         <java.version>11</java.version>
@@ -38,6 +38,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.12</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

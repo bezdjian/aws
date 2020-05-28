@@ -1,4 +1,4 @@
-package se.bezdjian.lambda;
+package se.sbab.sqsNotifier;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
