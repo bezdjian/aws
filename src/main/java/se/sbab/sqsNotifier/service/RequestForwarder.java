@@ -1,6 +1,5 @@
 package se.sbab.sqsNotifier.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -22,7 +21,6 @@ import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,11 +28,16 @@ import java.util.Map;
 @Slf4j
 public class RequestForwarder {
 
-    public static final String DOCUMENT_ID_KEY = "document_id";
-    public static final String DOCUMENT_JSON_KEY = "document_json";
-    public static final String DOCUMENT_SIGNED_AND_SEALED_KEY = "document_signed_and_sealed";
+    private static HttpHeaders getHttpHeaders(Headers headers) {
+        HttpHeaders httpHeaders = new org.springframework.http.HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, headers.getContentType());
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, headers.getAuthorization());
+        httpHeaders.add(HttpHeaders.CONTENT_LENGTH, headers.getContentLength());
+        return httpHeaders;
+    }
 
-    public void forwardRequest(List<RequestModel> requestModel) throws URISyntaxException, JsonProcessingException, NoSuchAlgorithmException, KeyManagementException {
+    public void forwardRequest(List<RequestModel> requestModel) throws NoSuchAlgorithmException,
+            KeyManagementException {
 
         TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
@@ -69,7 +72,6 @@ public class RequestForwarder {
                 e.printStackTrace();
             }
         });
-
     }
 
     private void sendRequest(RequestModel requestModel, RestTemplate restTemplate) throws URISyntaxException {
@@ -83,38 +85,28 @@ public class RequestForwarder {
         int port = -1;
         log.info("Environment is {}", env);
         switch (env) {
-            case RequestConstants.LOCALHOST:
-                protocol = RequestConstants.HTTP_SCHEME;
-                host = RequestConstants.LOCALHOST;
-                path =RequestConstants.E_SIGNING_SERVICE_URL;
-                port =8082;
-                break;
-            case RequestConstants.ENV_SYS:
-                protocol = RequestConstants.HTTPS_SCHEME;
-                host = RequestConstants.API_SYS;
-                break;
-            case RequestConstants.ENV_ACC:
-                protocol = RequestConstants.HTTPS_SCHEME;
-                host = RequestConstants.API_ACC;
-                break;
-            default:
-                protocol = RequestConstants.HTTPS_SCHEME;
-                host = RequestConstants.API_STAGE;
-                break;
+        case RequestConstants.LOCALHOST:
+            protocol = RequestConstants.HTTP_SCHEME;
+            host = RequestConstants.LOCALHOST;
+            path = RequestConstants.E_SIGNING_SERVICE_URL;
+            port = 8082;
+            break;
+        case RequestConstants.ENV_SYS:
+            protocol = RequestConstants.HTTPS_SCHEME;
+            host = RequestConstants.API_SYS;
+            break;
+        case RequestConstants.ENV_ACC:
+            protocol = RequestConstants.HTTPS_SCHEME;
+            host = RequestConstants.API_ACC;
+            break;
+        default:
+            protocol = RequestConstants.HTTPS_SCHEME;
+            host = RequestConstants.API_STAGE;
+            break;
         }
         Headers headers = requestModel.getHeaders();
-        Map<String, String> headersMap = new HashMap<>();
 
         URI uri = new URI(protocol, null, host, port, path, null, null);
         restTemplate.postForEntity(uri, new HttpEntity<>(requestModel.getBody(), getHttpHeaders(headers)), Void.class);
     }
-
-    private static HttpHeaders getHttpHeaders(Headers headers) {
-        HttpHeaders httpHeaders = new org.springframework.http.HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, headers.getContentType());
-        httpHeaders.add(HttpHeaders.AUTHORIZATION, headers.getAuthorization());
-        httpHeaders.add(HttpHeaders.CONTENT_LENGTH, headers.getContentLength());
-        return httpHeaders;
-    }
-
 }

@@ -1,6 +1,5 @@
 package se.sbab.sqsNotifier.api.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,7 +9,6 @@ import se.sbab.sqsNotifier.api.client.ReceiveSQSClient;
 import se.sbab.sqsNotifier.api.model.RequestModel;
 import se.sbab.sqsNotifier.service.RequestForwarder;
 
-import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -29,11 +27,10 @@ public class Scheduler {
     }
 
     @Scheduled(fixedRate = 12000)
-    public void callLambda() throws JsonProcessingException, KeyManagementException, NoSuchAlgorithmException, URISyntaxException {
-        log.info("Calling API GATEWAY");
+    public void callLambda() throws KeyManagementException, NoSuchAlgorithmException {
         ResponseEntity<List<RequestModel>> response = client.getSQSResponse();
-        log.info("Response: {}", response.getBody());
-        if(!CollectionUtils.isEmpty(response.getBody())) {
+        log.info("Calling lambda SQS receiver with Response: {}", response.getBody());
+        if (!CollectionUtils.isEmpty(response.getBody())) {
             requestForwarder.forwardRequest(response.getBody());
         }
     }
