@@ -14,15 +14,13 @@ import java.util.List;
 @Slf4j
 public class BucketService {
 
-    private static final String BUCKET_NAME = "hb-lambdabucket";
-
-    public List<String> getBucketContentNames() {
+    public List<String> getBucketContentNames(String bucketName) {
         final List<String> bucketContentNames = new ArrayList<>();
 
-        ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(BUCKET_NAME);
+        ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(bucketName);
         AmazonS3 s3 = getS3Bucket();
         ListObjectsV2Result result = s3.listObjectsV2(request);
-        log.info("***** Got the S3 bucket: " + BUCKET_NAME + " from " + s3.getRegionName());
+        log.info("***** Got the S3 bucket: " + bucketName + " from " + s3.getRegionName());
 
         do {
             result.getObjectSummaries()
@@ -33,7 +31,7 @@ public class BucketService {
         return bucketContentNames;
     }
 
-    public AmazonS3 getS3Bucket() {
+    protected AmazonS3 getS3Bucket() {
         return AmazonS3ClientBuilder.defaultClient();
     }
 }

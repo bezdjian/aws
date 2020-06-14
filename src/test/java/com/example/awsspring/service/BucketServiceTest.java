@@ -1,48 +1,56 @@
 package com.example.awsspring.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-public class BucketServiceTest {
+class BucketServiceTest {
 
+    private static final String BUCKET_NAME = "TEST";
     @InjectMocks
     private BucketService service;
-    @Mock
-    private AmazonS3 s3;
+    private AmazonS3 amazonS3;
     @Mock
     private ListObjectsV2Request listObjectsV2;
     @Mock
     private ListObjectsV2Result listObjectsV2Result;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+    @BeforeEach
+    void setup() {
+        initMocks(this);
+        amazonS3 = mock(AmazonS3.class);
     }
 
     @Test
-    @Ignore
-    //TODO FIX THIS!
-    public void getBucketContentNames() {
-        List<String> namesList = new ArrayList<>();
-        namesList.add("blabla");
-        when(service.getBucketContentNames()).thenReturn(namesList);
-        when(service.getS3Bucket()).thenReturn(s3);
-        when(s3.listObjectsV2(listObjectsV2)).thenReturn(listObjectsV2Result);
-        List<String> s = service.getBucketContentNames();
+    @Disabled
+    void getBucketContentNames() {
+        when(service.getS3Bucket()).thenReturn(amazonS3);
+        when(amazonS3.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(listObjectsV2Result);
+        when(listObjectsV2Result.getObjectSummaries()).thenReturn(Collections.singletonList(getS3ObjectSummary()));
+        when(service.getBucketContentNames(BUCKET_NAME)).thenReturn(Collections.singletonList("blabla"));
+        List<String> s = service.getBucketContentNames(BUCKET_NAME);
         assertEquals("List size is not correct", 1, s.size());
+    }
+
+    private S3ObjectSummary getS3ObjectSummary() {
+        S3ObjectSummary s3ObjectSummary = new S3ObjectSummary();
+        s3ObjectSummary.setKey("keyz");
+        s3ObjectSummary.setSize(111L);
+        return s3ObjectSummary;
     }
 }

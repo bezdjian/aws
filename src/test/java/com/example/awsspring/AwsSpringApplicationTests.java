@@ -1,11 +1,9 @@
 package com.example.awsspring;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.example.awsspring.service.BucketService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,11 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,15 +48,9 @@ public class AwsSpringApplicationTests {
     public void getBucketNames() throws Exception {
 
         // Given
-        when(service.getBucketContentNames()).thenReturn(getList());
+        when(service.getBucketContentNames(anyString())).thenReturn(Collections.singletonList("bName"));
 
         mockMvc.perform(get("/v1"))
-            .andDo(print());
-    }
-
-    private List<String> getList(){
-        return new ArrayList<String>(){{
-            add("blabla");
-        }};
+                .andDo(print());
     }
 }
