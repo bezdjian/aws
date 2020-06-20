@@ -1,4 +1,4 @@
-package se.sbab.sqsNotifier.api.model;
+package se.sbab.sqsnotifier.api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

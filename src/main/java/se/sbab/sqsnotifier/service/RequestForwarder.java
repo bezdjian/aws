@@ -1,4 +1,4 @@
-package se.sbab.sqsNotifier.service;
+package se.sbab.sqsnotifier.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -9,9 +9,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import se.sbab.sqsNotifier.api.model.Headers;
-import se.sbab.sqsNotifier.api.model.RequestModel;
-import se.sbab.sqsNotifier.util.RequestConstants;
+import se.sbab.sqsnotifier.api.model.Headers;
+import se.sbab.sqsnotifier.api.model.RequestModel;
+import se.sbab.sqsnotifier.util.RequestConstants;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;

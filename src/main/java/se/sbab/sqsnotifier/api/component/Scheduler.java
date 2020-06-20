@@ -1,13 +1,13 @@
-package se.sbab.sqsNotifier.api.component;
+package se.sbab.sqsnotifier.api.component;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import se.sbab.sqsNotifier.api.client.ReceiveSQSClient;
-import se.sbab.sqsNotifier.api.model.RequestModel;
-import se.sbab.sqsNotifier.service.RequestForwarder;
+import se.sbab.sqsnotifier.api.client.ReceiveSQSClient;
+import se.sbab.sqsnotifier.api.model.RequestModel;
+import se.sbab.sqsnotifier.service.RequestForwarder;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;

@@ -1,4 +1,4 @@
-package se.sbab.sqsNotifier.api.model;
+package se.sbab.sqsnotifier.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

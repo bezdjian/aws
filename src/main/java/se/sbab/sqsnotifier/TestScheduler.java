@@ -1,10 +1,10 @@
-package se.sbab.sqsNotifier;
+package se.sbab.sqsnotifier;
 
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-import se.sbab.sqsNotifier.api.client.ReceiveSQSClient;
-import se.sbab.sqsNotifier.api.component.Scheduler;
-import se.sbab.sqsNotifier.service.RequestForwarder;
+import se.sbab.sqsnotifier.api.client.ReceiveSQSClient;
+import se.sbab.sqsnotifier.api.component.Scheduler;
+import se.sbab.sqsnotifier.service.RequestForwarder;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;

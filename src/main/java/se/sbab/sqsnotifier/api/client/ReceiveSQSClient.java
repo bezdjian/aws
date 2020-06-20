@@ -1,4 +1,4 @@
-package se.sbab.sqsNotifier.api.client;
+package se.sbab.sqsnotifier.api.client;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.AWSLambda;
@@ -12,8 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import se.sbab.sqsNotifier.api.model.RequestModel;
-import se.sbab.sqsNotifier.service.LambdaService;
+import se.sbab.sqsnotifier.api.model.RequestModel;
+import se.sbab.sqsnotifier.service.LambdaService;
 
 import java.util.Collections;
 import java.util.List;

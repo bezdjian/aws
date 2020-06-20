@@ -1,7 +1,7 @@
-package se.sbab.sqsNotifier.service;
+package se.sbab.sqsnotifier.service;
 
 import com.amazonaws.services.lambda.invoke.LambdaFunction;
-import se.sbab.sqsNotifier.api.model.RequestModel;
+import se.sbab.sqsnotifier.api.model.RequestModel;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package se.sbab.sqsNotifier.util;
+package se.sbab.sqsnotifier.util;
 
 import lombok.experimental.UtilityClass;
 
