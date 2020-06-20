@@ -1,1 +1,1 @@
-###Java  Spring boot app to schedule a lambda function call that retrieves SQS messages sent by another lambda function. 
+### Java  Spring boot app to schedule a lambda function call that retrieves SQS messages sent by another lambda function.
