@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "BucketContentNames"
+s3_bucket = "buckets4lambda"
+s3_prefix = "BucketContentNames"
+region = "eu-north-1"
+capabilities = "CAPABILITY_IAM"
