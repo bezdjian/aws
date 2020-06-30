@@ -3,7 +3,8 @@ package bucketcontentnames;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Map;
+
 
 /**
  * POJO containing response object for API Gateway.
@@ -12,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GatewayResponse {
 
-    private final List<String> body;
+    private final String body;
+    private final Map<String, String> headers;
     private final int statusCode;
 }

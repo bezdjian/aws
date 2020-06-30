@@ -12,10 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,12 +23,12 @@ public class App implements RequestHandler<Object, GatewayResponse> {
     public GatewayResponse handleRequest(Object input, Context context) {
         LambdaLogger log = context.getLogger();
         Map<String, String> headers = new HashMap<>();
+        JSONObject response = new JSONObject();
         headers.put("Content-Type", "application/json");
         headers.put("X-Custom-Header", "application/json");
 
         try {
             String bucketName = getQueryParam(input);
-            final List<String> bucketContentNames = new ArrayList<>();
 
             ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(bucketName);
             AmazonS3 s3 = getS3Bucket();
@@ -40,13 +37,14 @@ public class App implements RequestHandler<Object, GatewayResponse> {
 
             do {
                 result.getObjectSummaries()
-                        .forEach(o -> bucketContentNames.add(o.getKey() + " with size: " + o.getSize() / 1024));
+                        .forEach(o -> response.put(o.getKey(), o.getSize() / 1024));
             } while (result.isTruncated());
 
             log.log("\n***** List with content names is generated");
-            return new GatewayResponse(bucketContentNames, HttpStatus.SC_OK);
+            return new GatewayResponse(String.valueOf(response), headers, HttpStatus.SC_OK);
         } catch (Exception e) {
-            return new GatewayResponse(Collections.singletonList(e.getMessage()), HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return new GatewayResponse("{'error': '" + e.getMessage() + "'}",
+                    headers, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

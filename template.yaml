@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: bucket-content-names
+Description: Lambda bucket-content-names function retrieves contents of a given bucket name through queryStringParameters
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -34,7 +34,7 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   BucketContentNamesApi:
     Description: "API Gateway endpoint URL for Prod stage for BucketContentNames function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/all/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/all/"
   BucketContentNamesFunction:
     Description: "BucketContentNames Lambda Function ARN"
     Value: "BucketContentNamesFunction"
