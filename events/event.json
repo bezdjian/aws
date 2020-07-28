@@ -5,7 +5,7 @@
     "httpMethod": "POST",
     "isBase64Encoded": false,
     "queryStringParameters": {
-      "bucketName": "hb-lambdabucket"
+      "bucketName": "ritaarabian.com"
     },
     "pathParameters": {
       "proxy": "/path/to/resource"

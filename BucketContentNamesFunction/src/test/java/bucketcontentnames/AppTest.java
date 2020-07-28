@@ -1,5 +1,6 @@
 package bucketcontentnames;
 
+import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -12,8 +13,8 @@ public class AppTest {
     @Ignore
     public void successfulResponse() {
         App app = new App();
-        GatewayResponse result = app.handleRequest(null, null);
-        assertEquals(result.getStatusCode(), 200);
+        APIGatewayProxyResponseEvent result = app.handleRequest(null, null);
+        assertEquals(result.getStatusCode(), new Integer(200));
         String content = result.getBody();
         assertNotNull(content);
         assertTrue(content.contains("\"message\""));
