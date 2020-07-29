@@ -1,12 +1,13 @@
 package bucketcontentnames;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import org.apache.http.HttpStatus;
@@ -29,8 +30,12 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
         APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent()
                 .withHeaders(headers);
         try {
-            String bucketName = input.getQueryStringParameters().get("bucketName") != null ?
-                    input.getQueryStringParameters().get("bucketName") : "";
+            String bucketName = input.getQueryStringParameters() != null ?
+                            input.getQueryStringParameters().get("bucketName") : "";
+
+            if (bucketName.isEmpty())
+                return apiResponse.withStatusCode(HttpStatus.SC_BAD_REQUEST)
+                        .withBody("Bucket name must be provided in the query!");
 
             ListObjectsV2Request request = new ListObjectsV2Request().withBucketName(bucketName);
             AmazonS3 s3 = getS3Bucket();
@@ -55,6 +60,8 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
     }
 
     protected AmazonS3 getS3Bucket() {
-        return AmazonS3ClientBuilder.defaultClient();
+        return AmazonS3Client.builder()
+                .withRegion(Regions.EU_WEST_2)
+                .build();
     }
 }
