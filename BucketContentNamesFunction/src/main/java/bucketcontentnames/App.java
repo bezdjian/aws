@@ -49,11 +49,13 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
             logger.log("\n***** List with content names is generated.\n\n");
             return apiResponse
+                    .withHeaders(headers)
                     .withStatusCode(HttpStatus.SC_OK)
                     .withBody(String.valueOf(response));
         } catch (Exception e) {
             logger.log("\n***** Error while getting the contents: " + e.getMessage() + "\n\n");
             return apiResponse
+                    .withHeaders(headers)
                     .withBody("{'error': '" + e.getMessage() + "'}")
                     .withStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
