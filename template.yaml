@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Lambda bucket-content-names function retrieves contents of a given bucket name through queryStringParameters
 
@@ -21,12 +21,37 @@ Resources:
       #.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
       #  Variables:
       #    PARAM1: VALUE
+      # Give just CRUD permissions to this table.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BucketContentTable
       Events:
         BucketContentNamesAPI:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /all
             Method: get
+  BucketContentTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: BucketContentsTable
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      AttributeDefinitions:
+        - AttributeName: "ID"
+          AttributeType: "S"
+        - AttributeName: "CREATION_TIME"
+          AttributeType: "S"
+        #- AttributeName: "KEY_NAME"
+        #  AttributeType: "S"
+        #- AttributeName: "REQUEST_ID"
+        #  AttributeType: "S"
+      KeySchema:
+        - AttributeName: "ID"
+          KeyType: "HASH" # Partition key
+        - AttributeName: "CREATION_TIME"
+          KeyType: "RANGE" # Sort key
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -38,3 +63,6 @@ Outputs:
   BucketContentNamesFunction:
     Description: "BucketContentNames Lambda Function ARN"
     Value: !GetAtt BucketContentNamesFunction.Arn
+  BucketContentTableDynamo:
+    Description: "The Dyanmo DB table to save bucket content names"
+    Value: !GetAtt BucketContentTable.Arn
