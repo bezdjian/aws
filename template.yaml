@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Application that reads a bucket object into Dynamo DB.
+Resources:
+  cloud9HelloLambdaFn:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lambdaBucketEvent/index.handler
+      Runtime: nodejs12.x
+      Description: 'Lambda function reads bucket object into dynamo DB'
+      FunctionName: 'lambdaBucketEvent'
+      MemorySize: 128
+      Timeout: 15
+      Role: 'arn:aws:iam::397178420157:role/lambda-vpc-role'
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref Cloud9HelloBucket
+            Events: s3:ObjectCreated:*
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Cloud9HelloDynamoDBTable
+  # Declare an S3 bucket.
+  Cloud9HelloBucket:
+    Type: AWS::S3::Bucket
+  # Declare a Dynamo DB
+  Cloud9HelloDynamoDBTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: cloud9HelloTable
