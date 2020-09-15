@@ -11,22 +11,20 @@ exports.handler = function(event, context, callback) {
     
     // Create dynamo service object
     var ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
-    
-    var params = createDBParam(s3ObjectKey, s3ObjectTime, s3ObjectSize);
-    
+    // Create params with the values to save into the table.
+    var params = createDBParam(s3ObjectKey, s3ObjectTime, s3ObjectSize.toString());
     // Call Dynamo DB to add the items to the table.
     ddb.putItem(params, function(error, data){
         if(error){
-            console.log("An error accured while adding an item", error);
+            callback(respond(500, "An error accured while adding an item" + error.message));
         } else {
-            console.log("Successfully added " + s3ObjectKey + " into table");
+            callback(null, respond(200, "Successfully added " + s3ObjectKey + " into table"));
         }
     });
-    callback();
 };
 
 function createDBParam(key, time, size){
-    return params = {
+    return {
         TableName: 'cloud9HelloTable',
         Item: {
             'id': {S: key},
@@ -34,4 +32,13 @@ function createDBParam(key, time, size){
             'size': {S: size}
         }
     };
+}
+
+function respond(status, message){
+    return {
+      statusCode: status,
+      body: JSON.stringify({
+        message: message
+      }),
+};
 }
