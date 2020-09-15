@@ -24,6 +24,8 @@ Resources:
   # Declare an S3 bucket.
   Cloud9HelloBucket:
     Type: AWS::S3::Bucket
+    Properties:
+      BucketName: lambda-bucket-events
   # Declare a Dynamo DB
   Cloud9HelloDynamoDBTable:
     Type: AWS::Serverless::SimpleTable
