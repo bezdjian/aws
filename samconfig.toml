@@ -2,8 +2,8 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "cloud9-cloud9Hello"
+stack_name = "cloud9-bucketEvents"
 s3_bucket = "buckets4lambda"
-s3_prefix = "cloud9-cloud9Hello"
+s3_prefix = "cloud9-bucketEvents"
 region = "eu-north-1"
 capabilities = "CAPABILITY_IAM"
