@@ -12,6 +12,9 @@ Resources:
       MemorySize: 128
       Timeout: 15
       Role: 'arn:aws:iam::397178420157:role/lambda-vpc-role'
+      Environment:
+        Variables:
+          DDB_TABLE: !Ref Cloud9HelloDynamoDBTable
       Events:
         S3Event:
           Type: S3
@@ -29,5 +32,5 @@ Resources:
   # Declare a Dynamo DB
   Cloud9HelloDynamoDBTable:
     Type: AWS::Serverless::SimpleTable
-    Properties:
-      TableName: cloud9HelloTable
+    #Properties:
+    #  TableName: cloud9HelloTable
