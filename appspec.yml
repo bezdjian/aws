@@ -5,4 +5,5 @@ files:
     destination: /home/ec2-user
 hooks:
   ApplicationStart:
-    - location: run_app.sh
+    - location: start_app.sh
+      runas: root
