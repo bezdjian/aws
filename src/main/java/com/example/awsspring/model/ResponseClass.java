@@ -1,17 +1,14 @@
 package com.example.awsspring.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-@Data
+@Value
 public class ResponseClass {
-    private String count;
-    private List<String> bucketContentNames;
+    int count;
+    String message;
+    List<String> bucketContentNames;
 }

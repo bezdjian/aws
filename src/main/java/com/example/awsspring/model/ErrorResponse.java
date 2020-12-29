@@ -1,16 +1,12 @@
 package com.example.awsspring.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-@Data
+@Value
 public class ErrorResponse {
-    private String message;
-    private int statusCode;
-    private String status;
+    String message;
+    int statusCode;
+    String status;
 }

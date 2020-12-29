@@ -29,16 +29,22 @@ public class BucketController {
     public ResponseEntity<Object> getBucketContentNames(@PathVariable("bucketName") String bucketName) {
         try {
             List<String> names = bucketService.getBucketContentNames(bucketName);
-            log.info("***** Got {} in the list", names.size());
+            log.info("***** Received {} in the list", names.size());
             if (!names.isEmpty()) {
-                return ResponseEntity.ok(new ResponseClass(String.valueOf(names.size()), names));
+                return ResponseEntity.ok(ResponseClass.builder()
+                        .bucketContentNames(names)
+                        .count(names.size())
+                        .message("OK")
+                        .build());
             }
             return ResponseEntity.noContent().build();
         } catch (AmazonS3Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(e.getErrorCode() + ": " + e.getErrorMessage(),
-                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            HttpStatus.INTERNAL_SERVER_ERROR.name()));
+                    .body(ErrorResponse.builder()
+                            .statusCode(HttpStatus.valueOf(e.getStatusCode()).value())
+                            .message(e.getErrorMessage())
+                            .status(HttpStatus.valueOf(e.getStatusCode()).name())
+                            .build());
         }
     }
 }
