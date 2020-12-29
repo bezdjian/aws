@@ -3,7 +3,6 @@ os: linux
 files:
   - source: ./aws-spring-0.1.jar
     destination: /home/ec2-user
-#hooks:
-#  ApplicationStart:
-#    - location: start_app.sh
-#      runas: root
+hooks:
+  ApplicationStart:
+    - location: start_app.sh
