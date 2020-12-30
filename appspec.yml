@@ -4,9 +4,6 @@ files:
   - source: ./aws-spring-0.1.jar
     destination: /home/ec2-user
 hooks:
-  ApplicationStop:
-    - location: stop_app.sh
-      runas: root
   ApplicationStart:
     - location: start_app.sh
       runas: root

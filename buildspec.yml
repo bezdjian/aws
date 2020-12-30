@@ -17,5 +17,4 @@ artifacts:
     - target/aws-spring-0.1.jar
     - appspec.yml
     - scripts/start_app.sh
-    - scripts/stop_app.sh
   discard-paths: yes
