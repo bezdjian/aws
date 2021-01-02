@@ -1,0 +1,1 @@
+web: java -jar target/aws-spring-0.1.jar
