@@ -1,3 +1,4 @@
+# This file is used WHEN the app is building in Build stage of pipeline when deploying to an EC2 instance directly.
 version: 0.2
 phases:
   install:

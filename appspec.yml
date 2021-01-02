@@ -1,3 +1,4 @@
+# This file is used after the app is deployed when using Pipeline to deploy to an EC2 instance directly.
 version: 0.0
 os: linux
 files:
