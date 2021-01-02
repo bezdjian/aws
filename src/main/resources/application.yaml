@@ -7,6 +7,7 @@ spring:
     username: rds
     password: springbootapp
     url: jdbc:mysql://aa2mxhs51eyi1y.clrsxfhrhxie.eu-north-1.rds.amazonaws.com/ebdb
+    driver-class-name: com.mysql.jdbc.Driver
   application:
     name: aws-spring-app
 
