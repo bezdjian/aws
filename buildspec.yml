@@ -18,5 +18,5 @@ artifacts:
     - Procfile
     - Buildfile
 #For Pipeline deploying to EC2 directly    - appspec.yml
-  #For Pipeline deploying to EC2 directly    - scripts/start_app.sh
+#For Pipeline deploying to EC2 directly    - scripts/start_app.sh
   discard-paths: yes
