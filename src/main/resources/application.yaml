@@ -1,3 +1,7 @@
+spring:
+  application:
+    name: aws-spring-app
+
 management:
   endpoints:
     web:
