@@ -1,7 +1,9 @@
 package com.example.awsspring.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,8 @@ import javax.persistence.Table;
 
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "USER")
 public class User {
