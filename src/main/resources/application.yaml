@@ -10,6 +10,10 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   application:
     name: aws-spring-app
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
 
 management:
   endpoints:
