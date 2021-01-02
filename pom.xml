@@ -13,6 +13,7 @@
     <version>0.1</version>
     <name>aws-spring</name>
     <description>Demo project for Spring Boot with EC2 pipeline</description>
+    <packaging>war</packaging>
 
     <properties>
         <java.version>1.8</java.version>
