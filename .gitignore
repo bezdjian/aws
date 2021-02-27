@@ -1,6 +1,7 @@
 .aws-sam
 .idea
 BucketContentNamesFunction/target/
+BucketContentNamesFunction/bucketcontentnames.iml
 .classpath
 .factorypath
 .project
