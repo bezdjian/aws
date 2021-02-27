@@ -1,11 +1,11 @@
 {
-    "input": "{\"bucketName\": \"hb-lambdabucket\"}",
+    "input": "{\"bucketName\": \"notBeingUsed\"}",
     "resource": "/{proxy+}",
     "path": "/path/to/resource",
     "httpMethod": "POST",
     "isBase64Encoded": false,
     "queryStringParameters": {
-      "bucketName": "mylms-frontend"
+      "bucketName": "buckets4lambda"
     },
     "pathParameters": {
       "proxy": "/path/to/resource"

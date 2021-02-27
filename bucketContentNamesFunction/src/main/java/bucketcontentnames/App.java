@@ -20,18 +20,22 @@ import java.util.Map;
  */
 public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
-    public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
+    final Map<String, String> headers = new HashMap<>();
+    final Map<String, Long> response = new HashMap<>();
+
+    public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent requestEvent, Context context) {
+        //Get logger to log to CloudWatch logs
         LambdaLogger logger = context.getLogger();
-        Map<String, String> headers = new HashMap<>();
-        Map<String, Long> response = new HashMap<>();
+        //Add default headers
         headers.put("Content-Type", "application/json");
         headers.put("X-Custom-Header", "application/json");
 
         APIGatewayProxyResponseEvent apiResponse = new APIGatewayProxyResponseEvent()
                 .withHeaders(headers);
+
         try {
-            String bucketName = input.getQueryStringParameters() != null ?
-                            input.getQueryStringParameters().get("bucketName") : "";
+            String bucketName = requestEvent.getQueryStringParameters() != null ?
+                    requestEvent.getQueryStringParameters().get("bucketName") : "";
 
             if (bucketName.isEmpty())
                 return apiResponse.withStatusCode(HttpStatus.SC_BAD_REQUEST)
@@ -63,7 +67,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
     protected AmazonS3 getS3Bucket() {
         return AmazonS3Client.builder()
-                .withRegion(Regions.EU_WEST_2)
+                .withRegion(Regions.EU_NORTH_1)
                 .build();
     }
 }
