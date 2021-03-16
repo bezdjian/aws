@@ -9,7 +9,7 @@ import insurancecalculation.exception.InsuranceException;
 import insurancecalculation.model.ErrorMessage;
 import insurancecalculation.model.InsurancePremiumRequest;
 import insurancecalculation.model.InsurancePremiumResponse;
-import insurancecalculation.service.InsurancePremiumService;
+import insurancecalculation.service.InsurancePremiumCalculator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             InsurancePremiumRequest insurancePremiumRequest = getRequestFromQueryParameters(input);
             insurancePremiumRequest.validateRequest();
 
-            InsurancePremiumResponse insurancePremiumResponse = InsurancePremiumService.calculateInsurancePremium(
+            InsurancePremiumResponse insurancePremiumResponse = InsurancePremiumCalculator.calculate(
                     insurancePremiumRequest, logger);
 
             return respond(200, insurancePremiumResponse.toString());

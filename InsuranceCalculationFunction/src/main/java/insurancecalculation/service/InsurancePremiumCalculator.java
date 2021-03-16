@@ -12,9 +12,9 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 @UtilityClass
-public class InsurancePremiumService {
+public class InsurancePremiumCalculator {
 
-    public InsurancePremiumResponse calculateInsurancePremium(InsurancePremiumRequest request, LambdaLogger logger) {
+    public InsurancePremiumResponse calculate(InsurancePremiumRequest request, LambdaLogger logger) {
 
         logger.log("Calculate monthly income insurance premium");
         double incomeInsuranceValue = InsuranceValues.getIncomeInsuranceValue(request.getAge());
