@@ -19,6 +19,10 @@ import java.util.Map;
  */
 public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
+    private static final int OK = 200;
+    private static final int BAD_REQUEST = 400;
+    private static final int INTERNAL_SERVER_ERROR = 500;
+
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
         LambdaLogger logger = context.getLogger();
         try {
@@ -28,13 +32,13 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             InsurancePremiumResponse insurancePremiumResponse = InsurancePremiumCalculator.calculate(
                     insurancePremiumRequest, logger);
 
-            return respond(200, insurancePremiumResponse.toString());
+            return respond(OK, insurancePremiumResponse.toString());
         } catch (InsuranceException e) {
-            return respond(400,
-                    createErrorMessage(400, e.getMessage()));
+            return respond(BAD_REQUEST,
+                    createErrorMessage(BAD_REQUEST, e.getMessage()));
         } catch (Exception e) {
-            return respond(500,
-                    createErrorMessage(500, e.getMessage()));
+            return respond(INTERNAL_SERVER_ERROR,
+                    createErrorMessage(INTERNAL_SERVER_ERROR, e.getMessage()));
         }
     }
 
