@@ -1,8 +1,8 @@
 {
   "name": "cdk-typescript",
   "version": "0.1.0",
-  "bin": {
-    "cdk-typescript": "bin/cdk-typescript.js"
+  "src": {
+    "cdk-typescript": "src/cdk-typescript.js"
   },
   "scripts": {
     "build": "tsc",
