@@ -19,15 +19,21 @@ Resources:
       Runtime: java11
       MemorySize: 512
       FunctionName: insurance-premium-calculation-function
-      #Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-      #  Variables:
-      #    PARAM1: VALUE
+      # Allow read on the DynamoDB table
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref DynamoDB
       Events:
         GetMonthlyCalculationEvent:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /calculate
             Method: get
+  # Create DynamoDB Table called InsuranceTariff
+  DynamoDB:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: InsuranceTariff
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
