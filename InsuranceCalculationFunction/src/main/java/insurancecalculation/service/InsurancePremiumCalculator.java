@@ -3,28 +3,32 @@ package insurancecalculation.service;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import insurancecalculation.model.InsurancePremiumRequest;
 import insurancecalculation.model.InsurancePremiumResponse;
-import insurancecalculation.util.InsuranceValues;
 import lombok.experimental.UtilityClass;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Map;
 
 @UtilityClass
 public class InsurancePremiumCalculator {
 
-    public InsurancePremiumResponse calculate(InsurancePremiumRequest request, LambdaLogger logger) {
+    private final String INCOME_INSURANCE = "TRYGG";
+    private final String LIFE_INSURANCE = "LIV";
 
-        logger.log("Calculate monthly income insurance premium");
-        double incomeInsuranceValue = InsuranceValues.getIncomeInsuranceValue(request.getAge());
+    public InsurancePremiumResponse calculate(InsurancePremiumRequest request,
+            Map<String, String> insuranceTypesWithValues, LambdaLogger logger) {
+
+        logger.log("\nCalculate monthly income insurance premium");
+        double incomeInsuranceValue = Double.parseDouble(insuranceTypesWithValues.get(INCOME_INSURANCE));
         double monthlyIncomeInsurancePremium = request.getInsurableAmount() * incomeInsuranceValue;
 
-        logger.log("Calculate monthly life insurance premium");
-        double lifeInsuranceValue = InsuranceValues.getLifeInsuranceValue(request.getAge());
+        logger.log("\nCalculate monthly life insurance premium");
+        double lifeInsuranceValue = Double.parseDouble(insuranceTypesWithValues.get(LIFE_INSURANCE));
         double monthlyLifeInsurancePremium = request.getLoanAmount() * lifeInsuranceValue;
 
-        logger.log("Calculate total monthly premium");
+        logger.log("\nCalculate total monthly premium\n");
         double totalMonthlyPremium = monthlyLifeInsurancePremium + monthlyIncomeInsurancePremium;
 
         DecimalFormat formatter = createDecimalFormatter();
