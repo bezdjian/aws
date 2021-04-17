@@ -3,3 +3,8 @@
 InsuranceCalculationFunction/target
 InsuranceCalculationFunction/insurance-premium-calculation.iml
 InsuranceCalculationFunction/*.iml
+.project
+.classpath
+.factorypath
+.settings
+.vscode
