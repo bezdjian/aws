@@ -1,8 +1,7 @@
 .idea
 .aws-sam
-InsuranceCalculationFunction/target
-InsuranceCalculationFunction/insurance-premium-calculation.iml
-InsuranceCalculationFunction/*.iml
+insurance-premium-calculation/target
+insurance-premium-calculation/insurance-premium-calculation.iml
 .project
 .classpath
 .factorypath

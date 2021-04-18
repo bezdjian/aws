@@ -84,7 +84,7 @@ You can find more information and examples about filtering Lambda function logs 
 Tests are defined in the `InsuranceCalculationFunction/src/test` folder in this project.
 
 ```bash
-$ cd InsuranceCalculationFunction
+$ cd insurance-calculation-function
 InsuranceCalculationFunction$ mvn test
 ```
 
