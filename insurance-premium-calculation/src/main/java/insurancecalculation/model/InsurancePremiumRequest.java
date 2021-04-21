@@ -23,7 +23,7 @@ public class InsurancePremiumRequest {
     }
 
     private void validateInsurableAmount() {
-        if (insurableAmount < 15000)
+        if (insurableAmount > 15000)
             throw new InsuranceException("Insurable amount must be less than or equal to 15000");
     }
 
