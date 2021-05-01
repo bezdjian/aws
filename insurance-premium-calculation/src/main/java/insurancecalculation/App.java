@@ -44,7 +44,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             insurancePremiumRequest.validateRequest();
             // Create DynamoDB scan expression with filter expression
             DynamoDBScanExpression scanExpression = createScanExpression(insurancePremiumRequest.getAge().toString());
-            // Scan the DB for tariff results and loop throuth insurance tariffs and add to map to calculate by the type
+            // Scan the DB for tariff results and loop through insurance tariffs and add to map to calculate by the type
             dynamoDBMapper.scan(InsuranceTariff.class, scanExpression)
                 .forEach(insuranceTariff -> {
                 logger.log("\nInsurance to calculate: " + insuranceTariff.toString());
@@ -54,6 +54,7 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             InsurancePremiumResponse insurancePremiumResponse = InsurancePremiumCalculator.calculate(
                     insurancePremiumRequest, insuranceTypesWithValues, logger);
 
+            logger.log("\nReturning calculated insurance premium.");
             return responseEvent(OK, insurancePremiumResponse.toString());
         } catch (InsuranceException e) {
             return responseEvent(BAD_REQUEST,
