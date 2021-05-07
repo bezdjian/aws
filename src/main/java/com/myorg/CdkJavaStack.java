@@ -22,10 +22,11 @@ public class CdkJavaStack extends Stack {
 
         // Build the Lambda function
         Function function = Function.Builder.create(this, "CdkJavaHelloFunction")
-            .functionName("java-hello-cdk")
+            .functionName("CdkJavaFunction")
             .handler("cdklambda.App::handleRequest")
             .runtime(Runtime.JAVA_11)
             .code(Code.fromAsset("lambdafunction/target/lambda-for-cdk-1.0.jar"))
+            .description("Lambda function for AWS CDK")
             .build();
 
         // Build DynamoDB

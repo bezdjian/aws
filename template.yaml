@@ -48,7 +48,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersedaac38f2b34d2933341cfa1d9169e27fadb5369d3cc57cf9370ba7c4f4026e3S3BucketCC2BD723
+          Ref: AssetParameters3211d46553db8a66b387cac7329af18a0f865fb107c63a5d786ac84bcc33e9dbS3Bucket431258C7
         S3Key:
           Fn::Join:
             - ""
@@ -56,20 +56,21 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersedaac38f2b34d2933341cfa1d9169e27fadb5369d3cc57cf9370ba7c4f4026e3S3VersionKeyCB96826B
+                      - Ref: AssetParameters3211d46553db8a66b387cac7329af18a0f865fb107c63a5d786ac84bcc33e9dbS3VersionKey18ABF4C0
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersedaac38f2b34d2933341cfa1d9169e27fadb5369d3cc57cf9370ba7c4f4026e3S3VersionKeyCB96826B
+                      - Ref: AssetParameters3211d46553db8a66b387cac7329af18a0f865fb107c63a5d786ac84bcc33e9dbS3VersionKey18ABF4C0
       Role:
         Fn::GetAtt:
           - CdkJavaHelloFunctionServiceRole66DA2F5E
           - Arn
+      Description: Lambda function for AWS CDK
       Environment:
         Variables:
           DB_TABLE: cdkTable-java
-      FunctionName: java-hello-cdk
+      FunctionName: CdkJavaFunction
       Handler: cdklambda.App::handleRequest
       Runtime: java11
     DependsOn:
@@ -132,7 +133,7 @@ Resources:
       - CdkJavaHelloApi942C2FAB
     Metadata:
       aws:cdk:path: CdkJavaStack/CdkJavaHelloApi/Account
-  CdkJavaHelloApiDeployment8ABDC766b78f30e4215e713d11904a5415d95d80:
+  CdkJavaHelloApiDeployment8ABDC76641d7215a07a1f1dccca9121ea9108a51:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId:
@@ -148,7 +149,7 @@ Resources:
       RestApiId:
         Ref: CdkJavaHelloApi942C2FAB
       DeploymentId:
-        Ref: CdkJavaHelloApiDeployment8ABDC766b78f30e4215e713d11904a5415d95d80
+        Ref: CdkJavaHelloApiDeployment8ABDC76641d7215a07a1f1dccca9121ea9108a51
       StageName: prod
     Metadata:
       aws:cdk:path: CdkJavaStack/CdkJavaHelloApi/DeploymentStage.prod/Resource
