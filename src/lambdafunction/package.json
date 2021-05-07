@@ -1,0 +1,10 @@
+{
+  "name": "lambdafunction",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "HB",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.901.0"
+  }
+}
