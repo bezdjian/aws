@@ -4,12 +4,13 @@ import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.apigateway.LambdaRestApi;
+import software.amazon.awscdk.services.dynamodb.Attribute;
+import software.amazon.awscdk.services.dynamodb.AttributeType;
+import software.amazon.awscdk.services.dynamodb.Table;
+import software.amazon.awscdk.services.dynamodb.TableProps;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class CdkJavaStack extends Stack {
     public CdkJavaStack(final Construct scope, final String id) {
@@ -25,8 +26,22 @@ public class CdkJavaStack extends Stack {
             .handler("cdklambda.App::handleRequest")
             .runtime(Runtime.JAVA_11)
             .code(Code.fromAsset("lambdafunction/target/lambda-for-cdk-1.0.jar"))
-            .environment(createLambdaEnvVariables())
             .build();
+
+        // Build DynamoDB
+        String tableName = "cdkTable-java";
+        Table dynamoTable = new Table(this, "cdkTable-java", TableProps.builder()
+            .partitionKey(Attribute.builder()
+                .name("id")
+                .type(AttributeType.STRING)
+                .build())
+            .tableName(tableName)
+            .build());
+        // Grant read access to Lambda function
+        dynamoTable.grantReadData(function);
+
+        // Add table name to Lambda's environment variables.
+        function.addEnvironment("DB_TABLE", tableName);
 
         // Build the rest API
         LambdaRestApi restApi = LambdaRestApi.Builder.create(this, "CdkJavaHelloApi")
@@ -38,11 +53,5 @@ public class CdkJavaStack extends Stack {
 
         // Add GET method with lambda integration
         restApi.getRoot().addMethod("GET");
-    }
-
-    private Map<String, String> createLambdaEnvVariables() {
-        HashMap<String, String> lambdaEnvironment = new HashMap<>();
-        lambdaEnvironment.put("SOMEENV", "SOMEVAR");
-        return lambdaEnvironment;
     }
 }
