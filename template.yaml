@@ -221,7 +221,7 @@ Resources:
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:
-      Analytics: v2:deflate64:H4sIAAAAAAAAE02Q3U7EIBCFn8X7KWtj9sI76xovjMam+gJTGCtugYYfNw3h3QVqk72ab+BwODMtuz+y9uYBL67h4nyI3Fhi8cMjP0PnHPmMk9QTDORMsJzgZLTzNnAPpy/do0VFnmxp3oNfQj3exQmKcZxRjQJZfA6ae2l0kVxzT1ZJ53KXQKJicTAzVZ9SezNLvlZdpQTursGSzbEaEcSqURkxsviJ4/ayQv5+kRN6uuDK4mtNkaP5bpH/KXfsODdBe3iiZTarIl3HuOrKGqrxBvuAj+gI3sh/G1EuN0opwQv+4qE9stu83R8nZWOzvVTEhq3+Af7UWkV5AQAA
+      Analytics: v2:deflate64:H4sIAAAAAAAAE02Q3U7EIBCFn2Xv6Wyr8d66xgujsam+wJSOXdwCDT9uGsK7C9QmezXfwOHMGRpo6juoD494tRUfL8fAtSEInw75hbXWkks4CTWxnqz2hhM7aWWd8dyx07fq0KAkRyY3H94tvhzv4siycZhRDiNCePGKO6FVltxyR0YKa1MXmUAJodczFZ9cOz0LvhZdocjsfYU5m4USkY2rQqnHAcIXDtvLAmn8IiZ0dMUVwltJkaK5dhH/KXdsOddeOfZMy6xXSaqscdPlbyjGG+wLPqEl9k7urMd8uVGMkb3iLx6bB6ihOfxYISqT7IUk6Lf6BzJmEXd6AQAA
     Metadata:
       aws:cdk:path: CdkJavaStack/CDKMetadata/Default
 Parameters:
