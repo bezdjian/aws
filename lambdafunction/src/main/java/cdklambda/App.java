@@ -16,8 +16,11 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
         LambdaLogger logger = context.getLogger();
+        logger.log("\n\n Input: " + input.toString());
 
-        logger.log(input.toString());
+        String dynamoTableName = System.getenv("DB_TABLE");
+
+        logger.log("\n\n dynamoTableName: " + dynamoTableName + "\n\n");
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
             .withHeaders(getHeaders());
