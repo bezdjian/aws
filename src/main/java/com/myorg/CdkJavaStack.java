@@ -22,9 +22,9 @@ public class CdkJavaStack extends Stack {
         // Build the Lambda function
         Function function = Function.Builder.create(this, "CdkJavaHelloFunction")
             .functionName("java-hello-cdk")
-            .handler("hello.handler")
-            .runtime(Runtime.NODEJS_10_X)
-            .code(Code.fromAsset("lambdafunction"))
+            .handler("cdklambda.App::handleRequest")
+            .runtime(Runtime.JAVA_11)
+            .code(Code.fromAsset("lambdafunction/target/lambda-for-cdk-1.0.jar"))
             .environment(createLambdaEnvVariables())
             .build();
 
