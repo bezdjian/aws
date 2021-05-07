@@ -1,0 +1,404 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Stack matches snapshot 1`] = `
+Object {
+  "Outputs": Object {
+    "HelloFnApiEndpoint86B12587": Object {
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "HelloFnApi96F71B69",
+            },
+            ".execute-api.",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            Object {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            Object {
+              "Ref": "HelloFnApiDeploymentStageprod0787A28A",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+  },
+  "Parameters": Object {
+    "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaArtifactHash1E9D0C5C": Object {
+      "Description": "Artifact hash for asset \\"616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301ea\\"",
+      "Type": "String",
+    },
+    "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3Bucket017B5D6B": Object {
+      "Description": "S3 bucket for asset \\"616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301ea\\"",
+      "Type": "String",
+    },
+    "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3VersionKeyFEAE847F": Object {
+      "Description": "S3 key for asset version \\"616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301ea\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CdkDynamoDBTable7FCBB52E": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "id",
+            "AttributeType": "S",
+          },
+        ],
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "id",
+            "KeyType": "HASH",
+          },
+        ],
+        "ProvisionedThroughput": Object {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5,
+        },
+        "TableName": "cdkTable",
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "HelloFn7942DF23": Object {
+      "DependsOn": Array [
+        "HelloFnServiceRoleDefaultPolicy23D39CE4",
+        "HelloFnServiceRoleDA97FE56",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3Bucket017B5D6B",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3VersionKeyFEAE847F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3VersionKeyFEAE847F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "DB_TABLE": Object {
+              "Ref": "CdkDynamoDBTable7FCBB52E",
+            },
+          },
+        },
+        "FunctionName": "CdkHelloFn",
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "HelloFnServiceRoleDA97FE56",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "HelloFnApi96F71B69": Object {
+      "Properties": Object {
+        "Description": "Api gateway created by CDK for HelloFn Lambda",
+        "Name": "HelloFnApi",
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "HelloFnApiAccount2463B4FC": Object {
+      "DependsOn": Array [
+        "HelloFnApi96F71B69",
+      ],
+      "Properties": Object {
+        "CloudWatchRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "HelloFnApiCloudWatchRoleD9669B2E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::Account",
+    },
+    "HelloFnApiCloudWatchRoleD9669B2E": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "HelloFnApiDeployment7DFA20C0cb28fd54efe969c171e9f33cd24e680c": Object {
+      "DependsOn": Array [
+        "HelloFnApiGET909E9DD6",
+      ],
+      "Properties": Object {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": Object {
+          "Ref": "HelloFnApi96F71B69",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "HelloFnApiDeploymentStageprod0787A28A": Object {
+      "Properties": Object {
+        "DeploymentId": Object {
+          "Ref": "HelloFnApiDeployment7DFA20C0cb28fd54efe969c171e9f33cd24e680c",
+        },
+        "RestApiId": Object {
+          "Ref": "HelloFnApi96F71B69",
+        },
+        "StageName": "prod",
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "HelloFnApiGET909E9DD6": Object {
+      "Properties": Object {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "GET",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "HelloFn7942DF23",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": Object {
+          "Fn::GetAtt": Array [
+            "HelloFnApi96F71B69",
+            "RootResourceId",
+          ],
+        },
+        "RestApiId": Object {
+          "Ref": "HelloFnApi96F71B69",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "HelloFnApiGETApiPermissionMyTestStackHelloFnApiB884D7F8GET5DFCFEC8": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "HelloFn7942DF23",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "HelloFnApi96F71B69",
+              },
+              "/",
+              Object {
+                "Ref": "HelloFnApiDeploymentStageprod0787A28A",
+              },
+              "/GET/",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "HelloFnApiGETApiPermissionTestMyTestStackHelloFnApiB884D7F8GET84F88627": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "HelloFn7942DF23",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "HelloFnApi96F71B69",
+              },
+              "/test-invoke-stage/GET/",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "HelloFnServiceRoleDA97FE56": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "HelloFnServiceRoleDefaultPolicy23D39CE4": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "CdkDynamoDBTable7FCBB52E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "HelloFnServiceRoleDefaultPolicy23D39CE4",
+        "Roles": Array [
+          Object {
+            "Ref": "HelloFnServiceRoleDA97FE56",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

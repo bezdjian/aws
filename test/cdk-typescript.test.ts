@@ -1,10 +1,6 @@
-import {
-  expect as expectCDK,
-  matchTemplate,
-  MatchStyle,
-} from "@aws-cdk/assert";
+import {SynthUtils,} from "@aws-cdk/assert";
 import * as cdk from "@aws-cdk/core";
-import * as CdkTypescript from "../src/cdk-typescript-stack";
+import {CdkTypescriptStack} from "../src/cdk-typescript-stack";
 
 test("Empty Stack", () => {
   //const app = new cdk.App();
@@ -14,4 +10,11 @@ test("Empty Stack", () => {
   //expectCDK(stack).to(matchTemplate({
   //  "Resources": {}
   //}, MatchStyle.EXACT))
+});
+
+test("Stack matches snapshot", () => {
+  const app = new cdk.App();
+  //const stack = new CdkTypescript.CdkTypescriptStack(app, 'TestStack');
+  const stack = new CdkTypescriptStack(app, 'MyTestStack');
+  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
