@@ -24,6 +24,7 @@ import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
 
+import java.io.File;
 import java.util.Collections;
 
 public class CdkJavaStack extends Stack {
@@ -35,11 +36,12 @@ public class CdkJavaStack extends Stack {
         super(scope, id, props);
 
         // Build the Lambda function
+        File projectDir = new File(System.getProperty("user.dir"));
         Function function = Function.Builder.create(this, "CdkJavaHelloFunction")
             .functionName("CdkJavaFunction")
             .handler("cdklambda.App::handleRequest")
             .runtime(Runtime.JAVA_11)
-            .code(Code.fromAsset("lambdafunction/target/lambda-for-cdk-1.0.jar"))
+            .code(Code.fromAsset(new File(projectDir, "lambdafunction/target/lambda-for-cdk-1.0.jar").toString()))
             .description("Lambda function for AWS CDK")
             .build();
 
