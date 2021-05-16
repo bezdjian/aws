@@ -27,6 +27,11 @@
       <artifactId>aws-lambda-java-events</artifactId>
       <version>3.6.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-dynamodb</artifactId>
+      <version>1.11.998</version>
+    </dependency>
     <!-- For some reason, ssm requires slf4j-->
     <dependency>
       <groupId>org.slf4j</groupId>

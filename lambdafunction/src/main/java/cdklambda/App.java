@@ -1,5 +1,11 @@
 package cdklambda;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -34,13 +40,27 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
             final SsmClient ssmClient = getSsmClient();
             GetParameterResponse parameter = getParameterResponse(ssmClient, ssmParamName);
             logger.log("\n Parameter value: " + parameter.parameter().value() + "\n\n");
-
             ssmClient.close();
 
+            ItemCollection<ScanOutcome> items = scanDynamoDB(dynamoTableName);
+
+            for (Item item : items) {
+                logger.log("\n Item: " + item.toString());
+            }
+
+            logger.log("\n\n");
             return gatewayResponse(200, "Hello!");
-        } catch (Exception e){
+        } catch (Exception e) {
             return gatewayResponse(500, e.getMessage());
         }
+    }
+
+    private ItemCollection<ScanOutcome> scanDynamoDB(String dynamoTableName) {
+        AmazonDynamoDB client = AmazonDynamoDBClient.builder().build();
+        DynamoDB dynamoDB = new DynamoDB(client);
+        return dynamoDB
+            .getTable(dynamoTableName)
+            .scan();
     }
 
     private SsmClient getSsmClient() {
