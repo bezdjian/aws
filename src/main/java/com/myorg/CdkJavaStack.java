@@ -24,6 +24,9 @@ import software.amazon.awscdk.services.ec2.VpcAttributes;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.ssm.ParameterType;
+import software.amazon.awscdk.services.ssm.StringParameter;
+import software.amazon.awscdk.services.ssm.StringParameterProps;
 
 import java.io.File;
 import java.util.Collections;
@@ -107,5 +110,22 @@ public class CdkJavaStack extends Stack {
             .instanceType("t3.micro")
             .tags(Collections.singletonList(ec2Tag))
             .build());
+
+        // Create SSM parameter
+        String parameterName = "/cdk/testParam";
+        StringParameter cdktestParam = new StringParameter(this, parameterName, StringParameterProps.builder()
+            .parameterName(parameterName)
+            .stringValue("cdk-test-param-value")
+            .type(ParameterType.STRING)
+            .description("SSM created by CDK-java")
+            .build());
+        cdktestParam.grantRead(function);
+        function.addEnvironment("SSM_PARAM_NAME", parameterName);
+
+        // Read while cdk deploy
+        //String cdkTestParamValue = StringParameter.valueForStringParameter(this, "CdkTestParam");
+        // Read while cdk synth
+        //String cdkTestParamValue = StringParameter.valueFromLookup(this, parameterName);
+        //System.out.println("cdkTestParamValue: " + cdkTestParamValue);
     }
 }
