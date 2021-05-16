@@ -37,6 +37,19 @@ Resources:
                   - cdkTablejava440D0D94
                   - Arn
               - Ref: AWS::NoValue
+          - Action:
+              - ssm:DescribeParameters
+              - ssm:GetParameters
+              - ssm:GetParameter
+              - ssm:GetParameterHistory
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :ssm:eu-north-1:397178420157:parameter
+                  - Ref: cdktestParamB796D4A0
         Version: "2012-10-17"
       PolicyName: CdkJavaHelloFunctionServiceRoleDefaultPolicy73FEC758
       Roles:
@@ -48,7 +61,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95aS3Bucket622648E2
+          Ref: AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3Bucket72758758
         S3Key:
           Fn::Join:
             - ""
@@ -56,12 +69,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95aS3VersionKey3758F0FB
+                      - Ref: AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3VersionKey7E057F2A
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95aS3VersionKey3758F0FB
+                      - Ref: AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3VersionKey7E057F2A
       Role:
         Fn::GetAtt:
           - CdkJavaHelloFunctionServiceRole66DA2F5E
@@ -70,9 +83,12 @@ Resources:
       Environment:
         Variables:
           DB_TABLE: cdkTable-java
+          SSM_PARAM_NAME: /cdk/testParam
       FunctionName: CdkJavaFunction
       Handler: cdklambda.App::handleRequest
+      MemorySize: 512
       Runtime: java11
+      Timeout: 30
     DependsOn:
       - CdkJavaHelloFunctionServiceRoleDefaultPolicy73FEC758
       - CdkJavaHelloFunctionServiceRole66DA2F5E
@@ -247,22 +263,31 @@ Resources:
           Value: EC2InstanceForCdk
     Metadata:
       aws:cdk:path: CdkJavaStack/EC2InstanceCdk
+  cdktestParamB796D4A0:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Value: cdk-test-param-value
+      Description: SSM created by CDK-java
+      Name: /cdk/testParam
+    Metadata:
+      aws:cdk:path: CdkJavaStack/--cdk--testParam/Resource
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:
-      Analytics: v2:deflate64:H4sIAAAAAAAAE12Q3U7DMAyFn2X3btYOcU8ZAoFAVIUXcFOvhDVJlR+mKuq7k6RUmrjyZ8d2jk/FqvLAyt0dXmzB+/M+cG2IhQ+H/Ay1teQiDkIN0JLV3nCCo1bWGc8dHE+qQYOSHJmUvHs3+VzemhdIi8OIsuuRhUevuBNapZZrbshIYW3MFhAoWWj1SHlPio0eBZ9zX6YF7E2BSZtlWSL0s0Kp+46FT+zWyQzx+0kM6OiCMwuvWUWU5upJ/KncsOZce+XggaZRz5JUPuMqSzbkxStsB96jJXgj96X79LjSAsQP0UTi3gg3Pxntpzz6v/AcnUQVbVoWeMEf3Fe3rGTV7tsKUZioR0hi7Rp/AbEsWsSrAQAA
+      Analytics: v2:deflate64:H4sIAAAAAAAAE11Q0U7DMAz8lr2n2ToknilDIBCIqfADbuqNsCap4oSpivLvJClFgyffOfblfDWvN1u+Wd3AmSrRn9ZBGIs8vDkQJ9YQoUvwKPWRtUjGW4FsZzQ564Vju4PegwWFDm0mr96NvrSX4ciycBhAdT3wcO+1cNLoPHKJ92iVJEosMgmKh9YMWHRy3ZtBiqnMFRQZXVWQvREvFlk/aVCm73h4h27eLCB9P8ojODzDxMNzcZGsuWaUPy4X2AhhvHbsDsfBTAp1OeOC5RiK8AyWA2+BkL2g+zB9fpxRZCi2KUQU3ko3PVjjx7L6v/GYkgSdYyJSOXWbkv4T6S+JMbIn+IJ1fb36JCkrm+xKhbyd6zetwlnzygEAAA==
     Metadata:
       aws:cdk:path: CdkJavaStack/CDKMetadata/Default
 Parameters:
-  AssetParameters494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95aS3Bucket622648E2:
+  AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3Bucket72758758:
     Type: String
-    Description: S3 bucket for asset "494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95a"
-  AssetParameters494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95aS3VersionKey3758F0FB:
+    Description: S3 bucket for asset "7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949"
+  AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3VersionKey7E057F2A:
     Type: String
-    Description: S3 key for asset version "494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95a"
-  AssetParameters494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95aArtifactHashFDB3775C:
+    Description: S3 key for asset version "7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949"
+  AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949ArtifactHash275A6AC7:
     Type: String
-    Description: Artifact hash for asset "494f467b403e4cec708d8a0275fbd0469dcc89d24ab83343aa1c286c9622b95a"
+    Description: Artifact hash for asset "7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949"
 Outputs:
   CdkJavaHelloApiEndpoint1F3D0DDC:
     Value:
