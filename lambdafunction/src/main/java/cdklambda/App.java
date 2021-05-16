@@ -19,22 +19,28 @@ import java.util.Map;
 public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
-        LambdaLogger logger = context.getLogger();
-        logger.log("\n\n Input: " + input.toString());
 
-        String dynamoTableName = System.getenv("DB_TABLE");
-        String ssmParamName = System.getenv("SSM_PARAM_NAME");
+        try {
+            LambdaLogger logger = context.getLogger();
 
-        logger.log("\n dynamoTableName: " + dynamoTableName);
-        logger.log("\n ssmParamName: " + ssmParamName);
+            logger.log("\n\n Input: " + input.toString());
 
-        final SsmClient ssmClient = getSsmClient();
-        GetParameterResponse parameter = getParameterResponse(ssmClient, ssmParamName);
-        logger.log("\n Parameter value: " + parameter.parameter().value() + "\n\n");
+            String dynamoTableName = System.getenv("DB_TABLE");
+            String ssmParamName = System.getenv("SSM_PARAM_NAME");
 
-        ssmClient.close();
+            logger.log("\n dynamoTableName: " + dynamoTableName);
+            logger.log("\n ssmParamName: " + ssmParamName);
 
-        return gatewayResponse(200, "Hello!");
+            final SsmClient ssmClient = getSsmClient();
+            GetParameterResponse parameter = getParameterResponse(ssmClient, ssmParamName);
+            logger.log("\n Parameter value: " + parameter.parameter().value() + "\n\n");
+
+            ssmClient.close();
+
+            return gatewayResponse(200, "Hello!");
+        } catch (Exception e){
+            return gatewayResponse(500, e.getMessage());
+        }
     }
 
     private SsmClient getSsmClient() {
