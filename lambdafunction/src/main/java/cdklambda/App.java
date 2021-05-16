@@ -22,18 +22,17 @@ public class App implements RequestHandler<APIGatewayProxyRequestEvent, APIGatew
 
         logger.log("\n\n dynamoTableName: " + dynamoTableName + "\n\n");
 
-        APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent()
-            .withHeaders(getHeaders());
-        return response
-            .withHeaders(getHeaders())
-            .withStatusCode(200)
-            .withBody("hello!");
+        return gatewayResponse(200, "Hello!");
     }
 
-    private Map<String, String> getHeaders() {
+    private APIGatewayProxyResponseEvent gatewayResponse(int statusCode, String message) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
         headers.put("X-Custom-Header", "application/json");
-        return headers;
+
+        return new APIGatewayProxyResponseEvent()
+            .withHeaders(headers)
+            .withStatusCode(statusCode)
+            .withBody(message);
     }
 }
