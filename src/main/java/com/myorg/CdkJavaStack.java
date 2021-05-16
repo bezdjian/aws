@@ -2,6 +2,7 @@ package com.myorg;
 
 import software.amazon.awscdk.core.CfnTag;
 import software.amazon.awscdk.core.Construct;
+import software.amazon.awscdk.core.Duration;
 import software.amazon.awscdk.core.Stack;
 import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.apigateway.LambdaRestApi;
@@ -36,6 +37,8 @@ public class CdkJavaStack extends Stack {
         super(scope, id, props);
 
         // Build the Lambda function
+        Number thirtySeconds = 30;
+        Number memorySizeInMB = 512;
         File projectDir = new File(System.getProperty("user.dir"));
         Function function = Function.Builder.create(this, "CdkJavaHelloFunction")
             .functionName("CdkJavaFunction")
@@ -43,6 +46,8 @@ public class CdkJavaStack extends Stack {
             .runtime(Runtime.JAVA_11)
             .code(Code.fromAsset(new File(projectDir, "lambdafunction/target/lambda-for-cdk-1.0.jar").toString()))
             .description("Lambda function for AWS CDK")
+            .timeout(Duration.seconds(thirtySeconds))
+            .memorySize(memorySizeInMB)
             .build();
 
         // Build DynamoDB
