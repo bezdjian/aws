@@ -1,5 +1,7 @@
 package com.myorg;
 
+import software.amazon.awscdk.core.CfnOutput;
+import software.amazon.awscdk.core.CfnOutputProps;
 import software.amazon.awscdk.core.CfnTag;
 import software.amazon.awscdk.core.Construct;
 import software.amazon.awscdk.core.Duration;
@@ -103,7 +105,7 @@ public class CdkJavaStack extends Stack {
             .build();
 
         // Build EC2.. for testing
-        new CfnInstance(this, "EC2InstanceCdk", CfnInstanceProps.builder()
+        CfnInstance ec2Instance = new CfnInstance(this, "EC2InstanceCdk", CfnInstanceProps.builder()
             .imageId(latestAmazonLinuxImage.getImageId())
             // .pem key name -> .keyName("Name")
             .securityGroupIds(Collections.singletonList(ec2SecurityG.getSecurityGroupId()))
@@ -127,5 +129,15 @@ public class CdkJavaStack extends Stack {
         // Read while cdk synth
         //String cdkTestParamValue = StringParameter.valueFromLookup(this, parameterName);
         //System.out.println("cdkTestParamValue: " + cdkTestParamValue);
+
+        //1 CfnOutput for each Resource we want to output?
+        createCfnOutput("LambdaFunctionArn", function.getFunctionArn());
+        createCfnOutput("EC2InstanceDNSName",ec2Instance.getAttrPublicDnsName());
+    }
+
+    private void createCfnOutput(String id, String value) {
+        new CfnOutput(this, id, CfnOutputProps.builder()
+            .value(value)
+            .build());
     }
 }
