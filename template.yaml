@@ -61,7 +61,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3Bucket72758758
+          Ref: AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3BucketFD676BD1
         S3Key:
           Fn::Join:
             - ""
@@ -69,12 +69,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3VersionKey7E057F2A
+                      - Ref: AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3VersionKeyD740D3AA
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3VersionKey7E057F2A
+                      - Ref: AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3VersionKeyD740D3AA
       Role:
         Fn::GetAtt:
           - CdkJavaHelloFunctionServiceRole66DA2F5E
@@ -275,19 +275,19 @@ Resources:
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:
-      Analytics: v2:deflate64:H4sIAAAAAAAAE11Q0U7DMAz8lr2n2ToknilDIBCIqfADbuqNsCap4oSpivLvJClFgyffOfblfDWvN1u+Wd3AmSrRn9ZBGIs8vDkQJ9YQoUvwKPWRtUjGW4FsZzQ564Vju4PegwWFDm0mr96NvrSX4ciycBhAdT3wcO+1cNLoPHKJ92iVJEosMgmKh9YMWHRy3ZtBiqnMFRQZXVWQvREvFlk/aVCm73h4h27eLCB9P8ojODzDxMNzcZGsuWaUPy4X2AhhvHbsDsfBTAp1OeOC5RiK8AyWA2+BkL2g+zB9fpxRZCi2KUQU3ko3PVjjx7L6v/GYkgSdYyJSOXWbkv4T6S+JMbIn+IJ1fb36JCkrm+xKhbyd6zetwlnzygEAAA==
+      Analytics: v2:deflate64:H4sIAAAAAAAAE11Q0U7DMAz8lr1n2TrEO2UIBAJRFX7AS70S1iRVnDBVUf6dJKVo8OQ7x76cr+LVdse3qxs401p0p00QxiIPbw7EidVE6BLspe5Zi2S8Fcj2RpOzXji2P+oGLCh0aDN59W70pb0MR5aFwwDq0AEP914LJ43OI5e4QaskUWKRSVA8tGbAopNrYwYppjJXUGR0tYbsjXixyLpJgzLdgYd3OMybBaTvR9mDwzNMPDwXF8maq0f543KBtRDGa8fucBzMpFCXMy5YjqEIz2A58BYI2Qu6D9PlxxlFhmKXQkThrXTTgzV+LKv/G48pSdA5JiKVU7cp6T+R/pIYI3uCL9hU13zLq9UnSbm2ybJUyNu5fgMJBsVqzgEAAA==
     Metadata:
       aws:cdk:path: CdkJavaStack/CDKMetadata/Default
 Parameters:
-  AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3Bucket72758758:
+  AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3BucketFD676BD1:
     Type: String
-    Description: S3 bucket for asset "7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949"
-  AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949S3VersionKey7E057F2A:
+    Description: S3 bucket for asset "4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248"
+  AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3VersionKeyD740D3AA:
     Type: String
-    Description: S3 key for asset version "7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949"
-  AssetParameters7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949ArtifactHash275A6AC7:
+    Description: S3 key for asset version "4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248"
+  AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248ArtifactHash15274ACF:
     Type: String
-    Description: Artifact hash for asset "7d0fa804cc004c1096207942534c489bf79ebe61a05b2bdee81483e3f66fd949"
+    Description: Artifact hash for asset "4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248"
 Outputs:
   CdkJavaHelloApiEndpoint1F3D0DDC:
     Value:
@@ -300,4 +300,14 @@ Outputs:
           - /
           - Ref: CdkJavaHelloApiDeploymentStageprodF86F7DDE
           - /
+  LambdaFunctionArn:
+    Value:
+      Fn::GetAtt:
+        - CdkJavaHelloFunction54F76B50
+        - Arn
+  EC2InstanceDNSName:
+    Value:
+      Fn::GetAtt:
+        - EC2InstanceCdk
+        - PublicDnsName
 
