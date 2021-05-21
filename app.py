@@ -3,6 +3,7 @@ import os
 
 from aws_cdk import core as cdk
 from cdk_python.cdk_python_stack import ServerlessStack
+from cdk_python.pipeline.pipeline import PipelineStack
 
 app = cdk.App()
 
@@ -23,5 +24,6 @@ ServerlessStack(app, "CdkPythonServerlessStack",
                 # and Region that are implied by the current CLI configuration.
                 # env=get_env()
                 )
+PipelineStack(app, "CdkPythonPipelineStack", )
 
 app.synth()
