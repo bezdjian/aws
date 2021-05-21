@@ -29,7 +29,10 @@ class CdkPythonStack(cdk.Stack):
         table.grant_read_data(function)
 
         # Create API proxy Gateway
-        aws_apigateway.LambdaRestApi(self, 'APIGateway',
-                                     handler=function,
-                                     rest_api_name='APIGateway',
-                                     description='Rest API for lambda function')
+        api = aws_apigateway.LambdaRestApi(self, 'APIGateway',
+                                           handler=function,
+                                           rest_api_name='APIGateway',
+                                           description='Rest API for lambda function')
+
+        self.url_output = cdk.CfnOutput(self, 'api-url',
+                                        value=api.url)
