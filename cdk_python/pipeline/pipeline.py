@@ -1,5 +1,6 @@
 from aws_cdk import core as cdk
 from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction
+from .serverless_stage import ServerlessStackStage
 
 import aws_cdk.aws_codepipeline as codepipeline
 import aws_cdk.aws_codepipeline_actions as codepipeline_actions
@@ -30,3 +31,5 @@ class PipelineStack(cdk.Stack):
                                    install_command="npm install -g aws-cdk && pip install -r requirements.txt",
                                    synth_command="cdk synth")
                                )
+        # Add serverless stack pre-prod deployment
+        pipeline.add_application_stage(ServerlessStackStage(self, 'Pre-Prod'))
