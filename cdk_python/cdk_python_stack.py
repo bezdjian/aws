@@ -1,4 +1,4 @@
-from aws_cdk import (core as cdk, aws_lambda)
+from aws_cdk import (core as cdk, aws_lambda, aws_apigateway)
 
 
 class CdkPythonStack(cdk.Stack):
@@ -12,3 +12,11 @@ class CdkPythonStack(cdk.Stack):
                                        function_name='simple-function',
                                        runtime=aws_lambda.Runtime.PYTHON_3_8,
                                        code=aws_lambda.Code.asset("./lambda"))
+
+        # Create API Gateway
+        api = aws_apigateway.LambdaRestApi(self, 'APIGateway',
+                                           rest_api_name='Simple function API',
+                                           proxy=None,
+                                           handler=function)
+        api.root.add_resource('greet')
+        api.root.add_method('GET')
