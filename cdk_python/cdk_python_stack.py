@@ -30,8 +30,10 @@ class CdkPythonStack(cdk.Stack):
 
         # Create API Gateway
         api = aws_apigateway.LambdaRestApi(self, 'APIGateway',
-                                           rest_api_name='Simple function API',
-                                           proxy=None,
-                                           handler=function)
-        api.root.add_resource('greet')
-        api.root.add_method('GET')
+                                           proxy=False,
+                                           handler=function,
+                                           rest_api_name='APIGateway',
+                                           description='Rest API for lambda function')
+        # Add resource & method: GET /items
+        items = api.root.add_resource('items')
+        items.add_method('GET')
