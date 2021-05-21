@@ -26,7 +26,7 @@ class ServerlessStack(cdk.Stack):
                                        })
 
         # Grant function read on table
-        table.grant_read_data(function)
+        table.grant_read_write_data(function)
 
         # Create API proxy Gateway
         api = aws_apigateway.LambdaRestApi(self, 'APIGateway',
