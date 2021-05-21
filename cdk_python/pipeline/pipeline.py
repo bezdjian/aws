@@ -27,6 +27,6 @@ class PipelineStack(cdk.Stack):
                                synth_action=SimpleSynthAction.standard_npm_synth(
                                    source_artifact=source_artifact,
                                    cloud_assembly_artifact=cloud_assembly_artifact,
-                                   install_command="pip install -r requirements.txt",
+                                   install_command="npm install -g aws-cdk && pip install -r requirements.txt",
                                    synth_command="cdk synth")
                                )
