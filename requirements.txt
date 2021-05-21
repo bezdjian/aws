@@ -1,3 +1,4 @@
+-e .
 appdirs==1.4.4
 attrs==20.3.0
 aws-cdk.assets==1.105.0
@@ -56,7 +57,6 @@ aws-cdk.region-info==1.105.0
 boto3==1.17.77
 botocore==1.20.77
 cattrs==1.5.0
--e git+git@github.com:bezdjian/aws.git@84ac997ba8534a9e18647a22cb38f4fcdeded3ee#egg=cdk_python
 constructs==3.3.75
 distlib==0.3.1
 filelock==3.0.12
