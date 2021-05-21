@@ -6,6 +6,15 @@ from cdk_python.cdk_python_stack import CdkPythonStack
 
 
 app = cdk.App()
+
+
+def get_env():
+    return cdk.Environment(
+        account=os.getenv('CDK_DEFAULT_ACCOUNT'),
+        region=os.getenv('CDK_DEFAULT_REGION')
+    )
+
+
 CdkPythonStack(app, "CdkPythonStack",
                # If you don't specify 'env', this stack will be environment-agnostic.
                # Account/Region-dependent features and context lookups will not work,
