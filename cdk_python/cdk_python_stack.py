@@ -28,12 +28,8 @@ class CdkPythonStack(cdk.Stack):
         # Grant function read on table
         table.grant_read_data(function)
 
-        # Create API Gateway
-        api = aws_apigateway.LambdaRestApi(self, 'APIGateway',
-                                           proxy=False,
-                                           handler=function,
-                                           rest_api_name='APIGateway',
-                                           description='Rest API for lambda function')
-        # Add resource & method: GET /items
-        items = api.root.add_resource('items')
-        items.add_method('GET')
+        # Create API proxy Gateway
+        aws_apigateway.LambdaRestApi(self, 'APIGateway',
+                                     handler=function,
+                                     rest_api_name='APIGateway',
+                                     description='Rest API for lambda function')
