@@ -10,7 +10,7 @@ class PipelineStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        source_artifact = codepipeline.Artifact('sourceArtifact')
+        source_artifact = codepipeline.Artifact()
         cloud_assembly_artifact = codepipeline.Artifact()
 
         pipeline = CdkPipeline(self, 'CdkPythonPipeline',
