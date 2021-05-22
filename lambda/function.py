@@ -80,7 +80,8 @@ def respond(items, status_code):
     return {
         'statusCode': status_code,
         'body': json.dumps({
-            'items': items
+            'items': items,
+            'status': status_code
         })
     }
 
