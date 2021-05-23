@@ -1,5 +1,5 @@
 from aws_cdk import core as cdk
-from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction, ShellScriptAction
+from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction
 from .serverless_stage import ServerlessStackStage
 
 import aws_cdk.aws_codepipeline as codepipeline
@@ -37,7 +37,3 @@ class PipelineStack(cdk.Stack):
                                )
         # Add serverless stack to deployment with Pre-Prod stage
         pipeline.add_application_stage(ServerlessStackStage(self, 'Pre-Prod'))
-        # Add test stage to run pytest
-        pipeline.add_stage('Test') \
-            .add_actions(ShellScriptAction(action_name='Pytest',
-                                           commands=['python -m pytest unittests']))
