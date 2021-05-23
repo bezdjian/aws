@@ -1,5 +1,5 @@
 import os
-import json
+from helper import respond, respond_bad_request, respond_http_method_error
 import uuid
 
 import boto3
@@ -74,34 +74,6 @@ def delete_item(item_id, table):
         }
     )
     return respond(item, 200)
-
-
-def respond(items, status_code):
-    return {
-        'statusCode': status_code,
-        'body': json.dumps({
-            'items': items,
-            'status': status_code
-        })
-    }
-
-
-def respond_http_method_error(http_method):
-    return {
-        'statusCode': 405,
-        'body': json.dumps({
-            'message': f'No resources are found for {http_method} at the moment!'
-        })
-    }
-
-
-def respond_bad_request():
-    return {
-        'statusCode': 400,
-        'body': json.dumps({
-            'message': f'Item ID is required!'
-        })
-    }
 
 
 def get_table():
