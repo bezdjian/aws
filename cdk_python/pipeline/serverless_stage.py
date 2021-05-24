@@ -8,4 +8,5 @@ class ServerlessStackStage(cdk.Stage):
 
         service = ServerlessStack(self, 'ServerlessStack')
 
-        self.url_output = service.url_output
+        # Expose API's url output one level higher
+        self.api_url_output = service.url_output

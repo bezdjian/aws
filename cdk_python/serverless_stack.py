@@ -34,5 +34,6 @@ class ServerlessStack(cdk.Stack):
                                            rest_api_name='APIGateway',
                                            description='Rest API for lambda function')
 
+        # Expose API's url output
         self.url_output = cdk.CfnOutput(self, 'api-url',
                                         value=api.url)

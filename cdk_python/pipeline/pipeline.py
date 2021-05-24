@@ -1,5 +1,5 @@
 from aws_cdk import core as cdk
-from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction
+from aws_cdk.pipelines import CdkPipeline, SimpleSynthAction, ShellScriptAction
 from .serverless_stage import ServerlessStackStage
 
 import aws_cdk.aws_codepipeline as codepipeline
@@ -36,4 +36,15 @@ class PipelineStack(cdk.Stack):
                                    synth_command="cdk synth")
                                )
         # Add serverless stack to deployment with Pre-Prod stage
-        pipeline.add_application_stage(ServerlessStackStage(self, 'Pre-Prod'))
+        pre_prod = ServerlessStackStage(self, 'Pre-Prod')
+        pre_prod_stage = pipeline.add_application_stage(pre_prod)
+        # Add validation
+        pre_prod_stage.add_actions(ShellScriptAction(action_name='test-pre-prod-lambda-url',
+                                                     use_outputs={
+                                                         # Exposes outputs to be used in the same stage
+                                                         "ENDPOINT_URL": pipeline.stack_output(
+                                                             cfn_output=pre_prod.api_url_output
+                                                         )
+                                                     },
+                                                     commands=['curl -Ssf $ENDPOINT_URL']
+                                                     ))
