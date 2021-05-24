@@ -38,13 +38,17 @@ class PipelineStack(cdk.Stack):
         # Add serverless stack to deployment with Pre-Prod stage
         pre_prod = ServerlessStackStage(self, 'Pre-Prod')
         pre_prod_stage = pipeline.add_application_stage(pre_prod)
-        # Add validation
-        pre_prod_stage.add_actions(ShellScriptAction(action_name='test-pre-prod-lambda-url',
+        # Add integration tests action
+        pre_prod_stage.add_actions(ShellScriptAction(action_name='integration-test-lambda-url',
+                                                     run_order=pre_prod_stage.next_sequential_run_order(),
+                                                     additional_artifacts=[source_artifact],
                                                      use_outputs={
                                                          # Exposes outputs to be used in the same stage
                                                          "ENDPOINT_URL": pipeline.stack_output(
                                                              cfn_output=pre_prod.api_url_output
                                                          )
                                                      },
-                                                     commands=['curl -Ssf $ENDPOINT_URL']
+                                                     commands=['pip install -r requirements.txt',
+                                                               'pytest integtests',
+                                                               'curl -Ssf $ENDPOINT_URL']
                                                      ))
