@@ -19,18 +19,12 @@ def handler(event, context):
     table = get_table()
 
     if http_method == 'GET':
-        if proxy_param == '':
-            print('Getting all items')
-            return scan_items(table)
-        else:
-            print('Getting one item')
-            return get_item(proxy_param, table)
+        print('Getting one item')
+        return get_item(proxy_param, table)
     elif http_method == 'POST':
         print('Posting one item')
         return post_item(table)
     elif http_method == 'DELETE':
-        if not proxy_param:
-            return respond_bad_request()
         print('Deleting one item')
         return delete_item(proxy_param, table)
 
@@ -52,22 +46,25 @@ def post_item(table):
     return respond(item, 200)
 
 
-def scan_items(table):
-    items = table.scan()
-    return respond(items.get('Items'), 200)
-
-
 def get_item(item_id, table):
-    items = table.query(
-        ProjectionExpression="id, item_name",
-        # ExpressionAttributeNames={'#name', 'name'},
-        KeyConditionExpression=
-        Key('id').eq(item_id)
-    )
+    if not item_id:
+        print('*** Scan table')
+        items = table.scan()
+        return respond(items.get('Items'), 200)
+    else:
+        print('*** Get item')
+        items = table.query(
+            ProjectionExpression="id, item_name",
+            # ExpressionAttributeNames={'#name', 'name'},
+            KeyConditionExpression=
+            Key('id').eq(item_id)
+        )
     return respond(items.get('Items'), 200)
 
 
 def delete_item(item_id, table):
+    if not item_id:
+        return respond_bad_request()
     item = table.delete_item(
         Key={
             'id': item_id

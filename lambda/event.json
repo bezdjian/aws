@@ -13,7 +13,7 @@
     ]
   },
   "pathParameters": {
-    "proxy": "/path/to/resource"
+    "proxy": ""
   },
   "stageVariables": {
     "baz": "qux"
