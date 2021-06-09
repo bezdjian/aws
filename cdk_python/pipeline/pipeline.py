@@ -25,7 +25,7 @@ class PipelineStack(cdk.Stack):
                                    oauth_token=cdk.SecretValue.secrets_manager("github-token"),
                                    trigger=codepipeline_actions.GitHubTrigger.POLL,
                                    owner='bezdjian',
-                                   branch='cdk-python-lambda-api',
+                                   branch='cdk-python-pipeline-stack',
                                    repo='aws'),
                                # Creates a Build stage
                                synth_action=SimpleSynthAction.standard_npm_synth(
