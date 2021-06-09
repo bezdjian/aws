@@ -35,10 +35,12 @@ jobs:
 
       - name: Integration test
         run: |
+          export STACK_NAME=$(cdk ls)
           export ENDPOINT_URL=$(aws cloudformation describe-stacks \
-              --stack-name CdkPythonServerlessStack \
+              --stack-name $STACK_NAME \
               --query "Stacks[].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" \
               --output text)
           echo $ENDPOINT_URL
+          echo $STACK_NAME
           pytest integtests
           curl -Ssf $ENDPOINT_URL
