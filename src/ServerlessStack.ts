@@ -5,7 +5,7 @@ import * as path from 'path';
 import { AttributeType, Table } from '@aws-cdk/aws-dynamodb';
 import { CfnOutput } from '@aws-cdk/core';
 
-export class CdkTypescriptStack extends cdk.Stack {
+export class ServerlessStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 

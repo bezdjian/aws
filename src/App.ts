@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
-import {CdkTypescriptStack} from './cdk-typescript-stack';
+import {ServerlessStack} from './ServerlessStack';
 
 const app = new cdk.App();
-new CdkTypescriptStack(app, 'CdkTypescriptStack', {
+new ServerlessStack(app, 'CdkTypescriptStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */

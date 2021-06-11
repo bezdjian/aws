@@ -2,7 +2,7 @@
   "name": "cdk-typescript",
   "version": "0.1.0",
   "src": {
-    "cdk-typescript": "src/cdk-typescript.js"
+    "cdk-typescript": "src/App.js"
   },
   "scripts": {
     "build": "tsc",
