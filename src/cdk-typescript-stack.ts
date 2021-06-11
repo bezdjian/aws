@@ -41,5 +41,6 @@ export class CdkTypescriptStack extends cdk.Stack {
     });
 
     gateway.root.addMethod('GET')
+    gateway.root.addResource('scan')
   }
 }

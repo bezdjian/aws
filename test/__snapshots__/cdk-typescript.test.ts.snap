@@ -31,16 +31,16 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaArtifactHash1E9D0C5C": Object {
-      "Description": "Artifact hash for asset \\"616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301ea\\"",
+    "AssetParameters2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1ArtifactHash66D920EE": Object {
+      "Description": "Artifact hash for asset \\"2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1\\"",
       "Type": "String",
     },
-    "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3Bucket017B5D6B": Object {
-      "Description": "S3 bucket for asset \\"616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301ea\\"",
+    "AssetParameters2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1S3BucketF7D6FE0D": Object {
+      "Description": "S3 bucket for asset \\"2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1\\"",
       "Type": "String",
     },
-    "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3VersionKeyFEAE847F": Object {
-      "Description": "S3 key for asset version \\"616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301ea\\"",
+    "AssetParameters2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1S3VersionKey1833908F": Object {
+      "Description": "S3 key for asset version \\"2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1\\"",
       "Type": "String",
     },
   },
@@ -77,7 +77,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3Bucket017B5D6B",
+            "Ref": "AssetParameters2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1S3BucketF7D6FE0D",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -90,7 +90,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3VersionKeyFEAE847F",
+                          "Ref": "AssetParameters2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1S3VersionKey1833908F",
                         },
                       ],
                     },
@@ -103,7 +103,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters616226905c4f6fe063f0b73c2cbe4207084cb2ccd5c2176155c3bd89ff0301eaS3VersionKeyFEAE847F",
+                          "Ref": "AssetParameters2101ff493c21785bd8f613f41401d505b01429a854f67ef9787d6e95a69d1dc1S3VersionKey1833908F",
                         },
                       ],
                     },
@@ -184,9 +184,10 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "HelloFnApiDeployment7DFA20C0cb28fd54efe969c171e9f33cd24e680c": Object {
+    "HelloFnApiDeployment7DFA20C0e2701561287dd9dcbfe82c0b5c193389": Object {
       "DependsOn": Array [
         "HelloFnApiGET909E9DD6",
+        "HelloFnApiscan030249A9",
       ],
       "Properties": Object {
         "Description": "Automatically created by the RestApi construct",
@@ -199,7 +200,7 @@ Object {
     "HelloFnApiDeploymentStageprod0787A28A": Object {
       "Properties": Object {
         "DeploymentId": Object {
-          "Ref": "HelloFnApiDeployment7DFA20C0cb28fd54efe969c171e9f33cd24e680c",
+          "Ref": "HelloFnApiDeployment7DFA20C0e2701561287dd9dcbfe82c0b5c193389",
         },
         "RestApiId": Object {
           "Ref": "HelloFnApi96F71B69",
@@ -328,6 +329,21 @@ Object {
         },
       },
       "Type": "AWS::Lambda::Permission",
+    },
+    "HelloFnApiscan030249A9": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Fn::GetAtt": Array [
+            "HelloFnApi96F71B69",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "scan",
+        "RestApiId": Object {
+          "Ref": "HelloFnApi96F71B69",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
     },
     "HelloFnServiceRoleDA97FE56": Object {
       "Properties": Object {
