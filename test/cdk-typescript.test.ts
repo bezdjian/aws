@@ -1,15 +1,14 @@
-import {SynthUtils,} from "@aws-cdk/assert";
+import {expect as expectCdk, haveResource, SynthUtils,} from "@aws-cdk/assert";
 import * as cdk from "@aws-cdk/core";
 import {CdkTypescriptStack} from "../src/cdk-typescript-stack";
 
-test("Empty Stack", () => {
-  //const app = new cdk.App();
-  //// WHEN
-  //const stack = new CdkTypescript.CdkTypescriptStack(app, 'MyTestStack');
-  //// THEN
-  //expectCDK(stack).to(matchTemplate({
-  //  "Resources": {}
-  //}, MatchStyle.EXACT))
+test("Stack has correct resources", () => {
+  const app = new cdk.App();
+  // WHEN
+  const stack = new CdkTypescriptStack(app, 'MyTestStack');
+  // THEN
+  expectCdk(stack).to(haveResource("AWS::Lambda::Function"));
+  expectCdk(stack).to(haveResource("AWS::DynamoDB::Table"));
 });
 
 test("Stack matches snapshot", () => {
