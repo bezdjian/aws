@@ -3,6 +3,7 @@ import * as api from '@aws-cdk/aws-apigateway';
 import * as cdk from '@aws-cdk/core';
 import * as path from 'path';
 import { AttributeType, Table } from '@aws-cdk/aws-dynamodb';
+import { CfnOutput } from '@aws-cdk/core';
 
 export class CdkTypescriptStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -42,5 +43,11 @@ export class CdkTypescriptStack extends cdk.Stack {
 
     gateway.root.addMethod('GET')
     gateway.root.addResource('scan')
+
+    // Expose api url to output
+    new CfnOutput(this, 'ScanApiGatewayUrl', {
+      value: gateway.url,
+      exportName: 'ScanApiGatewayUrl'
+    })
   }
 }
