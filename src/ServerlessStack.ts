@@ -41,8 +41,7 @@ export class ServerlessStack extends cdk.Stack {
       proxy: false
     });
 
-    gateway.root.addMethod('GET')
-    gateway.root.addResource('scan')
+    gateway.root.resourceForPath('scan').addMethod('GET', new api.LambdaIntegration(fn));
 
     // Expose api url to output
     new CfnOutput(this, 'ScanApiGatewayUrl', {
