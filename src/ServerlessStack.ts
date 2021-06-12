@@ -21,7 +21,7 @@ export class ServerlessStack extends cdk.Stack {
     const fn = new lambda.Function(this, "HelloFn", {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'lambdafunction')),
+      code: lambda.Code.fromAsset('./resource'),
       functionName: 'CdkHelloFn',
       environment: {
         DB_TABLE: dynamoTable.tableName
