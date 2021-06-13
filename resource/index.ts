@@ -1,6 +1,6 @@
 const AWS = require("aws-sdk");
 
-exports.handler = (event, context, callback) => {
+exports.handler = (event:any, callback:any) => {
   console.log("Env variables: ", process.env.DB_TABLE);
 
   let region = process.env.AWS_REGION;
@@ -10,7 +10,7 @@ exports.handler = (event, context, callback) => {
     TableName: process.env.DB_TABLE,
   };
   
-  ddb.scan(params, function (err, data) {
+  ddb.scan(params, function (err:any, data:any) {
     if (err) {
       callback(respond(new Error(err.message), null));
     } else {
@@ -19,7 +19,7 @@ exports.handler = (event, context, callback) => {
   });
 };
 
-function respond(status, items) {
+function respond(status:any, items:any) {
   return {
     statusCode: status,
     headers: { "Content-Type": "application/json" },
