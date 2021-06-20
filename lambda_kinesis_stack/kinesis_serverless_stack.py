@@ -1,10 +1,10 @@
-from aws_cdk import core as cdk
-
-# For consistency with other languages, `cdk` is the preferred import name for
-# the CDK's core module.  The following line also imports it as `core` for use
-# with examples from the CDK Developer's Guide, which are in the process of
-# being updated to use `cdk`.  You may delete this import if you don't need it.
-from aws_cdk import core
+from aws_cdk import (core as cdk,
+                     aws_lambda,
+                     aws_apigateway,
+                     aws_dynamodb,
+                     aws_iam,
+                     aws_kinesisfirehose as firehose,
+                     aws_s3)
 
 
 class KinesisServerlessStack(cdk.Stack):
@@ -12,4 +12,58 @@ class KinesisServerlessStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # The code that defines your stack goes here
+        # S3 Bucket for kinesis firehose
+        s3 = aws_s3.Bucket(self, 'KinesisFirehoseDataBucket',
+                           bucket_name='kinesis-firehose-data-bucket',
+                           removal_policy=cdk.RemovalPolicy.DESTROY)
+
+        # Kinesis role for S3
+        role = aws_iam.Role(self, 'KinesisS3Role',
+                            role_name='KinesisS3Role',
+                            assumed_by=aws_iam.ServicePrincipal('firehose.amazonaws.com'),
+                            description='An S3 role for Kinesis to put data')
+
+        # Kinesis firehose
+        k_firehose = firehose.CfnDeliveryStream(self, 'CarDataStream',
+                                                delivery_stream_name='CarDataStream',
+                                                delivery_stream_type='DirectPut',
+                                                s3_destination_configuration=
+                                                firehose.CfnDeliveryStream.S3DestinationConfigurationProperty(
+                                                    bucket_arn=s3.bucket_arn,
+                                                    role_arn=role.role_arn
+                                                ))
+
+        # DynamoDB to save data from Kinesis.
+        table_name = 'KinesisDataTable'
+        table = aws_dynamodb.Table(self, 'KinesisDataTable',
+                                   table_name=table_name,
+                                   partition_key=aws_dynamodb.Attribute(
+                                       name='id',
+                                       type=aws_dynamodb.AttributeType.STRING
+                                   ),
+                                   removal_policy=cdk.RemovalPolicy.DESTROY)
+
+        function = aws_lambda.Function(self, 'KinesisProducerFunction',
+                                       function_name='KinesisProducerFunction',
+                                       handler='consumer.handler',
+                                       code=aws_lambda.Code.asset('./consumer_function'),
+                                       runtime=aws_lambda.Runtime.PYTHON_3_8,
+                                       environment={
+                                           'DB_TABLE': table_name,
+                                           'STREAM_NAME': k_firehose.delivery_stream_name
+                                       })
+
+        # Grant function to write data to Table
+        table.grant_read_write_data(function)
+
+        # Api gateway
+        api_gateway = aws_apigateway.LambdaRestApi(self, 'KinesisConsumerApi',
+                                                   handler=function,
+                                                   proxy=False,
+                                                   rest_api_name='KinesisConsumerApi')
+        # Add resource and method to the API
+        api_gateway.root.add_resource('consume').add_method('GET')
+
+        self.url_output = cdk.CfnOutput(self, 'KinesisConsumerApiUrl',
+                                        value=api_gateway.url,
+                                        export_name='KinesisConsumerApiUrl')
