@@ -43,10 +43,10 @@ class KinesisServerlessStack(cdk.Stack):
                                    ),
                                    removal_policy=cdk.RemovalPolicy.DESTROY)
 
-        function = aws_lambda.Function(self, 'KinesisProducerFunction',
-                                       function_name='KinesisProducerFunction',
-                                       handler='consumer.handler',
-                                       code=aws_lambda.Code.asset('./consumer_function'),
+        function = aws_lambda.Function(self, 'KinesisProcessorFunction',
+                                       function_name='KinesisProcessorFunction',
+                                       handler='process.handler',
+                                       code=aws_lambda.Code.asset('./process_function'),
                                        runtime=aws_lambda.Runtime.PYTHON_3_8,
                                        environment={
                                            'DB_TABLE': table_name,
@@ -57,13 +57,13 @@ class KinesisServerlessStack(cdk.Stack):
         table.grant_read_write_data(function)
 
         # Api gateway
-        api_gateway = aws_apigateway.LambdaRestApi(self, 'KinesisConsumerApi',
+        api_gateway = aws_apigateway.LambdaRestApi(self, 'KinesisProcessorApi',
                                                    handler=function,
                                                    proxy=False,
-                                                   rest_api_name='KinesisConsumerApi')
+                                                   rest_api_name='KinesisProcessorApi')
         # Add resource and method to the API
-        api_gateway.root.add_resource('consume').add_method('GET')
+        api_gateway.root.add_resource('process').add_method('GET')
 
-        self.url_output = cdk.CfnOutput(self, 'KinesisConsumerApiUrl',
+        self.url_output = cdk.CfnOutput(self, 'KinesisProcessorApiUrl',
                                         value=api_gateway.url,
-                                        export_name='KinesisConsumerApiUrl')
+                                        export_name='KinesisProcessorApiUrl')
