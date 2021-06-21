@@ -34,8 +34,7 @@ class KinesisServerlessStack(cdk.Stack):
                                                       code=aws_lambda.Code.asset('./data_processor_function'),
                                                       runtime=aws_lambda.Runtime.PYTHON_3_8,
                                                       environment={
-                                                          'DB_TABLE': table_name,
-                                                          'STREAM_NAME': stream_name
+                                                          'DB_TABLE': table_name
                                                       },
                                                       timeout=cdk.Duration.seconds(30))
 
@@ -46,7 +45,6 @@ class KinesisServerlessStack(cdk.Stack):
                                                      code=aws_lambda.Code.asset('./data_producer_function'),
                                                      runtime=aws_lambda.Runtime.PYTHON_3_8,
                                                      environment={
-                                                         'DB_TABLE': table_name,
                                                          'STREAM_NAME': stream_name
                                                      },
                                                      timeout=cdk.Duration.seconds(30))
