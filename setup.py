@@ -19,7 +19,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where="lambda_kinesis_stack"),
 
     install_requires=[
-        "aws-cdk.core==1.108.1",
+        "aws-cdk.core==1.109.0",
     ],
 
     python_requires=">=3.6",
