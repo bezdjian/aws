@@ -31,7 +31,7 @@ class KinesisServerlessStack(cdk.Stack):
         function = aws_lambda.Function(self, 'KinesisProcessorFunction',
                                        function_name='KinesisProcessorFunction',
                                        handler='process.handler',
-                                       code=aws_lambda.Code.asset('./process_function'),
+                                       code=aws_lambda.Code.asset('./data_processor_function'),
                                        runtime=aws_lambda.Runtime.PYTHON_3_8,
                                        environment={
                                            'DB_TABLE': table_name,
