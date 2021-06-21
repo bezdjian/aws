@@ -2,9 +2,7 @@ from aws_cdk import (core as cdk,
                      aws_lambda,
                      aws_apigateway,
                      aws_dynamodb,
-                     aws_iam,
-                     aws_kinesisfirehose as firehose,
-                     aws_s3)
+                     aws_kinesis as kinesis)
 
 
 class KinesisServerlessStack(cdk.Stack):
@@ -12,26 +10,10 @@ class KinesisServerlessStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # S3 Bucket for kinesis firehose
-        s3 = aws_s3.Bucket(self, 'KinesisFirehoseDataBucket',
-                           bucket_name='kinesis-firehose-data-bucket',
-                           removal_policy=cdk.RemovalPolicy.DESTROY)
-
-        # Kinesis role for S3
-        role = aws_iam.Role(self, 'KinesisS3Role',
-                            role_name='KinesisS3Role',
-                            assumed_by=aws_iam.ServicePrincipal('firehose.amazonaws.com'),
-                            description='An S3 role for Kinesis to put data')
-
         # Kinesis firehose
-        k_firehose = firehose.CfnDeliveryStream(self, 'CarDataStream',
-                                                delivery_stream_name='CarDataStream',
-                                                delivery_stream_type='DirectPut',
-                                                s3_destination_configuration=
-                                                firehose.CfnDeliveryStream.S3DestinationConfigurationProperty(
-                                                    bucket_arn=s3.bucket_arn,
-                                                    role_arn=role.role_arn
-                                                ))
+        stream = kinesis.Stream(self, 'CarDataStream',
+                                stream_name='CarDataStream',
+                                shard_count=1)
 
         # DynamoDB to save data from Kinesis.
         table_name = 'KinesisDataTable'
@@ -50,7 +32,7 @@ class KinesisServerlessStack(cdk.Stack):
                                        runtime=aws_lambda.Runtime.PYTHON_3_8,
                                        environment={
                                            'DB_TABLE': table_name,
-                                           'STREAM_NAME': k_firehose.delivery_stream_name
+                                           'STREAM_NAME': stream.stream_name
                                        },
                                        timeout=cdk.Duration.seconds(30))
 
@@ -58,7 +40,7 @@ class KinesisServerlessStack(cdk.Stack):
         table.grant_read_write_data(function)
         # Add event source Kinesis stream
         function.add_event_source_mapping('CarDataStreamEvent',
-                                          event_source_arn=k_firehose.attr_arn,
+                                          event_source_arn=stream.stream_arn,
                                           starting_position=aws_lambda.StartingPosition.LATEST)
 
         # Api gateway
