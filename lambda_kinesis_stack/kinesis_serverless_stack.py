@@ -12,8 +12,9 @@ class KinesisServerlessStack(cdk.Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         # Kinesis Stream
-        stream = kinesis.Stream(self, 'CarDataStream',
-                                stream_name='CarDataStream',
+        stream_name = 'CarDataStream'
+        stream = kinesis.Stream(self, stream_name,
+                                stream_name=stream_name,
                                 shard_count=1)
 
         # DynamoDB to save data from Kinesis.
@@ -34,7 +35,7 @@ class KinesisServerlessStack(cdk.Stack):
                                        runtime=aws_lambda.Runtime.PYTHON_3_8,
                                        environment={
                                            'DB_TABLE': table_name,
-                                           'STREAM_NAME': stream.stream_name
+                                           'STREAM_NAME': stream_name
                                        },
                                        timeout=cdk.Duration.seconds(30))
 
