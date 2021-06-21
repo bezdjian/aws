@@ -51,10 +51,15 @@ class KinesisServerlessStack(cdk.Stack):
                                        environment={
                                            'DB_TABLE': table_name,
                                            'STREAM_NAME': k_firehose.delivery_stream_name
-                                       })
+                                       },
+                                       timeout=cdk.Duration.seconds(30))
 
         # Grant function to write data to Table
         table.grant_read_write_data(function)
+        # Add event source Kinesis stream
+        function.add_event_source_mapping('CarDataStreamEvent',
+                                          event_source_arn=k_firehose.attr_arn,
+                                          starting_position=aws_lambda.StartingPosition.LATEST)
 
         # Api gateway
         api_gateway = aws_apigateway.LambdaRestApi(self, 'KinesisProcessorApi',
