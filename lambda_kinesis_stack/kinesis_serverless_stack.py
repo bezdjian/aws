@@ -28,34 +28,44 @@ class KinesisServerlessStack(cdk.Stack):
                                    removal_policy=cdk.RemovalPolicy.DESTROY)
 
         # Lambda Kinesis stream data processor function
-        function = aws_lambda.Function(self, 'KinesisProcessorFunction',
-                                       function_name='KinesisProcessorFunction',
-                                       handler='process.handler',
-                                       code=aws_lambda.Code.asset('./data_processor_function'),
-                                       runtime=aws_lambda.Runtime.PYTHON_3_8,
-                                       environment={
-                                           'DB_TABLE': table_name,
-                                           'STREAM_NAME': stream_name
-                                       },
-                                       timeout=cdk.Duration.seconds(30))
+        data_processor_function = aws_lambda.Function(self, 'KinesisProcessorFunction',
+                                                      function_name='KinesisProcessorFunction',
+                                                      handler='process.handler',
+                                                      code=aws_lambda.Code.asset('./data_processor_function'),
+                                                      runtime=aws_lambda.Runtime.PYTHON_3_8,
+                                                      environment={
+                                                          'DB_TABLE': table_name,
+                                                          'STREAM_NAME': stream_name
+                                                      },
+                                                      timeout=cdk.Duration.seconds(30))
+
+        # Lambda Kinesis stream data producer function
+        data_producer_function = aws_lambda.Function(self, 'KinesisProducerFunction',
+                                                     function_name='KinesisProducerFunction',
+                                                     handler='produce.handler',
+                                                     code=aws_lambda.Code.asset('./data_producer_function'),
+                                                     runtime=aws_lambda.Runtime.PYTHON_3_8,
+                                                     environment={
+                                                         'DB_TABLE': table_name,
+                                                         'STREAM_NAME': stream_name
+                                                     },
+                                                     timeout=cdk.Duration.seconds(30))
 
         # Grant function to write data to Table
-        table.grant_read_write_data(function)
-        # Grant function to read stream data
-        stream.grant_read(function)
+        table.grant_read_write_data(data_producer_function)
         # Add event source Kinesis stream
         kinesis_event_source = event_sources.KinesisEventSource(stream,
                                                                 starting_position=aws_lambda.StartingPosition.LATEST)
-        function.add_event_source(kinesis_event_source)
+        data_processor_function.add_event_source(kinesis_event_source)
 
         # Api gateway
-        api_gateway = aws_apigateway.LambdaRestApi(self, 'KinesisProcessorApi',
-                                                   handler=function,
+        api_gateway = aws_apigateway.LambdaRestApi(self, 'KinesisProducerApi',
+                                                   handler=data_producer_function,
                                                    proxy=False,
-                                                   rest_api_name='KinesisProcessorApi')
+                                                   rest_api_name='KinesisProducerApi')
         # Add resource and method to the API
-        api_gateway.root.add_resource('process').add_method('GET')
+        api_gateway.root.add_resource('produce').add_method('POST')
 
-        self.url_output = cdk.CfnOutput(self, 'KinesisProcessorApiUrl',
+        self.url_output = cdk.CfnOutput(self, 'KinesisProducerApiUrl',
                                         value=api_gateway.url,
-                                        export_name='KinesisProcessorApiUrl')
+                                        export_name='KinesisProducerApiUrl')
