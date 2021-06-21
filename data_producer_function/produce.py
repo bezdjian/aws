@@ -12,42 +12,42 @@ def handler(event, context):
     body = event['body']
     print("Event body: ", body)
 
-    table_name = os.getenv('DB_TABLE')
     stream_name = os.getenv('STREAM_NAME')
 
     logger = logging.getLogger(__name__)
-    kinesis = boto3.client('kinesis')
+    kinesis = boto3.client('kinesis', region_name='us-east-1')
 
-    print("table_name: ", table_name)
     print("stream_name: ", stream_name)
 
+    time = datetime.now()
+    timestamp = time.strftime("%Y-%m-%d: %H:%M:%S")
+
+    # TODO: event body will be the data_payload!
     data_payload = {
-        'Model': 'someCarModel',
-        'Speed': '90km/h',
-        'Timestamp': datetime.now()
+        "Model": "Tesla Model X",
+        "Speed": "89km/h",
+        "Timestamp": timestamp
     }
 
-    print("data_payload: ", data_payload)
+    print("data_payload: ", str(body))
     print("Encode data...")
-    encoded_data = base64.b64encode(data_payload)
+    encoded_data = base64.b64encode(str.encode(str(body)))
+    print("Encoded data: ", encoded_data)
 
     try:
         response = kinesis.put_record(StreamName=stream_name,
                                       Data=encoded_data,
                                       PartitionKey='CarDataStreamKey'
                                       )
-        shard_id = response['StreamDescription']['Shards'][0]['ShardId']
-        print("put_record response: ", response)
-
         return {
-            'statusCode': 200,
+            'statusCode': response["ResponseMetadata"]["HTTPStatusCode"],
             'body': json.dumps({
-                "message": response
+                "message": response["ShardId"]
             })
         }
 
     except ClientError:
-        logger.exception("Couldn't get records from stream %s.", stream_name)
+        logger.exception("Couldn't put record to stream %s.", stream_name)
         raise
     except Exception as e:
         logger.exception("Internal error %s.", e)
