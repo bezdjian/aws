@@ -5,7 +5,7 @@
         "kinesisSchemaVersion": "1.0",
         "partitionKey": "1",
         "sequenceNumber": "49590338271490256608559692538361571095921575989136588898",
-        "data": "SGVsbG8sIHRoaXMgaXMgYSB0ZXN0Lg==",
+        "data": "ZXlkTmIyUmxiQ2M2SUNkVVpYTnNZU0JOYjJSbGJDQlRKeXdnSjFOd1pXVmtKem9nSnprNWEyMHZhQ2NzSUNkVWFXMWxjM1JoYlhBbk9pQW5NakF5TVMwd05pMHlNVG9nTVRRNk1qazZNalFuZlE9PQ==",
         "approximateArrivalTimestamp": 1545084650.987
       },
       "eventSource": "aws:kinesis",
@@ -21,7 +21,7 @@
         "kinesisSchemaVersion": "1.0",
         "partitionKey": "1",
         "sequenceNumber": "49590338271490256608559692540925702759324208523137515618",
-        "data": "VGhpcyBpcyBvbmx5IGEgdGVzdC4=",
+        "data": "ZXlKTmIyUmxiQ0k2SUNKVVpYTnNZU0JOYjJSbGJDQlpJaXdpVTNCbFpXUWlPaUFpT0RscmJTOW9JaXdpVkdsdFpYTjBZVzF3SWpvZ0lpd3lNREl4TFRBMkxUSXhPaUF4TkRveU9Ub3lOQ0o5",
         "approximateArrivalTimestamp": 1545084711.166
       },
       "eventSource": "aws:kinesis",
