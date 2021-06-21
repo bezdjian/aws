@@ -10,7 +10,7 @@ class KinesisServerlessStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # Kinesis firehose
+        # Kinesis Stream
         stream = kinesis.Stream(self, 'CarDataStream',
                                 stream_name='CarDataStream',
                                 shard_count=1)
@@ -25,6 +25,7 @@ class KinesisServerlessStack(cdk.Stack):
                                    ),
                                    removal_policy=cdk.RemovalPolicy.DESTROY)
 
+        # Lambda Kinesis stream data processor function
         function = aws_lambda.Function(self, 'KinesisProcessorFunction',
                                        function_name='KinesisProcessorFunction',
                                        handler='process.handler',
