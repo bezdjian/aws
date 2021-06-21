@@ -1,5 +1,6 @@
 from aws_cdk import (core as cdk,
                      aws_lambda,
+                     aws_lambda_event_sources as event_sources,
                      aws_apigateway,
                      aws_dynamodb,
                      aws_kinesis as kinesis)
@@ -42,9 +43,9 @@ class KinesisServerlessStack(cdk.Stack):
         # Grant function to read stream data
         stream.grant_read(function)
         # Add event source Kinesis stream
-        function.add_event_source_mapping('CarDataStreamEvent',
-                                          event_source_arn=stream.stream_arn,
-                                          starting_position=aws_lambda.StartingPosition.LATEST)
+        kinesis_event_source = event_sources.KinesisEventSource(stream,
+                                                                starting_position=aws_lambda.StartingPosition.LATEST)
+        function.add_event_source(kinesis_event_source)
 
         # Api gateway
         api_gateway = aws_apigateway.LambdaRestApi(self, 'KinesisProcessorApi',
