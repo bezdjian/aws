@@ -39,6 +39,8 @@ class KinesisServerlessStack(cdk.Stack):
 
         # Grant function to write data to Table
         table.grant_read_write_data(function)
+        # Grant function to read stream data
+        stream.grant_read(function)
         # Add event source Kinesis stream
         function.add_event_source_mapping('CarDataStreamEvent',
                                           event_source_arn=stream.stream_arn,
