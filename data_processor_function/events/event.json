@@ -5,7 +5,7 @@
         "kinesisSchemaVersion": "1.0",
         "partitionKey": "1",
         "sequenceNumber": "49590338271490256608559692538361571095921575989136588898",
-        "data": "eydNb2RlbCc6ICdUZXNsYSBNb2RlbCBTJywgJ1NwZWVkJzogJzk5a20vaCcsICdUaW1lc3RhbXAnOiAnMjAyMS0wNi0yMTogMTQ6Mjg6MjQnfQ==",
+        "data": "eyJNb2RlbCI6ICJUZXNsYSBNb2RlbCBTIiwgIlNwZWVkIjogIjk5a20vaCIsICJUaW1lc3RhbXAiOiAiMjAyMS0wNi0yMTogMTQ6Mjg6MjQifQ==",
         "approximateArrivalTimestamp": 1545084650.987
       },
       "eventSource": "aws:kinesis",
@@ -21,7 +21,7 @@
         "kinesisSchemaVersion": "1.0",
         "partitionKey": "1",
         "sequenceNumber": "49590338271490256608559692540925702759324208523137515618",
-        "data": "eydNb2RlbCc6ICdUZXNsYSBNb2RlbCBZJywgJ1NwZWVkJzogJzg5a20vaCcsICdUaW1lc3RhbXAnOiAnMjAyMS0wNi0yMTogMTQ6Mjk6MjQnfQ==",
+        "data": "eyJNb2RlbCI6ICJUZXNsYSBNb2RlbCBZIiwgIlNwZWVkIjogIjg5a20vaCIsICJUaW1lc3RhbXAiOiAiMjAyMS0wNi0yMTogMTQ6Mjk6MjQifQ==",
         "approximateArrivalTimestamp": 1545084711.166
       },
       "eventSource": "aws:kinesis",

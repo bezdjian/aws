@@ -16,14 +16,13 @@ def handler(event, context):
         for record in event["Records"]:
             # Kinesis data is base64 encoded so decode here
             payload = base64.b64decode(record["kinesis"]["data"]).decode('utf-8')
-            # Replace single quotes to double.
-            payload = payload.replace('\'', '\"')
             logger.info("Decoded payload: %s", payload)
-            record = json.loads(json.dumps(eval(payload)))
+            record = json.loads(payload)
             put_item(record["Model"], record["Speed"], record["Timestamp"])
 
             records.append(payload)
-            logger.info("%s of records are processed and saved to table", len(records))
+
+        logger.info("%s records are processed and saved to table", len(records))
 
     except ClientError as e:
         logger.exception("Could not process records! %s", str(e.response))
@@ -31,7 +30,6 @@ def handler(event, context):
 
 def put_item(model, speed, timestamp):
     table_name = os.getenv('DB_TABLE')
-    print("table_name: ", table_name)
     data_id = str(uuid.uuid4())
 
     dynamodb = boto3.resource('dynamodb')
