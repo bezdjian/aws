@@ -55,6 +55,8 @@ class KinesisServerlessStack(cdk.Stack):
         kinesis_event_source = event_sources.KinesisEventSource(stream,
                                                                 starting_position=aws_lambda.StartingPosition.LATEST)
         data_processor_function.add_event_source(kinesis_event_source)
+        # Grant function to put record in the stream
+        stream.grant_write(data_producer_function)
 
         # Api gateway
         api_gateway = aws_apigateway.LambdaRestApi(self, 'KinesisProducerApi',
