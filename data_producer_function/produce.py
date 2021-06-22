@@ -27,11 +27,12 @@ def handler(event, context):
             # Convert record to Json.
             record = json.dumps(record)
             logger.info("Event record: %s ", record)
-            encoded_data = base64.b64encode(bytes(record, 'utf-8'))
-            logger.info("Encoded data: %s", encoded_data)
+            # encoded_data = base64.b64encode(bytes(record, 'utf-8'))
+            # logger.info("Encoded data: %s", encoded_data)
 
+            print("Encoded: ", record.encode('utf-8'))
             response = kinesis.put_record(StreamName=stream_name,
-                                          Data=encoded_data,
+                                          Data=record.encode('utf-8'),
                                           PartitionKey='CarDataStreamKey'
                                           )
             status_code = response["ResponseMetadata"]["HTTPStatusCode"]

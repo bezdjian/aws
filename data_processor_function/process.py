@@ -15,7 +15,8 @@ def handler(event, context):
     try:
         for record in event["Records"]:
             # Kinesis data is base64 encoded so decode here
-            payload = base64.b64decode(record["kinesis"]["data"]).decode('utf-8')
+            # payload = base64.b64decode(record["kinesis"]["data"]).decode('utf-8')
+            payload = record["kinesis"]["data"].decode('utf-8')
             logger.info("Decoded payload: %s", payload)
             record = json.loads(payload)
             put_item(record["Model"], record["Speed"], record["Timestamp"])
