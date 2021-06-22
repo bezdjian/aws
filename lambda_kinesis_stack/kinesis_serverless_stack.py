@@ -50,7 +50,7 @@ class KinesisServerlessStack(cdk.Stack):
                                                      timeout=cdk.Duration.seconds(30))
 
         # Grant function to write data to Table
-        table.grant_read_write_data(data_producer_function)
+        table.grant_read_write_data(data_processor_function)
         # Add event source Kinesis stream
         kinesis_event_source = event_sources.KinesisEventSource(stream,
                                                                 starting_position=aws_lambda.StartingPosition.LATEST)
