@@ -26,34 +26,32 @@ def handler(event, context):
 
             records.append(payload)
 
-        return respond(200, records)
+        return {
+            "StatusCode": 200,
+            "body": json.dumps({
+                "Data": records
+            })
+        }
 
     except ClientError as e:
-        return respond(500, e.response)
+        return {
+            "StatusCode": 500,
+            "body": json.dumps({
+                "message": e.response
+            })
+        }
 
 
 def put_item(model, speed, timestamp):
     table_name = os.getenv('DB_TABLE')
     print("table_name: ", table_name)
     data_id = str(uuid.uuid4())
-    try:
-        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-        table = dynamodb.Table(table_name)
-        table.put_item(Item={
-            'id': data_id,
-            'model': model,
-            'speed': speed,
-            'timestamp': timestamp
-        })
-    except ClientError as c:
-        print("Could not put item in to %s: %s", table_name, c.response)
-        return respond(500, c.response)
-
-
-def respond(status, text):
-    return {
-        "StatusCode": status,
-        "body": json.dumps({
-            "message": text
-        })
-    }
+    
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table(table_name)
+    table.put_item(Item={
+        'id': data_id,
+        'model': model,
+        'speed': speed,
+        'timestamp': timestamp
+    })
