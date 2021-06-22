@@ -15,14 +15,8 @@ def handler(event, context):
     try:
         for record in event["Records"]:
             # Kinesis data is base64 encoded so decode here
-            decoded_data = base64 \
-                .b64decode(record["kinesis"]["data"]) \
-                .decode('utf-8')
-            # TODO, why double decodes to work?
-            payload = base64 \
-                .b64decode(decoded_data) \
-                .decode('utf-8')
-
+            payload = base64.b64decode(record["kinesis"]["data"]).decode('utf-8')
+            # Replace single quotes to double.
             payload = payload.replace('\'', '\"')
             logger.info("Decoded payload: %s", payload)
             record = json.loads(json.dumps(eval(payload)))
@@ -40,7 +34,7 @@ def put_item(model, speed, timestamp):
     print("table_name: ", table_name)
     data_id = str(uuid.uuid4())
 
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(table_name)
     table.put_item(Item={
         'id': data_id,

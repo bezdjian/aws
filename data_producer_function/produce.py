@@ -19,7 +19,7 @@ def handler(event, context):
     try:
         data = json.loads(body)
         stream_name = os.getenv('STREAM_NAME')
-        kinesis = boto3.client('kinesis', region_name='us-east-1')
+        kinesis = boto3.client('kinesis')
 
         for record in data:
             record_count += 1
@@ -27,7 +27,7 @@ def handler(event, context):
             # Stringify dict record.
             record = str(record)
             logger.info("Event record: %s ", record)
-            encoded_data = base64.b64encode(str.encode(record))
+            encoded_data = base64.b64encode(bytes(record, 'utf-8'))
             logger.info("Encoded data: %s", encoded_data)
 
             response = kinesis.put_record(StreamName=stream_name,
