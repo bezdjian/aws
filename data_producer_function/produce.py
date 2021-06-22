@@ -4,38 +4,60 @@ import boto3
 import logging
 import base64
 from botocore.exceptions import ClientError
+from json import JSONDecodeError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 def handler(event, context):
-    logger.info("API Event: %s", event)
     body = event['body']
-
-    stream_name = os.getenv('STREAM_NAME')
-    kinesis = boto3.client('kinesis', region_name='us-east-1')
-
-    logger.info("Event body: %s ", str(body))
-    logger.info("Encode data...")
-    encoded_data = base64.b64encode(str.encode(str(body)))
-    logger.info("Encoded data: %s", encoded_data)
+    record_count = 0
+    status_code = ''
+    shard_id = ''
 
     try:
-        response = kinesis.put_record(StreamName=stream_name,
-                                      Data=encoded_data,
-                                      PartitionKey='CarDataStreamKey'
-                                      )
-        return {
-            'statusCode': response["ResponseMetadata"]["HTTPStatusCode"],
-            'body': json.dumps({
-                "message": response["ShardId"]
-            })
-        }
+        data = json.loads(body)
+        stream_name = os.getenv('STREAM_NAME')
+        kinesis = boto3.client('kinesis', region_name='us-east-1')
 
-    except ClientError:
-        logger.exception("Couldn't put record to stream %s.", stream_name)
+        for record in data:
+            record_count += 1
+
+            # Stringify dict record.
+            record = str(record)
+            logger.info("Event record: %s ", record)
+            encoded_data = base64.b64encode(str.encode(record))
+            logger.info("Encoded data: %s", encoded_data)
+
+            response = kinesis.put_record(StreamName=stream_name,
+                                          Data=encoded_data,
+                                          PartitionKey='CarDataStreamKey'
+                                          )
+            status_code = response["ResponseMetadata"]["HTTPStatusCode"]
+            shard_id = response["ShardId"]
+
+        return respond(status_code=status_code,
+                       json_body={
+                           "shardId": shard_id,
+                           "records": record_count
+                       })
+
+    except ClientError as c:
+        logger.exception("Couldn't put record to stream. %s", c)
         raise
+    except JSONDecodeError as j:
+        return respond(status_code=400,
+                       json_body={
+                           "error": "Records to be inserted should be a list of data!"
+                       })
     except Exception as e:
         logger.exception("Internal error %s.", e)
         raise
+
+
+def respond(status_code, json_body):
+    return {
+        'statusCode': status_code,
+        'body': json.dumps(json_body)
+    }

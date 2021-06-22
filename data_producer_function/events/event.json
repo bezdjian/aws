@@ -1,5 +1,5 @@
 {
-  "body": "{\"Model\": \"Tesla Model Y\",\"Speed\": \"89km/h\",\"Timestamp\": \"2021-06-21: 14:29:24\"}",
+  "body": "[{\"Model\": \"Tesla Model S\",\"Speed\": \"99km/h\",\"Timestamp\": \"2021-06-21: 14:28:24\"}, {\"Model\": \"Tesla Model Y\",\"Speed\": \"89km/h\",\"Timestamp\": \"2021-06-21: 14:29:24\"}]",
   "resource": "/{proxy+}",
   "path": "/path/to/resource",
   "httpMethod": "POST",
