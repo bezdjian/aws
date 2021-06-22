@@ -3,7 +3,11 @@ import os
 import base64
 import boto3
 import uuid
+import logging
 from botocore.exceptions import ClientError
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 def handler(event, context):
@@ -20,33 +24,22 @@ def handler(event, context):
                 .decode('utf-8')
 
             payload = payload.replace('\'', '\"')
-            print("payload: ", payload)
+            logger.info("Decoded payload: %s", payload)
             record = json.loads(json.dumps(eval(payload)))
             put_item(record["Model"], record["Speed"], record["Timestamp"])
 
             records.append(payload)
-
-        return {
-            "StatusCode": 200,
-            "body": json.dumps({
-                "Data": records
-            })
-        }
+            logger.info("%s of records are processed and saved to table", len(records))
 
     except ClientError as e:
-        return {
-            "StatusCode": 500,
-            "body": json.dumps({
-                "message": e.response
-            })
-        }
+        logger.exception("Could not process records! %s", str(e.response))
 
 
 def put_item(model, speed, timestamp):
     table_name = os.getenv('DB_TABLE')
     print("table_name: ", table_name)
     data_id = str(uuid.uuid4())
-    
+
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table(table_name)
     table.put_item(Item={
