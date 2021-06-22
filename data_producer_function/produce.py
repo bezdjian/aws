@@ -7,19 +7,19 @@ from botocore.exceptions import ClientError
 
 
 def handler(event, context):
-    logger = logging.getLogger(__name__)
-    logger.info("API Event: ", event)
+    print("API Event: ", event)
     body = event['body']
-    logger.info("Event body: ", body)
+    print("Event body: ", body)
 
     stream_name = os.getenv('STREAM_NAME')
 
+    logger = logging.getLogger(__name__)
     kinesis = boto3.client('kinesis', region_name='us-east-1')
 
-    logger.info("data_payload: ", str(body))
-    logger.info("Encode data...")
+    print("data_payload: ", str(body))
+    print("Encode data...")
     encoded_data = base64.b64encode(str.encode(str(body)))
-    logger.info("Encoded data: ", encoded_data)
+    print("Encoded data: ", encoded_data)
 
     try:
         response = kinesis.put_record(StreamName=stream_name,
