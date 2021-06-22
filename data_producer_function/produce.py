@@ -3,7 +3,6 @@ import os
 import boto3
 import logging
 import base64
-from datetime import datetime
 from botocore.exceptions import ClientError
 
 
@@ -16,18 +15,6 @@ def handler(event, context):
 
     logger = logging.getLogger(__name__)
     kinesis = boto3.client('kinesis', region_name='us-east-1')
-
-    print("stream_name: ", stream_name)
-
-    time = datetime.now()
-    timestamp = time.strftime("%Y-%m-%d: %H:%M:%S")
-
-    # TODO: event body will be the data_payload!
-    data_payload = {
-        "Model": "Tesla Model X",
-        "Speed": "89km/h",
-        "Timestamp": timestamp
-    }
 
     print("data_payload: ", str(body))
     print("Encode data...")
