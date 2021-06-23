@@ -5,32 +5,33 @@ import boto3
 import uuid
 import logging
 from botocore.exceptions import ClientError
+from binascii import Error
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 def handler(event, context):
-    # logger.info("Event records: %s", event["Records"])
-    records = []
     record_size = len(event["Records"])
 
     try:
-        for record in event["Records"]:
+        for i, record in enumerate(event["Records"]):
             record_data = record["kinesis"]["data"]
             logger.info("Record Data: %s", record_data)
             # Decode the data
-            decoded_data = base64.b64decode(record_data).decode('utf-8')
+            decoded_data = base64.b64decode(bytes(record_data, 'utf-8')).decode('utf-8')
             logger.info("Decoded Data: %s", decoded_data)
-            # Covert string to Json object and put in Dynamo Table.
+
+            # Convert to Json object and put in Dynamo Table.
             record = json.loads(decoded_data)
             put_item(record["Model"], record["Speed"], record["Timestamp"])
 
-            records.append(decoded_data)
-            logger.info("%s of %s records are processed and saved to table", len(records), record_size)
+            logger.info("%s of %s records are processed and saved to table", i + 1, record_size)
 
     except ClientError as e:
         logger.exception("Could not process records! %s", str(e.response))
+    except Error as base64_error:
+        logger.warning("Could not process base64! %s", base64_error)
 
 
 def put_item(model, speed, timestamp):
