@@ -2,7 +2,6 @@ import json
 import os
 import boto3
 import logging
-import base64
 from botocore.exceptions import ClientError
 from json import JSONDecodeError
 
@@ -27,11 +26,9 @@ def handler(event, context):
             # Convert record to Json.
             record = json.dumps(record)
             logger.info("Event record: %s ", record)
-            encoded_data = base64.b64encode(bytes(record, 'utf-8'))
-            logger.info("Encoded data: %s", encoded_data)
 
             put_response = kinesis.put_record(StreamName=stream_name,
-                                              Data=encoded_data,
+                                              Data=record,
                                               PartitionKey='CarDataStreamKey'
                                               )
             status_code = put_response["ResponseMetadata"]["HTTPStatusCode"]
