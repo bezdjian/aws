@@ -28,10 +28,12 @@ def handler(event, context):
 
             logger.info("%s of %s records are processed and saved to table", i + 1, record_size)
 
-    except ClientError as e:
-        logger.exception("Could not process records! %s", str(e.response))
     except Error as base64_error:
         logger.warning("Could not process base64! %s", base64_error)
+    except TypeError as type_error:
+        logger.warning(type_error)
+    except ClientError as e:
+        logger.exception("Could not process records! %s", str(e.response))
 
 
 def put_item(model, speed, timestamp):
