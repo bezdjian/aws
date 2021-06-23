@@ -11,19 +11,23 @@ logger.setLevel(logging.INFO)
 
 
 def handler(event, context):
+    # logger.info("Event records: %s", event["Records"])
     records = []
+    record_size = len(event["Records"])
+
     try:
         for record in event["Records"]:
-            # Kinesis data is base64 encoded so decode here
-            payload = base64.b64decode(record["kinesis"]["data"]).decode('utf-8')
-            # payload = record["kinesis"]["data"].decode('utf-8')
-            logger.info("Decoded payload: %s", payload)
-            record = json.loads(payload)
+            record_data = record["kinesis"]["data"]
+            logger.info("Record Data: %s", record_data)
+            # Decode the data
+            decoded_data = base64.b64decode(record_data).decode('utf-8')
+            logger.info("Decoded Data: %s", decoded_data)
+            # Covert string to Json object and put in Dynamo Table.
+            record = json.loads(decoded_data)
             put_item(record["Model"], record["Speed"], record["Timestamp"])
 
-            records.append(payload)
-
-        logger.info("%s records are processed and saved to table", len(records))
+            records.append(decoded_data)
+            logger.info("%s of %s records are processed and saved to table", len(records), record_size)
 
     except ClientError as e:
         logger.exception("Could not process records! %s", str(e.response))

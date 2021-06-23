@@ -27,37 +27,36 @@ def handler(event, context):
             # Convert record to Json.
             record = json.dumps(record)
             logger.info("Event record: %s ", record)
-            # encoded_data = base64.b64encode(bytes(record, 'utf-8'))
-            # logger.info("Encoded data: %s", encoded_data)
+            encoded_data = base64.b64encode(bytes(record, 'utf-8'))
+            logger.info("Encoded data: %s", encoded_data)
 
-            print("Encoded: ", record.encode('utf-8'))
-            response = kinesis.put_record(StreamName=stream_name,
-                                          Data=record.encode('utf-8'),
-                                          PartitionKey='CarDataStreamKey'
-                                          )
-            status_code = response["ResponseMetadata"]["HTTPStatusCode"]
-            shard_id = response["ShardId"]
+            put_response = kinesis.put_record(StreamName=stream_name,
+                                              Data=encoded_data,
+                                              PartitionKey='CarDataStreamKey'
+                                              )
+            status_code = put_response["ResponseMetadata"]["HTTPStatusCode"]
+            shard_id = put_response["ShardId"]
 
-        return respond(status_code=status_code,
-                       json_body={
-                           "shardId": shard_id,
-                           "records": record_count
-                       })
+        return response(status_code=status_code,
+                        json_body={
+                            "shardId": shard_id,
+                            "records": record_count
+                        })
 
     except ClientError as c:
         logger.exception("Couldn't put record to stream. %s", c)
         raise
     except JSONDecodeError as j:
-        return respond(status_code=400,
-                       json_body={
-                           "error": "Records to be inserted should be a list of data!"
-                       })
+        return response(status_code=400,
+                        json_body={
+                            "error": "Records to be inserted should be a list of data!"
+                        })
     except Exception as e:
         logger.exception("Internal error %s.", e)
         raise
 
 
-def respond(status_code, json_body):
+def response(status_code, json_body):
     return {
         'statusCode': status_code,
         'body': json.dumps(json_body)
