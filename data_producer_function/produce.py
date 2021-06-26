@@ -35,7 +35,7 @@ def handler(event, context):
             shard_id = put_response["ShardId"]
 
         return response(status_code=status_code,
-                        json_body={
+                        body_message={
                             "shardId": shard_id,
                             "records": record_count
                         })
@@ -45,7 +45,7 @@ def handler(event, context):
         raise
     except JSONDecodeError as j:
         return response(status_code=400,
-                        json_body={
+                        body_message={
                             "error": "Records to be inserted should be a list of data!"
                         })
     except Exception as e:
@@ -53,8 +53,8 @@ def handler(event, context):
         raise
 
 
-def response(status_code, json_body):
+def response(status_code, body_message):
     return {
         'statusCode': status_code,
-        'body': json.dumps(json_body)
+        'body': json.dumps(body_message)
     }
