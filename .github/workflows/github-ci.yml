@@ -32,3 +32,8 @@ jobs:
 
       - name: CDK Deploy
         run: cdk deploy --require-approval=never --verbose
+
+      - name: Integration test
+        run: pytest tests/integration
+        env:
+          AWS_SAM_STACK_NAME: KinesisServerlessStack
