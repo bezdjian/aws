@@ -32,6 +32,8 @@ def handler(event, context):
         logger.warning("Could not process base64! %s", base64_error)
     except TypeError as type_error:
         logger.warning(type_error)
+    except KeyError as key_error:
+        logger.warning("Key %s was not found in json data.", key_error)
     except ClientError as e:
         logger.exception("Could not process records! %s", str(e.response))
 
