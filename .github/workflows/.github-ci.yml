@@ -38,7 +38,7 @@ jobs:
       - name: CDK Deploy
         run: cdk deploy --require-approval=never --verbose
 
-      - name: Lambda Integration test
+      - name: API Integration test
         run: |
           export STACK_NAME=$(cdk ls)
           export API_URL=$(aws cloudformation describe-stacks \
@@ -47,3 +47,4 @@ jobs:
               --output text)
           echo $API_URL
           curl -Ssf $API_URL/scan
+          npm run integration
