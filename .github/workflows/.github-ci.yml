@@ -29,7 +29,7 @@ jobs:
       - name: Npm install
         run: npm install
 
-      - name: Test
+      - name: Stack unit test
         run: npm test -- -u
 
       - name: Bootstrap
@@ -40,11 +40,9 @@ jobs:
 
       - name: API Integration test
         run: |
-          export STACK_NAME=$(cdk ls)
           export API_URL=$(aws cloudformation describe-stacks \
-              --stack-name $STACK_NAME \
+              --stack-name $(cdk ls) \
               --query "Stacks[].Outputs[?OutputKey=='ScanApiGatewayUrl'].OutputValue" \
               --output text)
-          echo $API_URL
-          curl -Ssf $API_URL/scan
+          echo 'API_URL:' $API_URL
           npm run integration
