@@ -33,7 +33,7 @@ jobs:
         run: npm test -- -u
 
       - name: Bootstrap
-        run: cdk bootstrap
+        run: cdk bootstrap --toolkit-stack-name CdkTypescriptToolkit
 
       - name: CDK Deploy
         run: cdk deploy --require-approval=never --verbose
