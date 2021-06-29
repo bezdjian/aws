@@ -1,7 +1,6 @@
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as api from '@aws-cdk/aws-apigateway';
 import * as cdk from '@aws-cdk/core';
-import * as path from 'path';
 import { AttributeType, Table } from '@aws-cdk/aws-dynamodb';
 import { CfnOutput } from '@aws-cdk/core';
 
@@ -27,9 +26,7 @@ export class ServerlessStack extends cdk.Stack {
         DB_TABLE: dynamoTable.tableName
       }
     });
-    //OR. Add DynamoDB table name to Lambda environment variable
-    //fn.addEnvironment('DBTABLE', dynamoTable.tableName);
-
+    
     // Grant read access to lambda function
     dynamoTable.grantReadData(fn)
 

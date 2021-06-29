@@ -5,11 +5,11 @@ exports.handler = (event, context, callback) => {
 
   let region = process.env.AWS_REGION;
   const ddb = new AWS.DynamoDB.DocumentClient({ region: region });
-  
+
   const params = {
     TableName: process.env.DB_TABLE,
   };
-  
+
   ddb.scan(params, function (err, data) {
     if (err) {
       callback(respond(new Error(err.message), null));
