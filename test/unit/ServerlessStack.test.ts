@@ -1,6 +1,6 @@
 import { expect as expectCdk, haveResource, SynthUtils } from "@aws-cdk/assert";
 import * as cdk from "@aws-cdk/core";
-import { ServerlessStack } from "../src/ServerlessStack";
+import { ServerlessStack } from "../../src/ServerlessStack";
 
 test("Stack has correct resources", () => {
   const app = new cdk.App();
