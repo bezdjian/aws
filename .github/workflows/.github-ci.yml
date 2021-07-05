@@ -2,7 +2,7 @@ name: cdk-typescript-ci
 
 on:
   push:
-    branches: [ cdk-typescript-lambda-api ]
+    branches: [ cdk-typescript-serverless-stack ]
 
 jobs:
   deploy:
