@@ -1,11 +1,11 @@
 import logging
 
 logger = logging.getLogger(__name__)
+logger.setLevel(level=logging.INFO)
 
 
 def handler(event, context):
-    logger.info("Simple Function Event: ")
-    logger.info(event)
+    logger.info("Simple Function Event: %s", event)
 
     transaction_type = event["transactionType"]
     product = event["product"]
@@ -13,7 +13,7 @@ def handler(event, context):
 
     # Do something with input parameters...
 
-    logger.info("transaction_type: ", transaction_type)
+    logger.info("transaction_type: %s", transaction_type)
     # Initiate response body
     response_body = {
         "merchantId": merchant_id
@@ -31,5 +31,5 @@ def handler(event, context):
         response_body["status"] = "NONE"
 
     response = {"body": response_body}
-    logger.info("Returning ", response)
+    logger.info("Returning %s", response)
     return response

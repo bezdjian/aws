@@ -1,3 +1,5 @@
 .idea
 .venv
 step_functions/__pycache__/
+cdk.out
+template.yaml

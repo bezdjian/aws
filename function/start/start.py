@@ -7,26 +7,26 @@ import boto3
 from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
+logger.setLevel(level=logging.INFO)
 
 
 def handler(event, context):
-    print("Start Function Event: ")
-    print(event)
-    body = json.loads(event["body"])
-    print("body: ", body)
+    logger.info("Start Function Event: %s", event)
 
     state_machine_arn = os.environ.get("state_machine_arn")
     state_machine_name = os.environ.get("state_machine_name")
 
     try:
+        body = json.loads(event["body"])
+        logger.info("body: %s", body)
+
         transaction_type = body["transactionType"]
         merchant_id = body["merchantId"]
         product = body["product"]
 
         step_functions_client = boto3.client('stepfunctions')
 
-        # TODO: Make it dynamic! read it from event?
-        output = {
+        execution_input = {
             "transactionType": transaction_type,
             "product": product,
             "merchantId": merchant_id
@@ -35,13 +35,15 @@ def handler(event, context):
         step_functions_client.start_execution(
             stateMachineArn=state_machine_arn,
             name=str(uuid.uuid4()),
-            input=json.dumps(output),
+            input=json.dumps(execution_input),
             traceHeader='string'
         )
 
-        print("output: ", output)
         return {
-            "statusCode": "200"
+            "statusCode": "200",
+            "body": json.dumps({
+                "message": f"State machine started with input {execution_input}"
+            })
         }
     except ClientError as c:
         logger.exception(
