@@ -1,0 +1,597 @@
+Resources:
+  StartTransactionFunctionServiceRole45DF6F05:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartTransactionFunction/ServiceRole/Resource
+  StartTransactionFunctionServiceRoleDefaultPolicy3A4EA80D:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: states:StartExecution
+            Effect: Allow
+            Resource:
+              Ref: SimpleStateMachineE8E2CF40
+        Version: "2012-10-17"
+      PolicyName: StartTransactionFunctionServiceRoleDefaultPolicy3A4EA80D
+      Roles:
+        - Ref: StartTransactionFunctionServiceRole45DF6F05
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartTransactionFunction/ServiceRole/DefaultPolicy/Resource
+  StartTransactionFunction4444AFF2:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798aS3BucketD0E9861C
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798aS3VersionKeyAECD35C7
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798aS3VersionKeyAECD35C7
+      Role:
+        Fn::GetAtt:
+          - StartTransactionFunctionServiceRole45DF6F05
+          - Arn
+      Environment:
+        Variables:
+          state_machine_arn:
+            Ref: SimpleStateMachineE8E2CF40
+          state_machine_name:
+            Fn::GetAtt:
+              - SimpleStateMachineE8E2CF40
+              - Name
+      FunctionName: StepFunction-StartTransaction
+      Handler: start.handler
+      Runtime: python3.8
+    DependsOn:
+      - StartTransactionFunctionServiceRoleDefaultPolicy3A4EA80D
+      - StartTransactionFunctionServiceRole45DF6F05
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartTransactionFunction/Resource
+      aws:asset:path: asset.9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798a
+      aws:asset:property: Code
+  SubmitTransactionFunctionServiceRole1FC8EC6F:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/SubmitTransactionFunction/ServiceRole/Resource
+  SubmitTransactionFunction33F097D7:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2S3Bucket7E34AA18
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2S3VersionKey4691DEBA
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2S3VersionKey4691DEBA
+      Role:
+        Fn::GetAtt:
+          - SubmitTransactionFunctionServiceRole1FC8EC6F
+          - Arn
+      FunctionName: StepFunction-SubmitTransaction
+      Handler: submit.handler
+      Runtime: python3.8
+    DependsOn:
+      - SubmitTransactionFunctionServiceRole1FC8EC6F
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/SubmitTransactionFunction/Resource
+      aws:asset:path: asset.2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2
+      aws:asset:property: Code
+  OrderFunctionServiceRole3E66F569:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/OrderFunction/ServiceRole/Resource
+  OrderFunctionFABF799C:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576dS3Bucket7E0BF125
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576dS3VersionKey2C63A91E
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576dS3VersionKey2C63A91E
+      Role:
+        Fn::GetAtt:
+          - OrderFunctionServiceRole3E66F569
+          - Arn
+      FunctionName: StepFunction-Order
+      Handler: order.handler
+      Runtime: python3.8
+    DependsOn:
+      - OrderFunctionServiceRole3E66F569
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/OrderFunction/Resource
+      aws:asset:path: asset.8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576d
+      aws:asset:property: Code
+  CancelFunctionServiceRole9CD46899:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/CancelFunction/ServiceRole/Resource
+  CancelFunctionE0E3B5E0:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameterse9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756S3Bucket14A9453B
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameterse9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756S3VersionKeyA5583D00
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameterse9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756S3VersionKeyA5583D00
+      Role:
+        Fn::GetAtt:
+          - CancelFunctionServiceRole9CD46899
+          - Arn
+      FunctionName: StepFunction-Cancel
+      Handler: cancel.handler
+      Runtime: python3.8
+    DependsOn:
+      - CancelFunctionServiceRole9CD46899
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/CancelFunction/Resource
+      aws:asset:path: asset.e9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756
+      aws:asset:property: Code
+  SimpleStateMachineRole0CBC135A:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                Fn::Join:
+                  - ""
+                  - - states.
+                    - Ref: AWS::Region
+                    - .amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/SimpleStateMachine/Role/Resource
+  SimpleStateMachineRoleDefaultPolicyF5E1CB8E:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - SubmitTransactionFunction33F097D7
+                - Arn
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - OrderFunctionFABF799C
+                - Arn
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CancelFunctionE0E3B5E0
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: SimpleStateMachineRoleDefaultPolicyF5E1CB8E
+      Roles:
+        - Ref: SimpleStateMachineRole0CBC135A
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/SimpleStateMachine/Role/DefaultPolicy/Resource
+  SimpleStateMachineE8E2CF40:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      RoleArn:
+        Fn::GetAtt:
+          - SimpleStateMachineRole0CBC135A
+          - Arn
+      DefinitionString:
+        Fn::Join:
+          - ""
+          - - '{"StartAt":"SubmitTransactionTask","States":{"SubmitTransactionTask":{"Next":"TransactionStatus","Parameters":{"FunctionName":"'
+            - Ref: SubmitTransactionFunction33F097D7
+            - '","Payload.$":"$"},"OutputPath":"$.Payload","Type":"Task","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::lambda:invoke"},"TransactionStatus":{"Type":"Choice","Choices":[{"Variable":"$.body.status","StringEquals":"ORDER","Next":"OrderTransactionTask"},{"Variable":"$.body.status","StringEquals":"CANCEL","Next":"CancelTransactionTask"},{"Variable":"$.body.status","StringEquals":"NONE","Next":"SubmitFail"}]},"OrderTransactionTask":{"Next":"OrderStatus","Parameters":{"FunctionName":"
+            - Ref: OrderFunctionFABF799C
+            - '","Payload.$":"$"},"OutputPath":"$.Payload","Type":"Task","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::lambda:invoke"},"OrderStatus":{"Type":"Choice","Choices":[{"Variable":"$","StringEquals":"COMPLETED","Next":"Success"},{"Variable":"$.body.status","StringEquals":"ERROR","Next":"TransactionError"}]},"Success":{"Type":"Succeed","InputPath":"$"},"CancelStatus":{"Type":"Choice","Choices":[{"Variable":"$","StringEquals":"CANCELLED","Next":"Success"},{"Variable":"$.body.status","StringEquals":"ERROR","Next":"TransactionError"}]},"CancelTransactionTask":{"Next":"CancelStatus","Parameters":{"FunctionName":"
+            - Ref: CancelFunctionE0E3B5E0
+            - '","Payload.$":"$"},"OutputPath":"$.Payload","Type":"Task","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::lambda:invoke"},"TransactionError":{"Type":"Fail","Error":"Transaction error","Cause":"Error occurred while processing transaction"},"SubmitFail":{"Type":"Fail","Error":"Transaction error","Cause":"Transaction Type us unknown"}}}
+      StateMachineName: StateMachine-SimpleResult
+    DependsOn:
+      - SimpleStateMachineRoleDefaultPolicyF5E1CB8E
+      - SimpleStateMachineRole0CBC135A
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/SimpleStateMachine/Resource
+  StartExecutionAPI24D9531F:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: StartExecutionAPI
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/Resource
+  StartExecutionAPICloudWatchRole09C73224:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/CloudWatchRole/Resource
+  StartExecutionAPIAccount38755085:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn:
+        Fn::GetAtt:
+          - StartExecutionAPICloudWatchRole09C73224
+          - Arn
+    DependsOn:
+      - StartExecutionAPI24D9531F
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/Account
+  StartExecutionAPIDeployment63766211328297ae1a816c394254ff232e0e7b7c:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: StartExecutionAPI24D9531F
+      Description: Automatically created by the RestApi construct
+    DependsOn:
+      - StartExecutionAPIexecutePOST14C92A50
+      - StartExecutionAPIexecute73087EA2
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/Deployment/Resource
+  StartExecutionAPIDeploymentStageprod0119CF69:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId:
+        Ref: StartExecutionAPI24D9531F
+      DeploymentId:
+        Ref: StartExecutionAPIDeployment63766211328297ae1a816c394254ff232e0e7b7c
+      StageName: prod
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/DeploymentStage.prod/Resource
+  StartExecutionAPIexecute73087EA2:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - StartExecutionAPI24D9531F
+          - RootResourceId
+      PathPart: execute
+      RestApiId:
+        Ref: StartExecutionAPI24D9531F
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/Default/execute/Resource
+  StartExecutionAPIexecutePOSTApiPermissionStepFunctionsStackStartExecutionAPI7D3E7025POSTexecuteACA62294:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - StartTransactionFunction4444AFF2
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: StartExecutionAPI24D9531F
+            - /
+            - Ref: StartExecutionAPIDeploymentStageprod0119CF69
+            - /POST/execute
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/Default/execute/POST/ApiPermission.StepFunctionsStackStartExecutionAPI7D3E7025.POST..execute
+  StartExecutionAPIexecutePOSTApiPermissionTestStepFunctionsStackStartExecutionAPI7D3E7025POSTexecute3738765A:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - StartTransactionFunction4444AFF2
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: StartExecutionAPI24D9531F
+            - /test-invoke-stage/POST/execute
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/Default/execute/POST/ApiPermission.Test.StepFunctionsStackStartExecutionAPI7D3E7025.POST..execute
+  StartExecutionAPIexecutePOST14C92A50:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      ResourceId:
+        Ref: StartExecutionAPIexecute73087EA2
+      RestApiId:
+        Ref: StartExecutionAPI24D9531F
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        RequestTemplates:
+          application/json: '{ "statusCode": "200" }'
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - ":apigateway:"
+              - Ref: AWS::Region
+              - :lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - StartTransactionFunction4444AFF2
+                  - Arn
+              - /invocations
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/StartExecutionAPI/Default/execute/POST/Resource
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/02QwW7CMAyGn4V7GsY4bMcBEze0quwFPNeA1zap4kSoqvruSwKdesr3W87v397ozetGv6w+4C4F1s16ROtIj2cP2KidCPmIVzZXdbBGvAvo1eFiSnDQkSeXxFfwfcjlisQGh5Q49tfs2ZpJJfOxhe6nBj0eg8FUTj1LLsl1LJI/MHR6rGybjfJb2pZxyH2ZJiXbAlI+0Tlm1HofsCG/ByElnvrL0130+A3SqHNAJKrVEbhVh5vlGDRu5+kEeGOThy11DN7zNeo7DDEOid/1/Fxzxh2iDcarT+pbO3Rk8h0WKp1vdo4wXyiHXJ7rn0/kb7ZOpQdN06TKIZJZb/W7flv9CnPh4lDuSFeP9w+zq/CRyAEAAA==
+    Metadata:
+      aws:cdk:path: StepFunctionsStack/CDKMetadata/Default
+    Condition: CDKMetadataAvailable
+Parameters:
+  AssetParameters9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798aS3BucketD0E9861C:
+    Type: String
+    Description: S3 bucket for asset "9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798a"
+  AssetParameters9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798aS3VersionKeyAECD35C7:
+    Type: String
+    Description: S3 key for asset version "9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798a"
+  AssetParameters9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798aArtifactHash21BAF580:
+    Type: String
+    Description: Artifact hash for asset "9c407ed1a866e0953d2cae3054010c3c1edfe88d935325d6185f9066a421798a"
+  AssetParameters2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2S3Bucket7E34AA18:
+    Type: String
+    Description: S3 bucket for asset "2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2"
+  AssetParameters2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2S3VersionKey4691DEBA:
+    Type: String
+    Description: S3 key for asset version "2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2"
+  AssetParameters2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2ArtifactHash2DA4F8D0:
+    Type: String
+    Description: Artifact hash for asset "2da2a1ff37f6f45835514b912d5b521c277881e239d8bba6198bccd2ccdfb1c2"
+  AssetParameters8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576dS3Bucket7E0BF125:
+    Type: String
+    Description: S3 bucket for asset "8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576d"
+  AssetParameters8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576dS3VersionKey2C63A91E:
+    Type: String
+    Description: S3 key for asset version "8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576d"
+  AssetParameters8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576dArtifactHash30D156B8:
+    Type: String
+    Description: Artifact hash for asset "8c31bcddaedc81fe2636c6094c7056123e7528bf5a30c2115a50d27d10a7576d"
+  AssetParameterse9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756S3Bucket14A9453B:
+    Type: String
+    Description: S3 bucket for asset "e9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756"
+  AssetParameterse9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756S3VersionKeyA5583D00:
+    Type: String
+    Description: S3 key for asset version "e9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756"
+  AssetParameterse9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756ArtifactHash87D56D36:
+    Type: String
+    Description: Artifact hash for asset "e9df418a691ebaead0cea906c316c334f93674c8422940c5140141314effc756"
+Outputs:
+  StartExecutionAPIEndpointB6846300:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: StartExecutionAPI24D9531F
+          - .execute-api.
+          - Ref: AWS::Region
+          - "."
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: StartExecutionAPIDeploymentStageprod0119CF69
+          - /
+  StateMachineName:
+    Value:
+      Fn::GetAtt:
+        - SimpleStateMachineE8E2CF40
+        - Name
+    Export:
+      Name: StateMachineName
+  StartExecutionAPIURL:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: StartExecutionAPI24D9531F
+          - .execute-api.
+          - Ref: AWS::Region
+          - "."
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: StartExecutionAPIDeploymentStageprod0119CF69
+          - /
+    Export:
+      Name: StartExecutionAPI-URL
+Conditions:
+  CDKMetadataAvailable:
+    Fn::Or:
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - af-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ca-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-northwest-1
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-3
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - me-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - sa-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-2
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-2
+

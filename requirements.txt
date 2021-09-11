@@ -1,0 +1,7 @@
+-e .
+aws-cdk.core
+aws-cdk.aws-lambda
+aws-cdk.aws-stepfunctions
+aws-cdk.aws-stepfunctions-tasks
+boto3
+botocore
