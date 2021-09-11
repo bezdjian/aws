@@ -26,7 +26,8 @@ setuptools.setup(
         "aws-cdk.aws-apigateway==1.122.0",
         "aws-cdk.aws-iam==1.122.0",
         "boto3",
-        "botocore"
+        "botocore",
+        "pytest"
     ],
 
     python_requires=">=3.6",
