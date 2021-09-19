@@ -2,6 +2,7 @@ from aws_cdk import (
     core as cdk,
     aws_stepfunctions as sfn,
     aws_stepfunctions_tasks as sf_task,
+    aws_dynamodb as db
 )
 
 from step_functions.constructs.transaction_functions import TransactionFunctions
@@ -11,6 +12,14 @@ class StepFunctionsStack(cdk.Stack):
 
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        # Dynamo DB - HistoryTable
+        history_table = db.Table(self, "HistoryTable",
+                                 table_name="HistoryTable",
+                                 billing_mode=db.BillingMode.PAY_PER_REQUEST,
+                                 partition_key=db.Attribute(
+                                     name="id",
+                                     type=db.AttributeType.STRING))
 
         transaction_functions = TransactionFunctions(self, "TransactionFunctions")
 
@@ -52,7 +61,7 @@ class StepFunctionsStack(cdk.Stack):
                                          definition=definition,
                                          state_machine_name="StateMachine-SimpleResult")
 
-        self.set_environment_variables(state_machine, transaction_functions)
+        self.set_environment_variables(state_machine, transaction_functions, history_table.table_name)
 
         # Grant start_function to execute state machine
         state_machine.grant_start_execution(transaction_functions.start_function)
@@ -61,10 +70,16 @@ class StepFunctionsStack(cdk.Stack):
                       export_name="StateMachineName",
                       value=state_machine.state_machine_name)
 
-    def set_environment_variables(self, state_machine, transaction_functions):
+        cdk.CfnOutput(self, "HistoryTableName",
+                      export_name="HistoryTableName",
+                      value=history_table.table_name)
+
+    def set_environment_variables(self, state_machine, transaction_functions, table_name):
         transaction_functions.start_function.add_environment("state_machine_arn", state_machine.state_machine_arn)
         transaction_functions.start_function.add_environment("state_machine_name", state_machine.state_machine_name)
         transaction_functions.start_function.add_environment("test", "false")
+        transaction_functions.start_function.add_environment("history_table", table_name)
+        transaction_functions.submit_function.add_environment("history_table", table_name)
 
     def create_transaction_status_choices(self, cancel_job_task, order_job_task, submit_fail):
         return sfn.Choice(self, 'TransactionStatus') \
