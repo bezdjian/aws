@@ -1,3 +1,4 @@
+import distutils.util
 import json
 import logging
 import os
@@ -16,6 +17,10 @@ def handler(event, context):
     state_machine_arn = os.environ.get("state_machine_arn")
     state_machine_name = os.environ.get("state_machine_name")
 
+    test = bool(distutils.util.strtobool(
+        os.environ.get("test")
+    ))
+
     try:
         body = json.loads(event["body"])
         logger.info("body: %s", body)
@@ -32,22 +37,27 @@ def handler(event, context):
             "merchantId": merchant_id
         }
 
-        step_functions_client.start_execution(
-            stateMachineArn=state_machine_arn,
-            name=str(uuid.uuid4()),
-            input=json.dumps(execution_input),
-            traceHeader='string'
-        )
+        if not test:
+            logger.info("Running state machine %s", state_machine_name)
+            step_functions_client.start_execution(
+                stateMachineArn=state_machine_arn,
+                name=str(uuid.uuid4()),
+                input=json.dumps(execution_input),
+                traceHeader='string'
+            )
+        else:
+            logger.info("Test is enabled. Skipping start of state machine %s", state_machine_name)
 
         return {
             "statusCode": "200",
             "body": json.dumps({
-                "message": f"State machine started with input {execution_input}"
+                "message": f"State machine {state_machine_name} started with input {execution_input}",
+                "test_env": test
             })
         }
     except ClientError as c:
         logger.exception(
-            "Couldn't get runs for state machine %s: %s.", state_machine_name, c)
+            "Error occurred while running state machine %s: %s.", state_machine_name, c)
         raise
     except KeyError as k:
         logger.exception("Missing parameter! %s", k)

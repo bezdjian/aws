@@ -69,6 +69,7 @@ class StepFunctionsStack(cdk.Stack):
 
         transaction_functions.start_function.add_environment("state_machine_arn", state_machine.state_machine_arn)
         transaction_functions.start_function.add_environment("state_machine_name", state_machine.state_machine_name)
+        transaction_functions.start_function.add_environment("test", "false")
 
         # Grant start_function to execute state machine
         state_machine.grant_start_execution(transaction_functions.start_function)
