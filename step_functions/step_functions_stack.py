@@ -34,42 +34,25 @@ class StepFunctionsStack(cdk.Stack):
                                    # Send output starting from Payload
                                    output_path="$.Payload")
 
-        # five_seconds = cdk.Duration.seconds(5)
-        # waiting_time = sfn.Wait(self, 'Wait 5 Seconds',
-        #                        time=sfn.WaitTime.duration(duration=five_seconds))
-
         succeed = sfn.Succeed(self, "Success", input_path="$")
-        submit_fail = sfn.Fail(self, "SubmitFail",
-                               error="Transaction error",
-                               cause="Transaction Type us unknown")
-        transaction_fail = sfn.Fail(self, "TransactionError",
-                                    error="Transaction error",
+        submit_fail = sfn.Fail(self, "SubmitFail", error="Transaction error", cause="Transaction Type us unknown")
+        transaction_fail = sfn.Fail(self, "TransactionError", error="Transaction error",
                                     cause="Error occurred while processing transaction")
 
-        order_status = sfn.Choice(self, "OrderStatus") \
-            .when(sfn.Condition.string_equals("$", "COMPLETED"), succeed) \
-            .when(sfn.Condition.string_equals("$.body.status", "ERROR"), transaction_fail)
+        order_status = self.create_order_status_choices(succeed, transaction_fail)
         order_job_task.next(order_status)
 
-        cancel_status = sfn.Choice(self, "CancelStatus") \
-            .when(sfn.Condition.string_equals("$", "CANCELLED"), succeed) \
-            .when(sfn.Condition.string_equals("$.body.status", "ERROR"), transaction_fail)
+        cancel_status = self.create_cancel_status_choices(succeed, transaction_fail)
         cancel_job_task.next(cancel_status)
 
-        transaction_status = sfn.Choice(self, 'TransactionStatus') \
-            .when(sfn.Condition.string_equals('$.body.status', 'ORDER'), order_job_task) \
-            .when(sfn.Condition.string_equals('$.body.status', 'CANCEL'), cancel_job_task) \
-            .when(sfn.Condition.string_equals("$.body.status", "NONE"), submit_fail)
-
+        transaction_status = self.create_transaction_status_choices(cancel_job_task, order_job_task, submit_fail)
         definition = submit_job_task.next(transaction_status)
 
         state_machine = sfn.StateMachine(self, "SimpleStateMachine",
                                          definition=definition,
                                          state_machine_name="StateMachine-SimpleResult")
 
-        transaction_functions.start_function.add_environment("state_machine_arn", state_machine.state_machine_arn)
-        transaction_functions.start_function.add_environment("state_machine_name", state_machine.state_machine_name)
-        transaction_functions.start_function.add_environment("test", "false")
+        self.set_environment_variables(state_machine, transaction_functions)
 
         # Grant start_function to execute state machine
         state_machine.grant_start_execution(transaction_functions.start_function)
@@ -78,9 +61,23 @@ class StepFunctionsStack(cdk.Stack):
                       export_name="StateMachineName",
                       value=state_machine.state_machine_name)
 
-        # start_execution = sf_task.StepFunctionsStartExecution(self, "StartStepFunctionExecution",
-        #                                                       state_machine=state_machine,
-        #                                                       input=state_machine_input,
-        #                                                       name="TransactionFunctionsExecutor",
-        #                                                       input_path="$",
-        #                                                       output_path="$.Payload")
+    def set_environment_variables(self, state_machine, transaction_functions):
+        transaction_functions.start_function.add_environment("state_machine_arn", state_machine.state_machine_arn)
+        transaction_functions.start_function.add_environment("state_machine_name", state_machine.state_machine_name)
+        transaction_functions.start_function.add_environment("test", "false")
+
+    def create_transaction_status_choices(self, cancel_job_task, order_job_task, submit_fail):
+        return sfn.Choice(self, 'TransactionStatus') \
+            .when(sfn.Condition.string_equals('$.body.status', 'ORDER'), order_job_task) \
+            .when(sfn.Condition.string_equals('$.body.status', 'CANCEL'), cancel_job_task) \
+            .when(sfn.Condition.string_equals("$.body.status", "NONE"), submit_fail)
+
+    def create_order_status_choices(self, succeed, transaction_fail):
+        return sfn.Choice(self, "OrderStatus") \
+            .when(sfn.Condition.string_equals("$", "COMPLETED"), succeed) \
+            .when(sfn.Condition.string_equals("$.body.status", "ERROR"), transaction_fail)
+
+    def create_cancel_status_choices(self, succeed, transaction_fail):
+        return sfn.Choice(self, "CancelStatus") \
+            .when(sfn.Condition.string_equals("$", "CANCELLED"), succeed) \
+            .when(sfn.Condition.string_equals("$.body.status", "ERROR"), transaction_fail)
