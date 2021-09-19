@@ -1,5 +1,4 @@
-*.swp
-package-lock.json
+.idea
 __pycache__
 .pytest_cache
 .env
@@ -9,3 +8,4 @@ step_functions/*.egg-info/
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+template.yaml
