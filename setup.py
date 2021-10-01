@@ -25,7 +25,8 @@ setuptools.setup(
         "aws-cdk.aws-stepfunctions-tasks==1.125.0",
         "aws-cdk.aws-apigateway==1.125.0",
         "boto3",
-        "botocore"
+        "botocore",
+        "pytest"
     ],
 
     python_requires=">=3.6",
