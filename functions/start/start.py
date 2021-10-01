@@ -44,7 +44,7 @@ def handler(event, context):
         }
 
         if not test:
-            logger.info("Running state machine %s", state_machine_name)
+            logger.info("Running state machine %s with execution input %s", state_machine_name, execution_input)
             step_functions_client.start_execution(
                 stateMachineArn=state_machine_arn,
                 name=transaction_id,
