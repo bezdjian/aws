@@ -14,6 +14,7 @@ import software.amazon.awscdk.services.ec2.SecurityGroup;
 import software.amazon.awscdk.services.ec2.SecurityGroupProps;
 import software.amazon.awscdk.services.ec2.Vpc;
 import software.amazon.awscdk.services.ec2.VpcAttributes;
+import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.ssm.ParameterType;
 import software.amazon.awscdk.services.ssm.StringParameter;
 import software.amazon.awscdk.services.ssm.StringParameterProps;
@@ -65,8 +66,9 @@ public class CdkJavaEC2Stack {
             .description("SSM created by CDK-java")
             .build());
 
-        cdktestParam.grantRead(stack.getLambdaFunction());
-        stack.getLambdaFunction().addEnvironment("SSM_PARAM_NAME", parameterName);
+        Function myServiceFunction = stack.getMyServiceFunction();
+        cdktestParam.grantRead(myServiceFunction);
+        myServiceFunction.addEnvironment("SSM_PARAM_NAME", parameterName);
 
         // Read while cdk deploy
         //String cdkTestParamValue = StringParameter.valueForStringParameter(this, "CdkTestParam");
