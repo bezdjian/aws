@@ -10,11 +10,15 @@ import software.amazon.awscdk.services.dynamodb.TableProps;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.s3.assets.AssetOptions;
 import software.amazon.awscdk.services.ssm.ParameterType;
 import software.amazon.awscdk.services.ssm.StringParameter;
 import software.amazon.awscdk.services.ssm.StringParameterProps;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class CdkJavaStack extends Stack {
     public CdkJavaStack(final Construct scope, final String id) {
@@ -80,18 +84,53 @@ public class CdkJavaStack extends Stack {
     }
 
     private Function createLambdaFunction() {
-        Number thirtySeconds = 30;
-        Number memorySizeInMB = 512;
-        File projectDir = new File(System.getProperty("user.dir"));
-        String myServiceFolderPath = new File(projectDir, "lambda-service").toString();
+        String myServiceFolderPath = getMyServiceFolderPath();
+
         return Function.Builder.create(this, "CdkJavaHelloFunction")
                 .functionName("CdkJavaFunction")
                 .handler("cdklambda.App::handleRequest")
                 .runtime(Runtime.JAVA_11)
-                .code(Code.fromAsset(myServiceFolderPath))
+                .code(Code.fromAsset(myServiceFolderPath, getAssetOptions()))
                 .description("Lambda function for AWS CDK")
-                .timeout(Duration.seconds(thirtySeconds))
-                .memorySize(memorySizeInMB)
+                .timeout(Duration.seconds(30))
+                .memorySize(512)
+                .build();
+    }
+
+    private String getMyServiceFolderPath() {
+        File projectDir = new File(System.getProperty("user.dir"));
+        return new File(projectDir, "lambda-service/").toString();
+    }
+
+    private AssetOptions getAssetOptions() {
+        return AssetOptions.builder()
+                .bundling(getBundlingOptions())
+                .build();
+    }
+
+    private BundlingOptions getBundlingOptions() {
+        return BundlingOptions.builder()
+                .command(getBundlingCommands())
+                .image(Runtime.JAVA_11.getBundlingImage())
+                .volumes(Collections.singletonList(getDockerVolume()))
+                .user("root")
+                .outputType(BundlingOutput.ARCHIVED)
+                .build();
+    }
+
+    private List<String> getBundlingCommands() {
+        return Arrays.asList(
+                "/bin/sh",
+                "-c",
+                "mvn clean install && " +
+                "cp /asset-input/target/lambda-service-1.0.jar /asset-output/"
+        );
+    }
+
+    private DockerVolume getDockerVolume() {
+        return DockerVolume.builder()
+                .hostPath(System.getProperty("user.home") + "/.m2/")
+                .containerPath("/root/.m2/")
                 .build();
     }
 

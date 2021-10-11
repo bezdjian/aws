@@ -6,16 +6,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.Test;
 import software.amazon.awscdk.core.App;
 
-import java.io.IOException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CdkJavaTest {
     private final static ObjectMapper JSON =
-        new ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true);
+            new ObjectMapper().configure(SerializationFeature.INDENT_OUTPUT, true);
 
     @Test
-    void testStack() throws IOException {
+    void testStack() {
         App app = new App();
         CdkJavaStack stack = new CdkJavaStack(app, "test");
 
