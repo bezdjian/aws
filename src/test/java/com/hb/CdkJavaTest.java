@@ -1,4 +1,4 @@
-package com.myorg;
+package com.hb;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package com.myorg;
+package com.hb;
 
 import org.jetbrains.annotations.NotNull;
 import software.amazon.awscdk.core.*;
