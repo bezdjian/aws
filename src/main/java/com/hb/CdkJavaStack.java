@@ -1,6 +1,5 @@
 package com.hb;
 
-import org.jetbrains.annotations.NotNull;
 import software.amazon.awscdk.core.*;
 import software.amazon.awscdk.services.apigateway.LambdaRestApi;
 import software.amazon.awscdk.services.dynamodb.Attribute;
@@ -49,40 +48,6 @@ public class CdkJavaStack extends Stack {
         createCfnOutput("LambdaServiceUrl", restApi.getUrl());
     }
 
-    @NotNull
-    private StringParameter createSsmParameter(String parameterName) {
-        return new StringParameter(this, parameterName, StringParameterProps.builder()
-                .parameterName(parameterName)
-                .stringValue("cdk-test-param-value")
-                .type(ParameterType.STRING)
-                .description("SSM created by CDK-java")
-                .build());
-    }
-
-    @NotNull
-    private LambdaRestApi createServiceRestApi(Function function) {
-        LambdaRestApi restApi = LambdaRestApi.Builder.create(this, "CdkJavaHelloApi")
-                .restApiName("CdkJavaHelloApi")
-                .description("Rest API created by CDK for NodeHelloFunction")
-                .handler(function)
-                .proxy(false)
-                .build();
-        // Add GET method with lambda integration
-        restApi.getRoot().addMethod("GET");
-        return restApi;
-    }
-
-    @NotNull
-    private Table createDynamoDBTable(String tableName) {
-        return new Table(this, "cdkTable-java", TableProps.builder()
-                .partitionKey(Attribute.builder()
-                        .name("id")
-                        .type(AttributeType.STRING)
-                        .build())
-                .tableName(tableName)
-                .build());
-    }
-
     private Function createLambdaFunction() {
         String myServiceFolderPath = getMyServiceFolderPath();
 
@@ -123,7 +88,7 @@ public class CdkJavaStack extends Stack {
                 "/bin/sh",
                 "-c",
                 "mvn clean install && " +
-                "cp /asset-input/target/lambda-service-1.0.jar /asset-output/"
+                        "cp /asset-input/target/lambda-service-1.0.jar /asset-output/"
         );
     }
 
@@ -132,6 +97,37 @@ public class CdkJavaStack extends Stack {
                 .hostPath(System.getProperty("user.home") + "/.m2/")
                 .containerPath("/root/.m2/")
                 .build();
+    }
+
+    private StringParameter createSsmParameter(String parameterName) {
+        return new StringParameter(this, parameterName, StringParameterProps.builder()
+                .parameterName(parameterName)
+                .stringValue("cdk-test-param-value")
+                .type(ParameterType.STRING)
+                .description("SSM created by CDK-java")
+                .build());
+    }
+
+    private LambdaRestApi createServiceRestApi(Function function) {
+        LambdaRestApi restApi = LambdaRestApi.Builder.create(this, "CdkJavaHelloApi")
+                .restApiName("CdkJavaHelloApi")
+                .description("Rest API created by CDK for NodeHelloFunction")
+                .handler(function)
+                .proxy(false)
+                .build();
+        // Add GET method with lambda integration
+        restApi.getRoot().addMethod("GET");
+        return restApi;
+    }
+
+    private Table createDynamoDBTable(String tableName) {
+        return new Table(this, "cdkTable-java", TableProps.builder()
+                .partitionKey(Attribute.builder()
+                        .name("id")
+                        .type(AttributeType.STRING)
+                        .build())
+                .tableName(tableName)
+                .build());
     }
 
     private void createCfnOutput(String id, String value) {
