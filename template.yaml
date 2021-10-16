@@ -61,7 +61,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3BucketFD676BD1
+          Ref: AssetParameters9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150fS3BucketF9E80D15
         S3Key:
           Fn::Join:
             - ""
@@ -69,12 +69,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3VersionKeyD740D3AA
+                      - Ref: AssetParameters9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150fS3VersionKeyE0D5F927
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3VersionKeyD740D3AA
+                      - Ref: AssetParameters9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150fS3VersionKeyE0D5F927
       Role:
         Fn::GetAtt:
           - CdkJavaHelloFunctionServiceRole66DA2F5E
@@ -94,7 +94,7 @@ Resources:
       - CdkJavaHelloFunctionServiceRole66DA2F5E
     Metadata:
       aws:cdk:path: CdkJavaStack/CdkJavaHelloFunction/Resource
-      aws:asset:path: /Users/hbez/myProjects/aws/cdk/cdk-java/lambdafunction/target/lambda-for-cdk-1.0.jar
+      aws:asset:path: C:\Users\bezdj\IdeaProjects\aws\cdk\cdk-java-lambda-api\cdk.out\asset.9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150f.jar
       aws:asset:property: Code
   cdkTablejava440D0D94:
     Type: AWS::DynamoDB::Table
@@ -235,34 +235,6 @@ Resources:
               - /invocations
     Metadata:
       aws:cdk:path: CdkJavaStack/CdkJavaHelloApi/Default/GET/Resource
-  EC2SecurityG2279A886:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: SG created by CDK for EC2InstanceForCdk
-      GroupName: EC2InstanceForCdk-SG
-      SecurityGroupEgress:
-        - CidrIp: 0.0.0.0/0
-          Description: Add SSH from anywhere
-          FromPort: 22
-          IpProtocol: tcp
-          ToPort: 22
-      VpcId: vpc-4f569826
-    Metadata:
-      aws:cdk:path: CdkJavaStack/EC2SecurityG/Resource
-  EC2InstanceCdk:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn-ami-hvm-x86_64-gp2}}"
-      InstanceType: t3.micro
-      SecurityGroupIds:
-        - Fn::GetAtt:
-            - EC2SecurityG2279A886
-            - GroupId
-      Tags:
-        - Key: Name
-          Value: EC2InstanceForCdk
-    Metadata:
-      aws:cdk:path: CdkJavaStack/EC2InstanceCdk
   cdktestParamB796D4A0:
     Type: AWS::SSM::Parameter
     Properties:
@@ -275,19 +247,19 @@ Resources:
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:
-      Analytics: v2:deflate64:H4sIAAAAAAAAE11Q0U7DMAz8lr1n2TrEO2UIBAJRFX7AS70S1iRVnDBVUf6dJKVo8OQ7x76cr+LVdse3qxs401p0p00QxiIPbw7EidVE6BLspe5Zi2S8Fcj2RpOzXji2P+oGLCh0aDN59W70pb0MR5aFwwDq0AEP914LJ43OI5e4QaskUWKRSVA8tGbAopNrYwYppjJXUGR0tYbsjXixyLpJgzLdgYd3OMybBaTvR9mDwzNMPDwXF8maq0f543KBtRDGa8fucBzMpFCXMy5YjqEIz2A58BYI2Qu6D9PlxxlFhmKXQkThrXTTgzV+LKv/G48pSdA5JiKVU7cp6T+R/pIYI3uCL9hU13zLq9UnSbm2ybJUyNu5fgMJBsVqzgEAAA==
+      Analytics: v2:deflate64:H4sIAAAAAAAA/02Q3U6EMBCFn2Xvy+yiid7KrvHCaCToCwxlxAptSX/ckIZ3ty0SuZozM83pN6eE8uYeTocHvNqCd8MxcG0IwrtDPrDKWnJR9kL17KKVdcZzxy6fqkaDkhwZ1pDV3nBK0zfvJp/323RhyTiMKNsOITx5xZ3QKj3Z65qMFNbGbmECJYRGj9kx11qPgs/5XVYLs7cFJjYLGTH2cPZ8IHdGS6ybFUrdtRA+sF19sogwk+jR0RVnCC+ZKYK6ahJ/zJusONdeOfZI06hnSSoftetSKNl4Fdu5+ftXcl+6S8tVRVwrU6Qmxvgf3D7FZVnYM/7gsbyDE5SHbytEYSKBkATNWn8B+3tDtqsBAAA=
     Metadata:
       aws:cdk:path: CdkJavaStack/CDKMetadata/Default
 Parameters:
-  AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3BucketFD676BD1:
+  AssetParameters9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150fS3BucketF9E80D15:
     Type: String
-    Description: S3 bucket for asset "4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248"
-  AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248S3VersionKeyD740D3AA:
+    Description: S3 bucket for asset "9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150f"
+  AssetParameters9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150fS3VersionKeyE0D5F927:
     Type: String
-    Description: S3 key for asset version "4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248"
-  AssetParameters4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248ArtifactHash15274ACF:
+    Description: S3 key for asset version "9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150f"
+  AssetParameters9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150fArtifactHash1BB731BF:
     Type: String
-    Description: Artifact hash for asset "4f85e66af18970a2f3469f81dfe8b1246a5b9976afc4ed46ea8390b7f8e0e248"
+    Description: Artifact hash for asset "9ebac80fe0a9ce3e14d25ff0c291e4b19c149777be7791afe3f6d456a619150f"
 Outputs:
   CdkJavaHelloApiEndpoint1F3D0DDC:
     Value:
@@ -300,14 +272,20 @@ Outputs:
           - /
           - Ref: CdkJavaHelloApiDeploymentStageprodF86F7DDE
           - /
-  LambdaFunctionArn:
+  LambdaServiceArn:
     Value:
       Fn::GetAtt:
         - CdkJavaHelloFunction54F76B50
         - Arn
-  EC2InstanceDNSName:
+  LambdaServiceUrl:
     Value:
-      Fn::GetAtt:
-        - EC2InstanceCdk
-        - PublicDnsName
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: CdkJavaHelloApi942C2FAB
+          - .execute-api.eu-north-1.
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: CdkJavaHelloApiDeploymentStageprodF86F7DDE
+          - /
 
