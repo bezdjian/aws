@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless application for archiving.
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  ArchiveServiceFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: service/
+      Handler: app.lambdaHandler
+      Runtime: nodejs14.x
+      FunctionName: 'archive-service'
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref ArchiveBucket
+        - DynamoDBWritePolicy:
+            TableName: !Ref ArchiveTable
+
+      Environment:
+        Variables:
+          DB_TABLE: !Ref ArchiveTable
+          ARCHIVE_BUCKET: !Ref ArchiveBucket
+      Events:
+        ArchiveServiceApi:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /archive
+            Method: post
+
+  ArchiveTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      TableName: !Sub "archive-service-table-${AWS::AccountId}"
+
+  ArchiveBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "archive-service-bucket-${AWS::AccountId}"
+      VersioningConfiguration:
+        Status: Enabled
+
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ArchiveServiceApi:
+    Description: "API Gateway endpoint URL for Prod stage for HelloArchiveServiceFunction"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/archive"
+  ArchiveServiceFunction:
+    Description: "ArchiveServiceFunction Lambda Function ARN"
+    Value: !GetAtt ArchiveServiceFunction.Arn

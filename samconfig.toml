@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "ArchiveServiceStack"
+s3_bucket = "buckets4lambda"
+s3_prefix = "ArchiveServiceStack"
+region = "eu-north-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []

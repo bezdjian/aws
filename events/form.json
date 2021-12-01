@@ -1,0 +1,140 @@
+{
+    "resource": "/",
+    "path": "/",
+    "httpMethod": "POST",
+    "headers": {
+      "Accept": "*/*",
+      "Accept-Encoding": "gzip, deflate, br",
+      "Cache-Control": "no-cache",
+      "CloudFront-Forwarded-Proto": "https",
+      "CloudFront-Is-Desktop-Viewer": "true",
+      "CloudFront-Is-Mobile-Viewer": "false",
+      "CloudFront-Is-SmartTV-Viewer": "false",
+      "CloudFront-Is-Tablet-Viewer": "false",
+      "CloudFront-Viewer-Country": "SE",
+      "Content-Type": "multipart/form-data; boundary=--------------------------084876596418036301522882",
+      "Host": "igsb6fkl69.execute-api.eu-north-1.amazonaws.com",
+      "Postman-Token": "94b1062e-61b5-451d-900f-39b288d681d7",
+      "User-Agent": "PostmanRuntime/7.28.4",
+      "Via": "1.1 22696b6e831fc717b53b9273ad3341c2.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Id": "otW0dH09zdwvXKwtklVOiwONqSF7KDIYWfIyoy0RB1BCeRVGd2lpBQ==",
+      "X-Amzn-Trace-Id": "Root=1-6172c4f7-1d34db67116c70f57e3a23ab",
+      "X-Forwarded-For": "194.68.56.46, 205.251.218.85",
+      "X-Forwarded-Port": "443",
+      "X-Forwarded-Proto": "https"
+    },
+    "multiValueHeaders": {
+      "Accept": [
+        "*/*"
+      ],
+      "Accept-Encoding": [
+        "gzip, deflate, br"
+      ],
+      "Cache-Control": [
+        "no-cache"
+      ],
+      "CloudFront-Forwarded-Proto": [
+        "https"
+      ],
+      "CloudFront-Is-Desktop-Viewer": [
+        "true"
+      ],
+      "CloudFront-Is-Mobile-Viewer": [
+        "false"
+      ],
+      "CloudFront-Is-SmartTV-Viewer": [
+        "false"
+      ],
+      "CloudFront-Is-Tablet-Viewer": [
+        "false"
+      ],
+      "CloudFront-Viewer-Country": [
+        "SE"
+      ],
+      "Content-Type": [
+        "multipart/form-data; boundary=--------------------------084876596418036301522882"
+      ],
+      "Host": [
+        "igsb6fkl69.execute-api.eu-north-1.amazonaws.com"
+      ],
+      "Postman-Token": [
+        "94b1062e-61b5-451d-900f-39b288d681d7"
+      ],
+      "User-Agent": [
+        "PostmanRuntime/7.28.4"
+      ],
+      "Via": [
+        "1.1 22696b6e831fc717b53b9273ad3341c2.cloudfront.net (CloudFront)"
+      ],
+      "X-Amz-Cf-Id": [
+        "otW0dH09zdwvXKwtklVOiwONqSF7KDIYWfIyoy0RB1BCeRVGd2lpBQ=="
+      ],
+      "X-Amzn-Trace-Id": [
+        "Root=1-6172c4f7-1d34db67116c70f57e3a23ab"
+      ],
+      "X-Forwarded-For": [
+        "194.68.56.46, 205.251.218.85"
+      ],
+      "X-Forwarded-Port": [
+        "443"
+      ],
+      "X-Forwarded-Proto": [
+        "https"
+      ]
+    },
+    "queryStringParameters": {
+      "documentType": "agreements",
+      "internalReference": "4q4w5e5r4d",
+      "source": "WTW",
+      "ssn": "123321213"
+    },
+    "multiValueQueryStringParameters": {
+      "documentType": [
+        "agreement"
+      ],
+      "internalReference": [
+        "4q4w5e5r4d"
+      ],
+      "source": [
+        "TTT"
+      ],
+      "ssn": [
+        "123321213"
+      ]
+    },
+    "pathParameters": null,
+    "stageVariables": null,
+    "requestContext": {
+      "resourceId": "vi1ay07lff",
+      "resourcePath": "/",
+      "httpMethod": "POST",
+      "extendedRequestId": "HnO2rEtOgi0FYIw=",
+      "requestTime": "22/Oct/2021:14:04:39 +0000",
+      "path": "/Prod/",
+      "accountId": "181533042740",
+      "protocol": "HTTP/1.1",
+      "stage": "Prod",
+      "domainPrefix": "igsb6fkl69",
+      "requestTimeEpoch": 1634911479390,
+      "requestId": "e9c14cbc-009e-4c98-8c09-c0a01db9b3a5",
+      "identity": {
+        "cognitoIdentityPoolId": null,
+        "accountId": null,
+        "cognitoIdentityId": null,
+        "caller": null,
+        "sourceIp": "194.68.56.46",
+        "principalOrgId": null,
+        "accessKey": null,
+        "cognitoAuthenticationType": null,
+        "cognitoAuthenticationProvider": null,
+        "userArn": null,
+        "userAgent": "PostmanRuntime/7.28.4",
+        "user": null
+      },
+      "domainName": "igsb6fkl69.execute-api.eu-north-1.amazonaws.com",
+      "apiId": "igsb6fkl69"
+    },
+    "body": "\t----------------------------157627978091926832991347\nContent-Disposition: form-data; name=\"file\"; filename=\"archive.txt\"\nContent-Type: text/plain\r\n  This is an archive test!\r\n----------------------------157627978091926832991347--\n\n",
+    "isBase64Encoded": false
+  }
+  
