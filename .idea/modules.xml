@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/product-api/product-api.iml" filepath="$PROJECT_DIR$/product-api/product-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/product-api-cdk.iml" filepath="$PROJECT_DIR$/.idea/product-api-cdk.iml" />
+    </modules>
+  </component>
+</project>
