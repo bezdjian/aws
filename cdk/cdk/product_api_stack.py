@@ -26,7 +26,7 @@ class ProductApiStack(Stack):
         )
 
         fargate_service = ecs_patterns.ApplicationLoadBalancedFargateService(
-            self, "ProductApiService",
+            self, "ProductApi",
             cluster=cluster,
             public_load_balancer=True,
             task_image_options=ecs_patterns.ApplicationLoadBalancedTaskImageOptions(
