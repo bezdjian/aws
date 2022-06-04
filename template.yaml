@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM App for triggering a Lambda function from SNS topic.
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+  ReceiveMessageFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      FunctionName: receive-sns-message-function
+      CodeUri: receive_message/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Environment:
+        Variables:
+          #LOCAL_STACK_ENDPOINT: !FindInMap [ "env", !Ref environment, "localstack_url" ]
+          LOCAL_STACK_ENDPOINT: http://host.docker.internal:4566
+          DB_TABLE: !Ref DynamoTable
+          SNS_TOPIC_ARN: !Ref SNS
+          SNS_TOPIC_NAME: !GetAtt SNS.TopicName
+  SNS:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: LambdaLocalStackSNSTopic
+      TopicName: LambdaLocalStackSNSTopic
+      FifoTopic: false
+
+  SNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: lambda
+      Endpoint: !GetAtt ReceiveMessageFunction.Arn
+      TopicArn: !Ref SNS
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      Principal: 'sns.amazonaws.com'
+      SourceArn: !Ref SNS
+      FunctionName: !Ref ReceiveMessageFunction
+
+  DynamoTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: sns-message-table
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  #SendMessageFunctionApi:
+  #  Description: "API Gateway endpoint URL for Prod stage for send message receive_message"
+  #  Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/publish/"
+  ReceiveMessageFunctionARN:
+    Description: "Receive message Lambda Function ARN"
+    Value: !GetAtt ReceiveMessageFunction.Arn
+  SNSTopicARN:
+    Description: "Sns topic ARN"
+    Value: !Ref SNS
