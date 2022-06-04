@@ -1,4 +1,5 @@
-# Run localstack
+# Install & run localstack
+pip install localstack
 localstack start -d
 
 # Create Dynamo table
@@ -6,13 +7,10 @@ awsls dynamodb create-table --table-name sns-message-table --attribute-definitio
 
 # Run with parameters and local env
 # sam local invoke --env-vars local.json --parameter-overrides=ParameterKey=environment,ParameterValue=prod
+sam local invoke --event events/sns_event.json --env-vars local.json
 
-
-# Create queue
-awsls sqs create-queue --queue-name sam-test
-
-# Create topic
+# Create topic, copy the ARN
 awsls sns create-topic --name sam-topic-test
 
-# Subscribe
-awsls sns subscribe --topic-arn arn:aws:sns:eu-north-1:000000000000:sam-topic-test --protocol sqs --notification-endpoint http://localhost:4566/000000000000/sam-queue-test
+# Lambda subscription
+awsls sns subscribe --topic-arn arn:aws:sns:eu-north-1:000000000000:sam-topic-test --protocol lambda --notification-endpoint http://localhost:4566/000000000000/sam-queue-test
