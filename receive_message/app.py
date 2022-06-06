@@ -22,6 +22,7 @@ def lambda_handler(event, context):
     message = event['Records'][0]['Sns']['Message']
     message_id = event['Records'][0]['Sns']['MessageId']
     timestamp = event['Records'][0]['Sns']['Timestamp']
+    topic_arn = event['Records'][0]['Sns']['TopicArn']
 
     parsed_timestamp = parser.parse(timestamp).strftime("%Y-%m-%dT%H:%M:%S")
     date = datetime.fromisoformat(parsed_timestamp)
@@ -34,7 +35,7 @@ def lambda_handler(event, context):
                 "messageId": {"S": message_id},
                 "message": {"S": message},
                 "created": {"S": date.__str__()},
-                # "date": {"S": timestamp}
+                "topicArn": {"S": topic_arn}
                 # We can add EventSource, EventSubscriptionArn if we use this lambda for other triggers?
             }
         )
