@@ -14,12 +14,7 @@ def lambda_handler(event, context):
     print(f"db_table: {db_table}")
     print(f"endpoint_url: {endpoint_url}")
 
-    if endpoint_url == "" or endpoint_url is None:
-        print("none")
-        dynamodb = boto3.client("dynamodb")
-    else:
-        print(f"not none: {endpoint_url}")
-        dynamodb = boto3.client("dynamodb", endpoint_url=endpoint_url)
+    dynamodb = get_dynamo_client(endpoint_url)
 
     # dynamodb = boto3.client("dynamodb")
     json_event = json.dumps(event, indent=2)
@@ -70,3 +65,12 @@ def lambda_handler(event, context):
                 "exception": err.response['Error']['Code']
             }),
         }
+
+
+def get_dynamo_client(endpoint_url):
+    print(f"endpoint_url: {endpoint_url}")
+    if endpoint_url == "" or endpoint_url is None:
+        dynamodb = boto3.client("dynamodb")
+    else:
+        dynamodb = boto3.client("dynamodb", endpoint_url=endpoint_url)
+    return dynamodb
