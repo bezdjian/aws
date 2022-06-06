@@ -20,6 +20,7 @@ def lambda_handler(event, context):
     json_event = json.dumps(event, indent=2)
     print("Received event: " + json_event)
     message = event['Records'][0]['Sns']['Message']
+    subject = event['Records'][0]['Sns']['Subject']
     message_id = event['Records'][0]['Sns']['MessageId']
     timestamp = event['Records'][0]['Sns']['Timestamp']
     topic_arn = event['Records'][0]['Sns']['TopicArn']
@@ -34,6 +35,7 @@ def lambda_handler(event, context):
                 "id": {'S': uuid.uuid4().__str__()},
                 "messageId": {"S": message_id},
                 "message": {"S": message},
+                "subject": {"S": subject},
                 "created": {"S": date.__str__()},
                 "topicArn": {"S": topic_arn}
                 # We can add EventSource, EventSubscriptionArn if we use this lambda for other triggers?
