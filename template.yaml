@@ -7,6 +7,16 @@ Globals:
   Function:
     Timeout: 5
 
+Parameters:
+  environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, prod]
+    Description: The environment name
+
+Conditions:
+  isDev: !Equals [!Ref environment, dev]
+
 Resources:
   ReceiveMessageFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -18,7 +28,7 @@ Resources:
       Environment:
         Variables:
           #LOCAL_STACK_ENDPOINT: !FindInMap [ "env", !Ref environment, "localstack_url" ]
-          LOCAL_STACK_ENDPOINT: http://host.docker.internal:4566
+          LOCAL_STACK_ENDPOINT: !If [isDev, "http://host.docker.internal:4566", ""]
           DB_TABLE: !Ref DynamoTable
           SNS_TOPIC_ARN: !Ref SNS
           SNS_TOPIC_NAME: !GetAtt SNS.TopicName
