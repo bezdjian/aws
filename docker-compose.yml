@@ -1,0 +1,44 @@
+version: "2.1"
+
+services:
+  app:
+    container_name: spring_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    networks:
+      - spring_localstack
+    environment:
+      - LOCALSTACK=localstack
+      - AWS_ACCESS_KEY_ID=dummy # just dummy works, those are needed otherwise Amazon 404 error occurs
+      - AWS_SECRET_ACCESS_KEY=dummy # just dummy works, those are needed otherwise Amazon 404 error occurs
+
+  localstack:
+    container_name: localstack_demo
+    image: localstack/localstack
+    networks:
+      - spring_localstack
+    #extra_hosts:
+    #  - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:4510-4559:4510-4559"  # external service port range
+      - "127.0.0.1:4566:4566"            # LocalStack Edge Proxy
+    environment:
+      - DEBUG=${DEBUG-}
+      - DATA_DIR=${DATA_DIR-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY-}  # only required for Pro
+      - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+networks:
+  spring_localstack:
+    driver: bridge
+    #ipam:
+    #  config:
+    #    - subnet: 10.10.1.0/24
