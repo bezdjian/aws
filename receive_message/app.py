@@ -16,7 +16,6 @@ def lambda_handler(event, context):
 
     dynamodb = get_dynamo_client(endpoint_url)
 
-    # dynamodb = boto3.client("dynamodb")
     json_event = json.dumps(event, indent=2)
     print("Received event: " + json_event)
     message = event['Records'][0]['Sns']['Message']
@@ -71,7 +70,6 @@ def lambda_handler(event, context):
 
 
 def get_dynamo_client(endpoint_url):
-    print(f"endpoint_url: {endpoint_url}")
     if endpoint_url == "" or endpoint_url is None:
         dynamodb = boto3.client("dynamodb")
     else:
