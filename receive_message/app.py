@@ -16,8 +16,6 @@ def lambda_handler(event, context):
 
     dynamodb = get_dynamo_client(endpoint_url)
 
-    json_event = json.dumps(event, indent=2)
-    print("Received event: " + json_event)
     message = event['Records'][0]['Sns']['Message']
     subject = event['Records'][0]['Sns']['Subject']
     message_id = event['Records'][0]['Sns']['MessageId']
@@ -27,18 +25,21 @@ def lambda_handler(event, context):
     parsed_timestamp = parser.parse(timestamp).strftime("%Y-%m-%dT%H:%M:%S")
     date = datetime.fromisoformat(parsed_timestamp)
 
+    dynamo_items = {
+        "id": {'S': uuid.uuid4().__str__()},
+        "messageId": {"S": message_id},
+        "message": {"S": message},
+        "subject": {"S": subject},
+        "created": {"S": date.__str__()},
+        "topicArn": {"S": topic_arn}
+        # We can add EventSource, EventSubscriptionArn if we use this lambda for other triggers?
+    }
+    print("Dynamo Items to put: ", dynamo_items)
+
     try:
         response = dynamodb.put_item(
             TableName=db_table,
-            Item={
-                "id": {'S': uuid.uuid4().__str__()},
-                "messageId": {"S": message_id},
-                "message": {"S": message},
-                "subject": {"S": subject},
-                "created": {"S": date.__str__()},
-                "topicArn": {"S": topic_arn}
-                # We can add EventSource, EventSubscriptionArn if we use this lambda for other triggers?
-            }
+            Item=dynamo_items
         )
 
         response_code = response["ResponseMetadata"]["HTTPStatusCode"]
