@@ -25,6 +25,9 @@ Resources:
       CodeUri: receive_message/
       Handler: app.lambda_handler
       Runtime: python3.9
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref DynamoTable
       Environment:
         Variables:
           #LOCAL_STACK_ENDPOINT: !FindInMap [ "env", !Ref environment, "localstack_url" ]
