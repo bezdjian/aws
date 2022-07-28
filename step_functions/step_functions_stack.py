@@ -14,8 +14,8 @@ class StepFunctionsStack(cdk.Stack):
         super().__init__(scope, construct_id, **kwargs)
 
         # Dynamo DB - HistoryTable
-        history_table = db.Table(self, "HistoryTable",
-                                 table_name="HistoryTable",
+        history_table = db.Table(self, "StateMachine-HistoryTable",
+                                 table_name="StateMachine-HistoryTable",
                                  billing_mode=db.BillingMode.PAY_PER_REQUEST,
                                  partition_key=db.Attribute(
                                      name="id",
