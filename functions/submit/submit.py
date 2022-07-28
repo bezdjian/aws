@@ -9,7 +9,7 @@ logger.setLevel(level=logging.INFO)
 
 
 def handler(event, context):
-    logger.info("Simple Function Event: %s", event)
+    logger.info("Submit transaction event: %s", event)
 
     try:
         history_table = os.environ.get("history_table")
@@ -25,6 +25,7 @@ def handler(event, context):
         logger.info("transaction_type: %s", transaction_type)
         # Initiate response body
         items = {
+            "id": transaction_id,
             "merchantId": merchant_id
         }
 
@@ -39,6 +40,7 @@ def handler(event, context):
                 'product': product,
                 'price': '23995'
             }
+            # TODO: Maybe update item!?!
             table_response = table.put_item(Item=items)
             logger.info("Response from Table: %s", table_response)
         elif transaction_type == "CANCEL":

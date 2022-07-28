@@ -65,6 +65,8 @@ class StepFunctionsStack(cdk.Stack):
 
         # Grant start_function to execute state machine
         state_machine.grant_start_execution(transaction_functions.start_function)
+        # Grant submit_function to put item in Dynamo DB
+        history_table.grant_write_data(transaction_functions.submit_function)
 
         cdk.CfnOutput(self, "StateMachineName",
                       value=state_machine.state_machine_name)
