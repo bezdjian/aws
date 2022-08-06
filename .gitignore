@@ -1,9 +1,12 @@
 .idea
+/step_functions/__pycache__/*
 __pycache__
 .pytest_cache
 .env
 .venv
+venv
 *.egg-info
+step_functions/step_functions.egg-info/*
 step_functions/*.egg-info/
 # CDK asset staging directory
 .cdk.staging

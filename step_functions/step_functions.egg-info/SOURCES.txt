@@ -1,7 +1,0 @@
-README.md
-setup.py
-step_functions/step_functions.egg-info/PKG-INFO
-step_functions/step_functions.egg-info/SOURCES.txt
-step_functions/step_functions.egg-info/dependency_links.txt
-step_functions/step_functions.egg-info/requires.txt
-step_functions/step_functions.egg-info/top_level.txt
