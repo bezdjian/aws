@@ -67,11 +67,9 @@ class StepFunctionsStack(cdk.Stack):
         state_machine.grant_start_execution(transaction_functions.start_function)
 
         cdk.CfnOutput(self, "StateMachineName",
-                      export_name="StateMachineName",
                       value=state_machine.state_machine_name)
 
         cdk.CfnOutput(self, "HistoryTableName",
-                      export_name="HistoryTableName",
                       value=history_table.table_name)
 
     def set_environment_variables(self, state_machine, transaction_functions, table_name):

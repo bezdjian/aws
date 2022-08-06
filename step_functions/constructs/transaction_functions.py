@@ -51,5 +51,4 @@ class TransactionFunctions(cdk.Construct):
 
         # Output API Gateways url
         cdk.CfnOutput(scope, "StartExecutionAPI-URL",
-                      export_name="StartExecutionAPI-URL",
                       value=execution_api.url)
