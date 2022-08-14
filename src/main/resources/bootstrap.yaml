@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: springboot-app
+
+aws:
+  secretsmanager:
+    # In Secrets manager, add dev/dbSecrets with key/value pairs
+    prefix: dev # default is secret
+    defaultContext: dbSecrets # dev/dbSecrets
+    name: dbSecrets # defaults to the value of spring.application.name
+  paramstore:
+    # In parameter store, add /dev/config/app.token
+    prefix: /dev
+    name: config
