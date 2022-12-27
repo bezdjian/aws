@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8081:8080"
+      - "8081:8081"
     networks:
       - spring_localstack
     environment:
@@ -16,7 +16,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=dummy # just dummy works, those are needed otherwise Amazon 404 error occurs
 
   localstack:
-    container_name: localstack_demo
+    container_name: localstack_app
     image: localstack/localstack
     networks:
       - spring_localstack
