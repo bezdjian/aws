@@ -20,10 +20,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class BucketController {
 
+  private static final Regions REGION = Regions.EU_NORTH_1;
+  private final AmazonS3 s3 = getAmazonS3();
+
   @GetMapping("/buckets")
   public BucketsResponse listBuckets() {
-    AmazonS3 s3 = getAmazonS3();
-
     log.info("*** Got s3 client in region: {}", s3.getRegionName());
 
     List<Bucket> buckets = s3.listBuckets();
@@ -46,7 +47,7 @@ public class BucketController {
 
     Optional.ofNullable(System.getenv("LOCALSTACK"))
       .ifPresentOrElse(endpoint -> setEndpointConfiguration(s3ClientBuilder, endpoint),
-        () -> s3ClientBuilder.withRegion(Regions.EU_NORTH_1));
+        () -> s3ClientBuilder.withRegion(REGION));
 
     return s3ClientBuilder.build();
   }
@@ -54,8 +55,8 @@ public class BucketController {
   private void setEndpointConfiguration(AmazonS3ClientBuilder s3ClientBuilder, String endpoint) {
     log.info("*** LOCALSTACK is present, setting endpoint: {}", endpoint);
     s3ClientBuilder.setEndpointConfiguration(
-        new AwsClientBuilder.EndpointConfiguration("http://" + endpoint + ":4566",
-            Regions.EU_NORTH_1.getName())
+      new AwsClientBuilder.EndpointConfiguration("http://" + endpoint + ":4566",
+        REGION.getName())
     );
   }
 }

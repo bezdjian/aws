@@ -20,12 +20,11 @@ import java.util.*;
 @RequestMapping("/api")
 public class DynamoController {
 
-  public static final Regions REGION = Regions.EU_NORTH_1;
+  private static final Regions REGION = Regions.EU_NORTH_1;
+  private final AmazonDynamoDB dynamoDB = getDynamoDB();
 
   @GetMapping("/items")
   public DynamoDBResponse getItems() {
-    AmazonDynamoDB dynamoDB = getDynamoDB();
-
     log.info("*** Got dynamoDB client: {}", dynamoDB.toString());
 
     ScanRequest scanRequest = new ScanRequest()
@@ -68,7 +67,7 @@ public class DynamoController {
 
   private void setEndpointConfiguration(AmazonDynamoDBClientBuilder s3ClientBuilder, String endpoint) {
     log.info("*** LOCALSTACK is present, setting endpoint: {}", endpoint);
-    s3ClientBuilder.setEndpointConfiguration(
+    s3ClientBuilder.withEndpointConfiguration(
       new AwsClientBuilder.EndpointConfiguration("http://" + endpoint + ":4566",
         REGION.getName())
     );
