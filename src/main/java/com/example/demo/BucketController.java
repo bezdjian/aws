@@ -5,7 +5,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
-import com.example.demo.model.LambdaResponse;
+import com.example.demo.model.BucketsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class BucketController {
 
   @GetMapping("/buckets")
-  public LambdaResponse listBuckets() {
+  public BucketsResponse listBuckets() {
     AmazonS3 s3 = getAmazonS3();
 
     log.info("*** Got s3 client in region: {}", s3.getRegionName());
@@ -32,7 +32,7 @@ public class BucketController {
 
     List<String> bucketNames = getBucketNames(s3);
 
-    return new LambdaResponse(bucketNames);
+    return new BucketsResponse(bucketNames);
   }
 
   private static List<String> getBucketNames(AmazonS3 s3) {
