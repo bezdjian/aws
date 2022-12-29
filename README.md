@@ -26,6 +26,8 @@ The --no-deps will not start linked services.
 ### Put item in DynamoDB table
 `aws --endpoint-url=http://localhost:4566 dynamodb put-item --table-name Albums --item file://items.json`
 
+Edit the content of the items.json (or create another .json file) and run the command again to add other items.
+
 ### Scan DynamoDB
 `aws --endpoint-url=http://localhost:4566 dynamodb scan --table-name Albums --query Items`
 
