@@ -1,6 +1,19 @@
-FROM openjdk:8-jdk
+FROM maven
 
-COPY /target/demo-0.0.1-SNAPSHOT.jar app.jar
+COPY src /app/src
+COPY pom.xml /app/
 
-EXPOSE 8080
+WORKDIR /app
+
+RUN mvn install -DskipTests
+
+RUN cp /app/target/demo-0.1.jar app.jar
+
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+## Simple Dockerfile
+#FROM openjdk:17-jdk
+#COPY /target/demo-0.1.jar app.jar
+#EXPOSE 8081
+#ENTRYPOINT ["java", "-jar", "app.jar"]
