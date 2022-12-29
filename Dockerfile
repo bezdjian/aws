@@ -5,7 +5,7 @@ COPY pom.xml /app/
 
 WORKDIR /app
 
-RUN mvn install -DskipTests
+RUN mvn install
 
 RUN cp /app/target/demo-0.1.jar app.jar
 
