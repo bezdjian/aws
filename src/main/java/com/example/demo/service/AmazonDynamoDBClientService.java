@@ -1,32 +1,26 @@
-package com.example.demo;
+package com.example.demo.service;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.example.demo.model.DynamoDBResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Slf4j
-@RestController
-@RequestMapping("/api")
-public class DynamoController {
+@Service
+@RequiredArgsConstructor
+public class AmazonDynamoDBClientService {
 
-  private static final Regions REGION = Regions.EU_NORTH_1;
-  private final AmazonDynamoDB dynamoDB = getDynamoDB();
+  @Autowired
+  private final AmazonDynamoDB dynamoDB;
 
-  @GetMapping("/items")
   public DynamoDBResponse getItems() {
-    log.info("*** Got dynamoDB client: {}", dynamoDB.toString());
-
     ScanRequest scanRequest = new ScanRequest()
       .withTableName("Albums");
 
@@ -54,22 +48,5 @@ public class DynamoController {
       return new DynamoDBResponse(Collections.singletonList(
         Collections.singletonMap("errorMessage", e.getMessage())));
     }
-  }
-
-  private AmazonDynamoDB getDynamoDB() {
-    AmazonDynamoDBClientBuilder dbClientBuilder = AmazonDynamoDBClientBuilder.standard();
-    Optional.ofNullable(System.getenv("LOCALSTACK"))
-      .ifPresentOrElse(endpoint -> setEndpointConfiguration(dbClientBuilder, endpoint),
-        () -> dbClientBuilder.withRegion(REGION));
-
-    return dbClientBuilder.build();
-  }
-
-  private void setEndpointConfiguration(AmazonDynamoDBClientBuilder s3ClientBuilder, String endpoint) {
-    log.info("*** LOCALSTACK is present, setting endpoint: {}", endpoint);
-    s3ClientBuilder.withEndpointConfiguration(
-      new AwsClientBuilder.EndpointConfiguration("http://" + endpoint + ":4566",
-        REGION.getName())
-    );
   }
 }
