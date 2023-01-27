@@ -1,6 +1,16 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: An AWS Serverless Application that reads a bucket object into Dynamo DB.
+
+Parameters:
+  environment:
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    Default: dev
+
+
 Resources:
   cloud9HelloLambdaFn:
     Type: 'AWS::Serverless::Function'
@@ -15,6 +25,7 @@ Resources:
       Environment:
         Variables:
           DDB_TABLE: !Ref Cloud9HelloDynamoDBTable
+          ENV: !Ref environment
       Events:
         S3Event:
           Type: S3

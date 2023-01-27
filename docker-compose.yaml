@@ -1,0 +1,24 @@
+version: "2.1"
+
+services:
+  localstack:
+    container_name: sam_bucket_events_localstack
+    image: localstack/localstack:1.3.1
+    networks:
+      - localstack_network
+    ports:
+      - "127.0.0.1:4510-4559:4510-4559"  # external service port range
+      - "127.0.0.1:4566:4566"            # LocalStack Edge Proxy
+    environment:
+      - DEBUG=${DEBUG-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY-}  # only required for Pro
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+networks:
+  localstack_network:
+    name: sam_localstack_network
+    driver: bridge
