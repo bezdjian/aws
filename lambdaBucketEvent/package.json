@@ -1,0 +1,14 @@
+{
+  "name": "lambdabucketevent",
+  "version": "1.0.0",
+  "description": "Lambda function to store bucket event",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Harout Bezdjian",
+  "license": "ISC",
+  "dependencies": {
+    "aws-cdk": "2.62.2"
+  }
+}
