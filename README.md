@@ -11,5 +11,11 @@ AWS Lambda function creates an S3 bucket and DynamoDB table, triggers Lambda
 - Run the application
     - 
     ```bash
-    $ sam local invoke --docker-network sam_localstack_network --event event/s3-event.json --env-vars env.json
+    sam local invoke --docker-network sam_localstack_network --event event/s3-event.json --env-vars env.json
+    ```
+
+- After running few times, scan the DB table
+    - 
+    ```bash
+    awslocal dynamodb scan --table-name bucket-events-table --query Count
     ```

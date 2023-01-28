@@ -1,3 +1,5 @@
 volume/
 node_modules
 */node_modules
+Items.json
+*/package-lock.json
