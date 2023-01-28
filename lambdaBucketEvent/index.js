@@ -1,14 +1,14 @@
-var AWS = require("aws-sdk");
+let AWS = require("aws-sdk");
 
 exports.handler = function (event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  var s3ObjectKey = event.Records[0].s3.object.key;
-  var s3ObjectSize = event.Records[0].s3.object.size;
-  var s3ObjectTime = event.Records[0].eventTime;
-  var s3BucketName = event.Records[0].s3.bucket.name;
+  let s3ObjectKey = event.Records[0].s3.object.key;
+  let s3ObjectSize = event.Records[0].s3.object.size;
+  let s3ObjectTime = event.Records[0].eventTime;
+  let s3BucketName = event.Records[0].s3.bucket.name;
 
-  var ddbTable = process.env.DDB_TABLE;
+  let ddbTable = process.env.DDB_TABLE;
 
   console.log("ddbTable: ", ddbTable);
 
@@ -19,15 +19,15 @@ exports.handler = function (event, context, callback) {
   );
 
   // Create dynamo service object
-  var ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08" });
+  let ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08" });
   if (process.env.ENV && process.env.ENV == "dev") {
     console.log(`process.env.ENV is present: ${process.env.ENV}, using localstack.`);
     let localstackHost = new AWS.Endpoint('http://localstack:4566')
-    var ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08", endpoint: localstackHost });
+    ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08", endpoint: localstackHost });
   }
 
   // Create params with the values to save into the table.
-  var params = createDBParam(
+  let params = createDBParam(
     ddbTable,
     s3ObjectKey,
     s3ObjectTime,
@@ -40,7 +40,7 @@ exports.handler = function (event, context, callback) {
       console.log("Error while puting item into table: ", error);
       callback(Error(error));
     } else {
-      var message = "Successfully added " + s3ObjectKey + " into table";
+      let message = "Successfully added " + s3ObjectKey + " into table";
       callback(null, respond(200, message));
     }
   });
