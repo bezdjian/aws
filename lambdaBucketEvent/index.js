@@ -23,6 +23,9 @@ exports.handler = function (event, context, callback) {
     s3ObjectSize.toString(),
     s3BucketName
   );
+
+  console.log("Ddb params:", JSON.stringify(params));
+
   // Call Dynamo DB to add the items to the table.
   dynamoDb.putItem(params, function (error, data) {
     if (error) {
