@@ -1,7 +1,5 @@
 let AWS = require("aws-sdk");
 
-let dynamoDb;
-
 exports.handler = function (event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
@@ -12,7 +10,7 @@ exports.handler = function (event, context, callback) {
 
   let ddbTable = process.env.DDB_TABLE;
   // Create dynamo service object
-  dynamoDb = createDdb();
+  let dynamoDb = createDdb();
 
   // Create params with the values to save into the table.
   s3ObjectKey += Date.now();
