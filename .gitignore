@@ -1,6 +1,7 @@
 samconfig.toml
 .idea
 .venv
+.aws-sam
 
 tests/__pycache__
 receive_message/__pycache__
