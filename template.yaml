@@ -30,7 +30,6 @@ Resources:
             TableName: !Ref DynamoTable
       Environment:
         Variables:
-          #LOCAL_STACK_ENDPOINT: !FindInMap [ "env", !Ref environment, "localstack_url" ]
           LOCAL_STACK_ENDPOINT: !If [isDev, "http://host.docker.internal:4566", ""]
           DB_TABLE: !Ref DynamoTable
           SNS_TOPIC_ARN: !Ref SNS
