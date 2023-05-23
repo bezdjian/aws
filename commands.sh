@@ -11,6 +11,8 @@ samlocal deploy
 # Run with parameters and local env
 # sam local invoke --env-vars local.json --parameter-overrides=ParameterKey=environment,ParameterValue=prod
 samlocal local invoke --event events/sns_event.json --env-vars local.json
+# --env-vars local.json is needed since we have another name for DynamoDB than the physical ID 'SNSMessageTable'.
+# 'sns-message-table' is not passed to Lambda's env var but rather passed as 'SNSMessageTable'
 
 # Scan table
 awslocal dynamodb scan --table-name sns-message-table

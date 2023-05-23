@@ -1,6 +1,5 @@
 {
   "ReceiveMessageFunction": {
-    "SQS_QUEUE_NAME": "sam-queue-test",
     "DB_TABLE": "sns-message-table"
   }
 }

@@ -27,11 +27,11 @@ Resources:
       Runtime: python3.9
       Policies:
         - DynamoDBWritePolicy:
-            TableName: !Ref DynamoTable
+            TableName: !Ref SNSMessageTable
       Environment:
         Variables:
           LOCAL_STACK_ENDPOINT: !If [isDev, "http://host.docker.internal:4566", ""]
-          DB_TABLE: !Ref DynamoTable
+          DB_TABLE: !Ref SNSMessageTable
           SNS_TOPIC_ARN: !Ref SNS
           SNS_TOPIC_NAME: !GetAtt SNS.TopicName
   SNS:
@@ -56,21 +56,12 @@ Resources:
       SourceArn: !Ref SNS
       FunctionName: !Ref ReceiveMessageFunction
 
-  DynamoTable:
+  SNSMessageTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
       TableName: sns-message-table
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  #SendMessageFunctionApi:
-  #  Description: "API Gateway endpoint URL for Prod stage for send message receive_message"
-  #  Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/publish/"
-  ReceiveMessageFunctionARN:
-    Description: "Receive message Lambda Function ARN"
-    Value: !GetAtt ReceiveMessageFunction.Arn
   SNSTopicARN:
     Description: "Sns topic ARN"
     Value: !Ref SNS
