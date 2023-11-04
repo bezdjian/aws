@@ -37,28 +37,18 @@ def lambda_handler(event, context):
     print("Dynamo Items to put: ", dynamo_items)
 
     try:
-        response = dynamodb.put_item(
+        dynamodb.put_item(
             TableName=db_table,
             Item=dynamo_items
         )
 
-        response_code = response["ResponseMetadata"]["HTTPStatusCode"]
-        # Do we need this check?
-        if response_code == 200:
-            return {
-                "statusCode": 200,
-                "body": json.dumps({
-                    "message": message,
-                    "messageId": message_id,
-                })
-            }
-        else:
-            return {
-                "statusCode": response_code,
-                "body": json.dumps({
-                    "message": f"Failed to put item into {db_table}"
-                })
-            }
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                "message": message,
+                "messageId": message_id,
+            })
+        }
 
     except ClientError as err:
         return {
@@ -72,7 +62,9 @@ def lambda_handler(event, context):
 
 def get_dynamo_client(endpoint_url):
     if endpoint_url == "" or endpoint_url is None:
+        print("Getting default dynamodb client")
         dynamodb = boto3.client("dynamodb")
     else:
+        print(f"Getting localstack dynamodb client with endpoint {endpoint_url}")
         dynamodb = boto3.client("dynamodb", endpoint_url=endpoint_url)
     return dynamodb
