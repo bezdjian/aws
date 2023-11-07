@@ -1,0 +1,4 @@
+client-id-123,wrs:vehicles:view,sim-management,/vw/vw/eu/iot
+client-id-123,acsp:read,sim-management,/vw/audi/eu/iot
+client-id-123,acsp:write,sim-management,/vw/seat/eu/iot
+client-id-123,wrs:vehicles:read,sim-management,/vw/ford/eu/iot

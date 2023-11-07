@@ -1,0 +1,5 @@
+.aws-sam
+.idea
+.vscode
+*/target
+*/dependency-reduced-pom.xml

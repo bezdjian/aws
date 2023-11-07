@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: java-s3-bucket-event-lambda
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 128
+
+Resources:
+  S3Event:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: s3event
+      Handler: s3event.App::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          TABLE_NAME: !Ref SasCacheDynamo
+          REGION: !Sub "${AWS::Region}"
+          LOCAL_STACK_ENDPOINT: "http://localhost.localstack.cloud:4566"
+          S3_LOCAL_STACK_ENDPOINT: !Sub "http://s3.${AWS::Region}.localhost.localstack.cloud:4566"
+          JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1 # More info about tiered compilation https://aws.amazon.com/blogs/compute/optimizing-aws-lambda-function-performance-for-java/
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref SasCacheDynamo
+      Events:
+        S3:
+          Type: S3 # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Events: s3:ObjectCreated:*
+            Bucket: !Ref WhitelistingForSASBucket
+
+  SasCacheDynamo:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: sas-token-cache-outbound
+      AttributeDefinitions:
+        - AttributeName: "clientid"
+          AttributeType: "S"
+        - AttributeName: "scope"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "clientid"
+          KeyType: "HASH"
+        - AttributeName: "scope"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  WhitelistingForSASBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "whitelisting-for-sas-token-cache"
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  s3Bucket:
+    Value: !Ref WhitelistingForSASBucket
+  DynamoDb:
+    Value: !Ref SasCacheDynamo
