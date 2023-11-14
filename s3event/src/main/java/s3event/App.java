@@ -3,9 +3,9 @@ package s3event;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
+import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -43,18 +43,29 @@ public class App implements RequestHandler<S3Event, String> {
     final AmazonS3 s3Client = getS3Client(s3LocalStackEndpoint, region);
     final S3Object s3Object = s3Client.getObject(bkt, key);
     final List<WhiteList> whiteListList = extractLinesFromCsv(s3Object.getObjectContent());
-
+    List<String> newItemLabels = new ArrayList<>();
     logger.log("\n\n");
     whiteListList.forEach(System.out::println);
 
     // Code to insert into AWS Dynamo db
     final AmazonDynamoDB dynamoDbClient = getDynamoDbClient(localstackEndpoint, region);
-    final DynamoDB dynamoDB = new DynamoDB(dynamoDbClient);
-    final Table table = dynamoDB.getTable(tableName);
 
-    whiteListList.forEach(wl -> table.putItem(Item.fromMap(wl.toMap())));
+    whiteListList.forEach(wl -> {
+      PutItemResult putItemResult = dynamoDbClient.putItem(createPutItemRequest(wl, tableName));
+      String newItemLabel = putItemResult.getAttributes() != null ? "OLD" : "NEW";
+      newItemLabels.add(newItemLabel);
+    });
 
+    long newItemCount = newItemLabels.stream()
+        .filter(l -> l.equals("NEW"))
+        .count();
+    logger.log("New Items: " + newItemCount);
     return "OK";
+  }
+
+  private PutItemRequest createPutItemRequest(WhiteList wl, String tableName) {
+    return new PutItemRequest(tableName, wl.toAttributeValueMap())
+        .withReturnValues(ReturnValue.ALL_OLD);
   }
 
   private AmazonS3 getS3Client(String s3LocalStackEndpoint, String region) {
