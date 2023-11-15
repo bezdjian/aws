@@ -3,6 +3,7 @@ package s3event;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
@@ -22,6 +23,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class App implements RequestHandler<S3Event, String> {
 
@@ -51,7 +53,7 @@ public class App implements RequestHandler<S3Event, String> {
     final AmazonDynamoDB dynamoDbClient = getDynamoDbClient(localstackEndpoint, region);
 
     whiteListList.forEach(wl -> {
-      PutItemResult putItemResult = dynamoDbClient.putItem(createPutItemRequest(wl, tableName));
+      PutItemResult putItemResult = putItem(wl, dynamoDbClient, tableName);
       String newItemLabel = putItemResult.getAttributes() != null ? "OLD" : "NEW";
       newItemLabels.add(newItemLabel);
     });
@@ -63,9 +65,22 @@ public class App implements RequestHandler<S3Event, String> {
     return "OK";
   }
 
+  private PutItemResult putItem(WhiteList wl, AmazonDynamoDB dynamoDbClient, String tableName) {
+    try {
+      return dynamoDbClient.putItem(createPutItemRequest(wl, tableName));
+    } catch (ConditionalCheckFailedException ex) {
+      System.out.println("Already existing item..." + wl.getClientId() + "--" + wl.getScope());
+    }
+    return new PutItemResult().withAttributes(Map.of());
+  }
+
   private PutItemRequest createPutItemRequest(WhiteList wl, String tableName) {
-    return new PutItemRequest(tableName, wl.toAttributeValueMap())
-        .withReturnValues(ReturnValue.ALL_OLD);
+    return new PutItemRequest()
+        .withTableName(tableName)
+        .withItem(wl.toAttributeValueMap())
+        .withReturnValues(ReturnValue.ALL_OLD)
+        .withConditionExpression("attribute_not_exists(clientid) AND attribute_not_exists(#sc)")
+        .withExpressionAttributeNames(Map.of("#sc", "scope"));
   }
 
   private AmazonS3 getS3Client(String s3LocalStackEndpoint, String region) {

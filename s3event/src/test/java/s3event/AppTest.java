@@ -3,6 +3,7 @@ package s3event;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
 import com.amazonaws.services.dynamodbv2.model.ReturnValue;
@@ -16,6 +17,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AppTest {
 
@@ -25,32 +27,41 @@ public class AppTest {
    */
   @Test
   @Ignore
-  public void s() {
+  public void testLambdaHandler() throws IOException {
     String tableName = "sas-token-cache-outbound";
     List<String> newItemLabels = new ArrayList<>();
     InputStream resource = getClass().getClassLoader().getResourceAsStream("test.csv");
     assert resource != null;
+
+    final List<WhiteList> whiteList = MapCsvLinesToWhiteList(resource);
+    final AmazonDynamoDB dynamoDbClient = getDynamoDbClient();
+
+    whiteList.forEach(wl -> {
+      PutItemResult putItemResult = getPutItemResult(wl, dynamoDbClient, tableName);
+      String newItemLabel = putItemResult.getAttributes() != null ? "OLD" : "NEW";
+      System.out.println("PutItemResult: " + putItemResult);
+      newItemLabels.add(newItemLabel);
+    });
+
+    long newItemCount = newItemLabels.stream().filter(l -> l.equals("NEW")).count();
+    System.out.println("New Items: " + newItemCount);
+
+  }
+
+  private PutItemResult getPutItemResult(WhiteList wl, AmazonDynamoDB dynamoDbClient, String tableName) {
     try {
-      final List<WhiteList> whiteList = MapCsvLinesToWhiteList(resource);
-      final AmazonDynamoDB dynamoDbClient = getDynamoDbClient();
-
-      whiteList.forEach(wl -> {
-        System.out.println("Putting item..." + wl.toMap());
-        PutItemResult putItemResult = dynamoDbClient.putItem(new PutItemRequest(tableName, wl.toAttributeValueMap())
-            .withReturnValues(ReturnValue.ALL_OLD));
-        String newItemLabel = putItemResult.getAttributes() != null ? "OLD" : "NEW";
-        System.out.println("PutItemResult: " + putItemResult);
-        System.out.println("newItemLabel: " + newItemLabel);
-        newItemLabels.add(newItemLabel);
-      });
-
-      long newItemCount = newItemLabels.stream()
-          .filter(l -> l.equals("NEW"))
-          .count();
-      System.out.println("New Items: " + newItemCount);
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
+      return dynamoDbClient.putItem(
+          new PutItemRequest()
+              .withTableName(tableName)
+              .withItem(wl.toAttributeValueMap())
+              .withReturnValues(ReturnValue.ALL_OLD)
+              .withConditionExpression("attribute_not_exists(clientid) AND attribute_not_exists(#sc)")
+              .withExpressionAttributeNames(Map.of("#sc", "scope"))
+      );
+    } catch (ConditionalCheckFailedException ex) {
+      System.out.println("Already existing item..." + wl.getClientId() + "--" + wl.getScope());
     }
+    return new PutItemResult().withAttributes(Map.of()); // As if exists
   }
 
   private List<WhiteList> MapCsvLinesToWhiteList(InputStream resource) throws IOException {
