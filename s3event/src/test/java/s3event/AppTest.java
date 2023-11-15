@@ -29,22 +29,19 @@ public class AppTest {
   @Ignore
   public void testLambdaHandler() throws IOException {
     String tableName = "sas-token-cache-outbound";
-    List<String> newItemLabels = new ArrayList<>();
     InputStream resource = getClass().getClassLoader().getResourceAsStream("test.csv");
     assert resource != null;
 
     final List<WhiteList> whiteList = MapCsvLinesToWhiteList(resource);
     final AmazonDynamoDB dynamoDbClient = getDynamoDbClient();
 
-    whiteList.forEach(wl -> {
-      PutItemResult putItemResult = getPutItemResult(wl, dynamoDbClient, tableName);
-      String newItemLabel = putItemResult.getAttributes() != null ? "OLD" : "NEW";
-      System.out.println("PutItemResult: " + putItemResult);
-      newItemLabels.add(newItemLabel);
-    });
+    long count = whiteList.stream()
+        .map(wl -> getPutItemResult(wl, dynamoDbClient, tableName))
+        .map(putItemResult -> putItemResult.getAttributes() != null ? "OLD" : "NEW")
+        .filter(s -> s.equals("NEW"))
+        .count();
 
-    long newItemCount = newItemLabels.stream().filter(l -> l.equals("NEW")).count();
-    System.out.println("New Items: " + newItemCount);
+    System.out.println("New Items: " + count);
 
   }
 
