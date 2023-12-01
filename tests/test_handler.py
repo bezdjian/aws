@@ -1,11 +1,17 @@
 import json
-import unittest
+import os
+import sys
+from unittest import TestCase
 from unittest.mock import Mock, patch
+
+basedir = os.path.dirname(os.path.realpath(__file__))
+parent_directory = os.path.dirname(basedir)
+sys.path.append(parent_directory + "/hello_world")
 
 from hello_world import app
 
 
-class AppTest(unittest.TestCase):
+class AppTest(TestCase):
     expected_status_type = "TEST_STATUS_TYPE_UNKNOWN"
     external_id = "3A9AC5E49ACF4D1E84F37646E874C542"
 

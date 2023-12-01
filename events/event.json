@@ -1,5 +1,5 @@
 {
-  "body": "{\"message\": \"hello world\"}",
+  "body": "{\"externalId\": \"3A9AC5E49ACF4D1E84F37646E874C542\"}",
   "resource": "/hello",
   "path": "/hello",
   "httpMethod": "POST",

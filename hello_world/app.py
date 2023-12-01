@@ -2,10 +2,14 @@ import json
 
 import boto3
 
+from utils import test
+
 
 def lambda_handler(event, context):
     http_method = event.get("httpMethod")
     print(f"http_method: {http_method}")
+
+    test()
 
     if http_method == "GET":
         return get_handler(event, context)
