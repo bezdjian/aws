@@ -1,0 +1,4 @@
+{
+  "statusCode": 200,
+  "body": "{\"message\": [{\"name\": {\"S\": \"John Doe\"}, \"id\": {\"S\": \"123456\"}, \"email\": {\"S\": \"john.doe@example.com\"}, \"age\": {\"N\": \"35\"}}]}"
+}

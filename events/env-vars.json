@@ -1,0 +1,7 @@
+{
+  "HelloWorldFunction": {
+    "TABLE_TABLE_NAME": "local-dynamo-table",
+    "TABLE_TABLE_ARN": "Table.Arn",
+    "ENV_NAME": "local"
+  }
+}

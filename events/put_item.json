@@ -1,0 +1,6 @@
+{
+  "id": {"S": "123456"},
+  "name": {"S": "John Doe"},
+  "email": {"S": "john.doe@example.com"},
+  "age": {"N": "35"}
+}
