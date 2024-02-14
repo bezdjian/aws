@@ -2,6 +2,7 @@ import json
 import boto3
 import os
 import uuid
+from typing import Dict, Any
 
 from botocore.exceptions import ClientError
 from datetime import datetime
@@ -9,47 +10,36 @@ from dateutil import parser
 
 
 def lambda_handler(event, context):
-    db_table = os.environ.get("DB_TABLE")
-    endpoint_url = os.environ.get("LOCAL_STACK_ENDPOINT")
+    db_table = os.getenv("DB_TABLE", "")
+    endpoint_url = os.getenv("LOCAL_STACK_ENDPOINT", "")
     print(f"db_table: {db_table}")
     print(f"endpoint_url: {endpoint_url}")
 
     dynamodb = get_dynamo_client(endpoint_url)
 
-    message = event['Records'][0]['Sns']['Message']
-    subject = event['Records'][0]['Sns']['Subject']
-    message_id = event['Records'][0]['Sns']['MessageId']
-    timestamp = event['Records'][0]['Sns']['Timestamp']
-    topic_arn = event['Records'][0]['Sns']['TopicArn']
+    sns_record = event['Records'][0]['Sns']
+    message, subject, message_id, timestamp, topic_arn = (
+        sns_record['Message'],
+        sns_record['Subject'],
+        sns_record['MessageId'],
+        sns_record['Timestamp'],
+        sns_record['TopicArn'],
+    )
 
-    parsed_timestamp = parser.parse(timestamp).strftime("%Y-%m-%dT%H:%M:%S")
-    date = datetime.fromisoformat(parsed_timestamp)
+    date = parser.parse(timestamp)
 
-    dynamo_items = {
-        "id": {'S': uuid.uuid4().__str__()},
-        "messageId": {"S": message_id},
-        "message": {"S": message},
-        "subject": {"S": subject},
-        "created": {"S": date.__str__()},
-        "topicArn": {"S": topic_arn}
-        # We can add EventSource, EventSubscriptionArn if we use this lambda for other triggers?
-    }
+    dynamo_items = create_dynamo_items(message_id, message, subject, date, topic_arn)
     print("Dynamo Items to put: ", dynamo_items)
 
     try:
-        dynamodb.put_item(
-            TableName=db_table,
-            Item=dynamo_items
-        )
-
+        dynamodb.put_item(TableName=db_table, Item=dynamo_items)
         return {
-            "statusCode": 200,
+            "statusCode": 200, 
             "body": json.dumps({
-                "message": message,
-                "messageId": message_id,
-            })
-        }
-
+                "message": message, 
+                "messageId": message_id
+                })
+            }
     except ClientError as err:
         return {
             "statusCode": err.response['ResponseMetadata']['HTTPStatusCode'],
@@ -60,11 +50,17 @@ def lambda_handler(event, context):
         }
 
 
-def get_dynamo_client(endpoint_url):
-    if endpoint_url == "" or endpoint_url is None:
-        print("Getting default dynamodb client")
-        dynamodb = boto3.client("dynamodb")
-    else:
-        print(f"Getting localstack dynamodb client with endpoint {endpoint_url}")
-        dynamodb = boto3.client("dynamodb", endpoint_url=endpoint_url)
-    return dynamodb
+def create_dynamo_items(message_id: str, message: str, subject: str, date: datetime, topic_arn: str) -> Dict[str, Dict[str, str]]:
+    return {
+        "id": {'S': str(uuid.uuid4())},
+        "messageId": {"S": message_id},
+        "message": {"S": message},
+        "subject": {"S": subject},
+        "created": {"S": date.isoformat()},
+        "topicArn": {"S": topic_arn}
+    }
+
+
+def get_dynamo_client(endpoint_url: str) -> Any:
+    print("Getting default dynamodb client" if not endpoint_url else f"Getting localstack dynamodb client with endpoint {endpoint_url}")
+    return boto3.client("dynamodb", endpoint_url=endpoint_url) if endpoint_url else boto3.client("dynamodb")
