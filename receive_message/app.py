@@ -12,6 +12,9 @@ from dateutil import parser
 def lambda_handler(event, context):
     db_table = os.getenv("DB_TABLE", "")
     endpoint_url = os.getenv("LOCAL_STACK_ENDPOINT", "")
+    account_id = os.getenv("ACCOUNT_ID", "")
+    
+    print(f"account_id: {account_id}")
     print(f"db_table: {db_table}")
     print(f"endpoint_url: {endpoint_url}")
 
@@ -41,13 +44,24 @@ def lambda_handler(event, context):
                 })
             }
     except ClientError as err:
-        return {
-            "statusCode": err.response['ResponseMetadata']['HTTPStatusCode'],
-            "body": json.dumps({
-                "message": err.response['Error']['Message'],
-                "exception": err.response['Error']['Code']
-            }),
-        }
+        error_code, error_message = err.response['Error']['Code'], err.response['Error']['Message']
+        status_code = err.response['ResponseMetadata']['HTTPStatusCode']
+        if error_code == 'ResourceNotFoundException':
+            return {
+                "statusCode": status_code,
+                "body": json.dumps({
+                    "message": f"{error_message}: {db_table} not found in account {account_id}",
+                    "exception":  error_code
+                }),
+            }
+        else:
+            return {
+                "statusCode": status_code,
+                "body": json.dumps({
+                    "message": error_message,
+                    "exception": error_code
+                }),
+            }
 
 
 def create_dynamo_items(message_id: str, message: str, subject: str, date: datetime, topic_arn: str) -> Dict[str, Dict[str, str]]:

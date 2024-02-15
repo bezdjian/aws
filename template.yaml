@@ -31,6 +31,7 @@ Resources:
       Environment:
         Variables:
           LOCAL_STACK_ENDPOINT: !If [isDev, "http://host.docker.internal:4566", ""]
+          ACCOUNT_ID: !Ref AWS::AccountId
           DB_TABLE: !Ref SNSMessageTable
           SNS_TOPIC_ARN: !Ref SNS
           SNS_TOPIC_NAME: !GetAtt SNS.TopicName
