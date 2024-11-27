@@ -1,4 +1,4 @@
--e .
+#-e .
 attrs==20.3.0
 aws-cdk.assets==1.109.0
 aws-cdk.aws-apigateway==1.109.0
@@ -62,11 +62,11 @@ pyparsing==2.4.7
 pytest==6.2.4
 pytest-mock==3.6.1
 python-dateutil==2.8.1
-PyYAML==5.4.1
+PyYAML==6.0.2
 requests==2.25.1
 s3transfer==0.4.2
 six==1.16.0
 toml==0.10.2
-troposphere==2.7.1
+troposphere==4.8.3
 typing-extensions==3.10.0.0
 urllib3==1.26.5
