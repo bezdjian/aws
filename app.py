@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from aws_cdk import core as cdk
+import aws_cdk as cdk
 
 from step_functions.step_functions_stack import StepFunctionsStack
 

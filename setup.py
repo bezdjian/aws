@@ -19,13 +19,17 @@ setuptools.setup(
     packages=setuptools.find_packages(where="step_functions"),
 
     install_requires=[
-        "aws-cdk.core==1.125.0",
-        "aws-cdk.aws-lambda==1.125.0",
-        "aws-cdk.aws-stepfunctions==1.125.0",
-        "aws-cdk.aws-stepfunctions-tasks==1.125.0",
-        "aws-cdk.aws-apigateway==1.125.0",
-        "boto3",
-        "botocore",
+        "aws-cdk-lib>=2.211.0",
+        "constructs>=10.0.0",
+        "boto3>=1.34.0",
+        "botocore>=1.34.0",
+    ],
+
+    install_requires=[
+        "aws-cdk-lib>=2.130.0",
+        "constructs>=10.0.0",
+        "boto3>=1.34.0",
+        "botocore>=1.34.0",
         "pytest"
     ],
 
@@ -42,6 +46,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.13",
 
         "Topic :: Software Development :: Code Generators",
         "Topic :: Utilities",
