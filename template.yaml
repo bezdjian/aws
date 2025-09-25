@@ -1,0 +1,302 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  BiblioCloud - A modern serverless library management system
+  Built with AWS Lambda, API Gateway, DynamoDB, and S3
+
+Parameters:
+  StageName:
+    Type: String
+    Default: dev
+    Description: Deployment stage name for the HTTP API
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 30
+    MemorySize: 256
+    Tracing: Active
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        PYTHONUTF8: '1'
+
+Resources:
+  # API Gateway
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref StageName
+      CorsConfiguration:
+        AllowMethods:
+          - '*'
+        AllowHeaders:
+          - '*'
+        AllowOrigins:
+          - '*'
+
+  # DynamoDB Tables
+  BooksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}-books
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: book_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: book_id
+          KeyType: HASH
+
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}-users
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: email-index
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  BorrowedBooksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}-borrowed-books
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: borrow_id
+          AttributeType: S
+        - AttributeName: user_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: borrow_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: user-index
+          KeySchema:
+            - AttributeName: user_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+  # S3 Bucket for file storage
+  BooksBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-books-${AWS::AccountId}-${AWS::Region}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+            AllowedOrigins:
+              - '*'
+
+  # Lambda Functions
+  BooksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-books
+      CodeUri: books/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          BOOKS_TABLE: !Ref BooksTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BooksTable
+      Events:
+        GetBooks:
+          Type: HttpApi
+          Properties:
+            Path: /books
+            Method: GET
+            ApiId: !Ref HttpApi
+        GetBook:
+          Type: HttpApi
+          Properties:
+            Path: /books/{book_id}
+            Method: GET
+            ApiId: !Ref HttpApi
+        CreateBook:
+          Type: HttpApi
+          Properties:
+            Path: /books
+            Method: POST
+            ApiId: !Ref HttpApi
+        UpdateBook:
+          Type: HttpApi
+          Properties:
+            Path: /books/{book_id}
+            Method: PUT
+            ApiId: !Ref HttpApi
+        DeleteBook:
+          Type: HttpApi
+          Properties:
+            Path: /books/{book_id}
+            Method: DELETE
+            ApiId: !Ref HttpApi
+
+  UsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-users
+      CodeUri: users/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+      Events:
+        GetUsers:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: GET
+            ApiId: !Ref HttpApi
+        GetUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{user_id}
+            Method: GET
+            ApiId: !Ref HttpApi
+        CreateUser:
+          Type: HttpApi
+          Properties:
+            Path: /users
+            Method: POST
+            ApiId: !Ref HttpApi
+        UpdateUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{user_id}
+            Method: PUT
+            ApiId: !Ref HttpApi
+        DeleteUser:
+          Type: HttpApi
+          Properties:
+            Path: /users/{user_id}
+            Method: DELETE
+            ApiId: !Ref HttpApi
+
+  BorrowingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-borrowing
+      CodeUri: borrowing/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          BORROWED_BOOKS_TABLE: !Ref BorrowedBooksTable
+          BOOKS_TABLE: !Ref BooksTable
+          USERS_TABLE: !Ref UsersTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BorrowedBooksTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BooksTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+      Events:
+        GetBorrowedBooks:
+          Type: HttpApi
+          Properties:
+            Path: /borrowed
+            Method: GET
+            ApiId: !Ref HttpApi
+        GetUserBorrowedBooks:
+          Type: HttpApi
+          Properties:
+            Path: /users/{user_id}/borrowed
+            Method: GET
+            ApiId: !Ref HttpApi
+        BorrowBook:
+          Type: HttpApi
+          Properties:
+            Path: /borrow
+            Method: POST
+            ApiId: !Ref HttpApi
+        ReturnBook:
+          Type: HttpApi
+          Properties:
+            Path: /return
+            Method: POST
+            ApiId: !Ref HttpApi
+
+  FilesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-files
+      CodeUri: files/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          BOOKS_BUCKET: !Ref BooksBucket
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref BooksBucket
+      Events:
+        UploadFile:
+          Type: HttpApi
+          Properties:
+            Path: /files/upload
+            Method: POST
+            ApiId: !Ref HttpApi
+        GetFileUrl:
+          Type: HttpApi
+          Properties:
+            Path: /files/{file_key}
+            Method: GET
+            ApiId: !Ref HttpApi
+
+Outputs:
+  ApiEndpoint:
+    Description: Base URL for the BiblioCloud API
+    Value: !GetAtt HttpApi.ApiEndpoint
+  BooksTableName:
+    Description: Name of the Books DynamoDB table
+    Value: !Ref BooksTable
+  UsersTableName:
+    Description: Name of the Users DynamoDB table
+    Value: !Ref UsersTable
+  BorrowedBooksTableName:
+    Description: Name of the Borrowed Books DynamoDB table
+    Value: !Ref BorrowedBooksTable
+  BooksBucketName:
+    Description: Name of the S3 bucket for file storage
+    Value: !Ref BooksBucket
+  BooksFunctionArn:
+    Description: ARN of the Books Lambda function
+    Value: !GetAtt BooksFunction.Arn
+  UsersFunctionArn:
+    Description: ARN of the Users Lambda function
+    Value: !GetAtt UsersFunction.Arn
+  BorrowingFunctionArn:
+    Description: ARN of the Borrowing Lambda function
+    Value: !GetAtt BorrowingFunction.Arn
+  FilesFunctionArn:
+    Description: ARN of the Files Lambda function
+    Value: !GetAtt FilesFunction.Arn

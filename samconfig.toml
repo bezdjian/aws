@@ -1,0 +1,13 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "bibliocloud"
+s3_bucket = ""
+s3_prefix = "bibliocloud"
+region = "eu-north-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = ""
+confirm_changeset = true
+fail_on_empty_changeset = false
+resolve_s3 = true
