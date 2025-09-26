@@ -1,58 +1,279 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  BiblioCloud - A modern serverless library management system
-  Built with AWS Lambda, API Gateway, DynamoDB, and S3
+  BiblioCloud - Serverless Library Management System
 
-Parameters:
-  StageName:
-    Type: String
-    Default: dev
-    Description: Deployment stage name for the HTTP API
+  Complete library management with books, users, borrowing, and file storage
 
 Globals:
   Function:
-    Runtime: python3.12
     Timeout: 30
-    MemorySize: 256
-    Tracing: Active
-    Architectures:
-      - x86_64
+    Runtime: python3.12
     Environment:
       Variables:
-        PYTHONUTF8: '1'
+        BOOKS_TABLE: !Ref BooksTable
+        USERS_TABLE: !Ref UsersTable
+        BORROWED_BOOKS_TABLE: !Ref BorrowedBooksTable
+        BOOKS_BUCKET: !Ref BooksBucket
 
 Resources:
-  # API Gateway
-  HttpApi:
-    Type: AWS::Serverless::HttpApi
-    Properties:
-      StageName: !Ref StageName
-      CorsConfiguration:
-        AllowMethods:
-          - '*'
-        AllowHeaders:
-          - '*'
-        AllowOrigins:
-          - '*'
-
   # DynamoDB Tables
   BooksTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub ${AWS::StackName}-books
+      TableName: BiblioCloud-Books
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: book_id
           AttributeType: S
+        - AttributeName: isbn
+          AttributeType: S
+        - AttributeName: title
+          AttributeType: S
       KeySchema:
         - AttributeName: book_id
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: isbn-index
+          KeySchema:
+            - AttributeName: isbn
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: title-index
+          KeySchema:
+            - AttributeName: title
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  BiblioCloud - Serverless Library Management System
+
+  A comprehensive library management system built with AWS Lambda, API Gateway,
+  DynamoDB, and S3 for modern book inventory and lending operations.
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.12
+    MemorySize: 256
+    Environment:
+      Variables:
+        BOOKS_TABLE: !Ref BooksTable
+        USERS_TABLE: !Ref UsersTable
+        TRANSACTIONS_TABLE: !Ref TransactionsTable
+        STORAGE_BUCKET: !Ref StorageBucket
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    Description: Deployment stage
+
+Resources:
+  # DynamoDB Tables
+  BooksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}-books-${Stage}
+      AttributeDefinitions:
+        - AttributeName: book_id
+          AttributeType: S
+        - AttributeName: isbn
+          AttributeType: S
+        - AttributeName: category
+          AttributeType: S
+      KeySchema:
+        - AttributeName: book_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: isbn-index
+          KeySchema:
+            - AttributeName: isbn
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          BillingMode: PAY_PER_REQUEST
+        - IndexName: category-index
+          KeySchema:
+            - AttributeName: category
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          BillingMode: PAY_PER_REQUEST
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
 
   UsersTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub ${AWS::StackName}-users
+      TableName: !Sub ${AWS::StackName}-users-${Stage}
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: email-index
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          BillingMode: PAY_PER_REQUEST
+      BillingMode: PAY_PER_REQUEST
+
+  TransactionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}-transactions-${Stage}
+      AttributeDefinitions:
+        - AttributeName: transaction_id
+          AttributeType: S
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: book_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: transaction_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: user-index
+          KeySchema:
+            - AttributeName: user_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          BillingMode: PAY_PER_REQUEST
+        - IndexName: book-index
+          KeySchema:
+            - AttributeName: book_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          BillingMode: PAY_PER_REQUEST
+      BillingMode: PAY_PER_REQUEST
+
+  # S3 Bucket for file storage
+  StorageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-storage-${AWS::AccountId}-${Stage}
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT, POST, DELETE]
+            AllowedOrigins: ['*']
+            MaxAge: 3000
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  StorageBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref StorageBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub '${StorageBucket}/covers/*'
+
+  # Lambda Functions
+  BooksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-books-${Stage}
+      CodeUri: src/books/
+      Handler: handler.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BooksTable
+        - S3CrudPolicy:
+            BucketName: !Ref StorageBucket
+        - Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+              Resource: 
+                - !Sub '${BooksTable}/index/*'
+      Events:
+        GetBooks:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LibraryApi
+            Path: /books
+            Method: get
+        CreateBook:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LibraryApi
+            Path: /books
+            Method: post
+        GetBook:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LibraryApi
+            Path: /books/{book_id}
+            Method: get
+        UpdateBook:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LibraryApi
+            Path: /books/{book_id}
+            Method: put
+        DeleteBook:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LibraryApi
+            Path: /books/{book_id}
+            Method: delete
+        SearchBooks:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LibraryApi
+            Path: /books/search
+            Method: get
+
+  UsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-users-${Stage}
+      CodeUri: src/users/
+      Handler: handler.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:Query
+              Resource: 
+                - !Sub '${UsersTable}/index/*'
+      Events:
+        GetUsers:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LibraryApi
+            Path: /users
+            Method: get
+        CreateUser:
+          Type: Api
+          Properties:
+            RestApiId: !Ref LibraryApi
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: BiblioCloud-Users
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: user_id
@@ -73,12 +294,14 @@ Resources:
   BorrowedBooksTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub ${AWS::StackName}-borrowed-books
+      TableName: BiblioCloud-BorrowedBooks
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: borrow_id
           AttributeType: S
         - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: book_id
           AttributeType: S
       KeySchema:
         - AttributeName: borrow_id
@@ -90,213 +313,171 @@ Resources:
               KeyType: HASH
           Projection:
             ProjectionType: ALL
+        - IndexName: book-index
+          KeySchema:
+            - AttributeName: book_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
-  # S3 Bucket for file storage
+  # S3 Bucket for book covers and documents
   BooksBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub ${AWS::StackName}-books-${AWS::AccountId}-${AWS::Region}
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
+      BucketName: !Sub "bibliocloud-books-${AWS::AccountId}-${AWS::Region}"
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
-              - '*'
+              - "*"
             AllowedMethods:
               - GET
               - PUT
               - POST
               - DELETE
             AllowedOrigins:
-              - '*'
+              - "*"
+            MaxAge: 3000
 
   # Lambda Functions
   BooksFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-books
       CodeUri: books/
       Handler: app.lambda_handler
-      Environment:
-        Variables:
-          BOOKS_TABLE: !Ref BooksTable
+      Events:
+        GetBooks:
+          Type: Api
+          Properties:
+            Path: /books
+            Method: get
+        GetBook:
+          Type: Api
+          Properties:
+            Path: /books/{book_id}
+            Method: get
+        CreateBook:
+          Type: Api
+          Properties:
+            Path: /books
+            Method: post
+        UpdateBook:
+          Type: Api
+          Properties:
+            Path: /books/{book_id}
+            Method: put
+        DeleteBook:
+          Type: Api
+          Properties:
+            Path: /books/{book_id}
+            Method: delete
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref BooksTable
-      Events:
-        GetBooks:
-          Type: HttpApi
-          Properties:
-            Path: /books
-            Method: GET
-            ApiId: !Ref HttpApi
-        GetBook:
-          Type: HttpApi
-          Properties:
-            Path: /books/{book_id}
-            Method: GET
-            ApiId: !Ref HttpApi
-        CreateBook:
-          Type: HttpApi
-          Properties:
-            Path: /books
-            Method: POST
-            ApiId: !Ref HttpApi
-        UpdateBook:
-          Type: HttpApi
-          Properties:
-            Path: /books/{book_id}
-            Method: PUT
-            ApiId: !Ref HttpApi
-        DeleteBook:
-          Type: HttpApi
-          Properties:
-            Path: /books/{book_id}
-            Method: DELETE
-            ApiId: !Ref HttpApi
+        - S3CrudPolicy:
+            BucketName: !Ref BooksBucket
 
   UsersFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-users
       CodeUri: users/
       Handler: app.lambda_handler
-      Environment:
-        Variables:
-          USERS_TABLE: !Ref UsersTable
+      Events:
+        GetUsers:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: get
+        GetUser:
+          Type: Api
+          Properties:
+            Path: /users/{user_id}
+            Method: get
+        CreateUser:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: post
+        UpdateUser:
+          Type: Api
+          Properties:
+            Path: /users/{user_id}
+            Method: put
+        DeleteUser:
+          Type: Api
+          Properties:
+            Path: /users/{user_id}
+            Method: delete
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
-      Events:
-        GetUsers:
-          Type: HttpApi
-          Properties:
-            Path: /users
-            Method: GET
-            ApiId: !Ref HttpApi
-        GetUser:
-          Type: HttpApi
-          Properties:
-            Path: /users/{user_id}
-            Method: GET
-            ApiId: !Ref HttpApi
-        CreateUser:
-          Type: HttpApi
-          Properties:
-            Path: /users
-            Method: POST
-            ApiId: !Ref HttpApi
-        UpdateUser:
-          Type: HttpApi
-          Properties:
-            Path: /users/{user_id}
-            Method: PUT
-            ApiId: !Ref HttpApi
-        DeleteUser:
-          Type: HttpApi
-          Properties:
-            Path: /users/{user_id}
-            Method: DELETE
-            ApiId: !Ref HttpApi
 
   BorrowingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-borrowing
       CodeUri: borrowing/
       Handler: app.lambda_handler
-      Environment:
-        Variables:
-          BORROWED_BOOKS_TABLE: !Ref BorrowedBooksTable
-          BOOKS_TABLE: !Ref BooksTable
-          USERS_TABLE: !Ref UsersTable
+      Events:
+        GetBorrowedBooks:
+          Type: Api
+          Properties:
+            Path: /borrowed
+            Method: get
+        BorrowBook:
+          Type: Api
+          Properties:
+            Path: /borrow
+            Method: post
+        ReturnBook:
+          Type: Api
+          Properties:
+            Path: /return
+            Method: post
+        GetUserBorrowedBooks:
+          Type: Api
+          Properties:
+            Path: /users/{user_id}/borrowed
+            Method: get
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref BorrowedBooksTable
-        - DynamoDBCrudPolicy:
+        - DynamoDBReadPolicy:
             TableName: !Ref BooksTable
-        - DynamoDBCrudPolicy:
+        - DynamoDBReadPolicy:
             TableName: !Ref UsersTable
-      Events:
-        GetBorrowedBooks:
-          Type: HttpApi
-          Properties:
-            Path: /borrowed
-            Method: GET
-            ApiId: !Ref HttpApi
-        GetUserBorrowedBooks:
-          Type: HttpApi
-          Properties:
-            Path: /users/{user_id}/borrowed
-            Method: GET
-            ApiId: !Ref HttpApi
-        BorrowBook:
-          Type: HttpApi
-          Properties:
-            Path: /borrow
-            Method: POST
-            ApiId: !Ref HttpApi
-        ReturnBook:
-          Type: HttpApi
-          Properties:
-            Path: /return
-            Method: POST
-            ApiId: !Ref HttpApi
 
-  FilesFunction:
+  FileUploadFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-files
       CodeUri: files/
       Handler: app.lambda_handler
-      Environment:
-        Variables:
-          BOOKS_BUCKET: !Ref BooksBucket
+      Events:
+        UploadFile:
+          Type: Api
+          Properties:
+            Path: /files/upload
+            Method: post
+        GetFileUrl:
+          Type: Api
+          Properties:
+            Path: /files/{file_key}
+            Method: get
       Policies:
         - S3CrudPolicy:
             BucketName: !Ref BooksBucket
-      Events:
-        UploadFile:
-          Type: HttpApi
-          Properties:
-            Path: /files/upload
-            Method: POST
-            ApiId: !Ref HttpApi
-        GetFileUrl:
-          Type: HttpApi
-          Properties:
-            Path: /files/{file_key}
-            Method: GET
-            ApiId: !Ref HttpApi
 
 Outputs:
-  ApiEndpoint:
-    Description: Base URL for the BiblioCloud API
-    Value: !GetAtt HttpApi.ApiEndpoint
+  BiblioCloudApi:
+    Description: "API Gateway endpoint URL for BiblioCloud"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
   BooksTableName:
-    Description: Name of the Books DynamoDB table
+    Description: "DynamoDB table name for Books"
     Value: !Ref BooksTable
   UsersTableName:
-    Description: Name of the Users DynamoDB table
+    Description: "DynamoDB table name for Users"
     Value: !Ref UsersTable
   BorrowedBooksTableName:
-    Description: Name of the Borrowed Books DynamoDB table
+    Description: "DynamoDB table name for Borrowed Books"
     Value: !Ref BorrowedBooksTable
   BooksBucketName:
-    Description: Name of the S3 bucket for file storage
+    Description: "S3 bucket name for book files"
     Value: !Ref BooksBucket
-  BooksFunctionArn:
-    Description: ARN of the Books Lambda function
-    Value: !GetAtt BooksFunction.Arn
-  UsersFunctionArn:
-    Description: ARN of the Users Lambda function
-    Value: !GetAtt UsersFunction.Arn
-  BorrowingFunctionArn:
-    Description: ARN of the Borrowing Lambda function
-    Value: !GetAtt BorrowingFunction.Arn
-  FilesFunctionArn:
-    Description: ARN of the Files Lambda function
-    Value: !GetAtt FilesFunction.Arn
