@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: SAM App for triggering a Lambda function from SQS queue.
+Globals:
+  Function:
+    Timeout: 5
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+    Description: The environment name
+
+Conditions:
+  isDev: !Equals
+    - !Ref Environment
+    - dev
+
+Resources:
+  ReceiveMessageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: receive-sqs-message-function
+      CodeUri: function/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref DynamoTable
+      Environment:
+        Variables:
+          LOCAL_STACK_ENDPOINT: !If
+            - isDev
+            - http://host.docker.internal:4566
+            - ""
+          DB_TABLE: !Ref DynamoTable
+          SQS_QUEUE_NAME: !GetAtt SQSQueue.QueueName
+      MemorySize: 3008
+      Timeout: 30
+      Events:
+        SQSReceiveEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SQSQueue.Arn
+            BatchSize: 1
+    Metadata:
+      SamResourceId: ReceiveMessageFunction
+
+  SQSQueue:
+    Type: AWS::SQS::Queue
+    DeletionPolicy: Delete
+    Properties:
+      QueueName: LambdaLocalStackSQSQueue
+    Metadata:
+      SamResourceId: SQSQueue
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      Principal: sqs.amazonaws.com
+      SourceArn: !GetAtt SQSQueue.Arn
+      FunctionName: !Ref ReceiveMessageFunction
+    Metadata:
+      SamResourceId: LambdaInvokePermission
+
+  DynamoTable:
+    Type: AWS::Serverless::SimpleTable
+    DeletionPolicy: Delete
+    Properties:
+      TableName: sqs-message-table
+    Metadata:
+      SamResourceId: DynamoTable
+
+Outputs:
+  ReceiveMessageFunctionARN:
+    Description: Receive message Lambda Function ARN
+    Value: !GetAtt ReceiveMessageFunction.Arn
+  SQSQueueARN:
+    Description: SQS queue ARN
+    Value: !GetAtt SQSQueue.Arn
+  SQSQueueUrl:
+    Description: SQS queue URL
+    Value: !Ref SQSQueue
