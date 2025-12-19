@@ -1,0 +1,21 @@
+meta {
+  name: get_calculations
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://pnis8jefkl.execute-api.localhost.localstack.cloud:4566/localstack/calculations/?skip=0&limit=100
+  body: none
+  auth: inherit
+}
+
+params:query {
+  skip: 0
+  limit: 100
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
