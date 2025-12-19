@@ -1,0 +1,11 @@
+{
+    "httpMethod": "GET",
+    "path": "/calculations",
+    "queryStringParameters": {
+        "skip": "0",
+        "limit": "10"
+    },
+    "headers": {
+        "Content-Type": "application/json"
+    }
+}

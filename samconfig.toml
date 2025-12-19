@@ -1,0 +1,61 @@
+version = 0.1
+
+[default]
+[default.global.parameters]
+stack_name = "eighty-twenty"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-north-1"
+parameter_overrides = "Environment=dev"
+
+[default.package.parameters]
+resolve_s3 = true
+
+[default.sync.parameters]
+watch = true
+
+[default.local_start_api.parameters]
+warm_containers = "EAGER"
+
+[default.local_start_lambda.parameters]
+warm_containers = "EAGER"
+
+# Production configuration
+[prod]
+[prod.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-north-1"
+parameter_overrides = "Environment=prod"
+stack_name = "eighty-twenty-prod"
+
+# Staging configuration
+[staging]
+[staging.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+region = "eu-north-1"
+parameter_overrides = "Environment=staging"
+stack_name = "eighty-twenty-staging"
+
+# Localstack configuration
+[localstack]
+[localstack.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+resolve_s3 = true
+region = "eu-north-1"
+parameter_overrides = "Environment=localstack"
+stack_name = "eighty-twenty-localstack"
