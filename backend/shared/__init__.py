@@ -13,8 +13,6 @@ from .crud import (
 from .database import get_table, get_dynamodb_resource, get_dynamodb_client
 from .schemas import (
     SalaryCalculationBase,
-    SalaryCalculationCreate,
-    SalaryCalculationUpdate,
     SalaryCalculationResponse,
     MessageResponse,
 )
@@ -32,8 +30,6 @@ __all__ = [
     "get_dynamodb_client",
     # Schemas
     "SalaryCalculationBase",
-    "SalaryCalculationCreate",
-    "SalaryCalculationUpdate",
     "SalaryCalculationResponse",
     "MessageResponse",
 ]

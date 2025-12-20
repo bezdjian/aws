@@ -1,45 +1,39 @@
-from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from typing import Optional
+
+from pydantic import BaseModel, Field, validator
 
 
 class SalaryCalculationBase(BaseModel):
     """Base schema for salary calculation"""
-    name: str = Field(..., min_length=1, max_length=100, description="Name or description of the calculation")
-    gross_salary: float = Field(..., gt=0, description="Gross salary amount")
-    essential_percentage: float = Field(default=80.0, ge=0, le=100, description="Percentage for essentials")
-    discretionary_percentage: float = Field(default=20.0, ge=0, le=100, description="Percentage for discretionary spending")
+    email: str = Field(..., min_length=1, max_length=100, description="Email of the consultant")
+    client_name: str = Field(..., min_length=1, max_length=100, description="Name of the client")
+    hourly_rate: float = Field(default=800, gt=0, description="Hourly rate amount")
+    hours_worked: int = Field(default=160, gt=0, description="Hours worked amount")
+    invoiced_amount: float = Field(default=128000, gt=0, description="Invoiced amount, calculated by hourly_rate * hours_worked")
+    after_deduction: float = Field(default=102400, gt=0, description="After deduction amount, 80% - invoiced_amount")
+    save_to_buffer: float = Field(default=10000, gt=0, description="Save to buffer amount")
+    gross_salary: float = Field(..., gt=0, description="Gross salary amount after deduction and save to buffer")
+    total_costs: float = Field(..., gt=0, description="Total costs amount after tax deductions")
+
     notes: Optional[str] = Field(None, max_length=500, description="Additional notes")
+    date: Optional[datetime] = Field(None, description="Date of the calculation")
 
-    @validator('discretionary_percentage')
-    def validate_percentages(cls, v, values):
-        """Ensure percentages add up to 100"""
-        if 'essential_percentage' in values:
-            total = values['essential_percentage'] + v
-            if abs(total - 100.0) > 0.01:  # Allow for floating point precision
-                raise ValueError(f'Percentages must add up to 100. Got {total}')
+    created_at: Optional[datetime] = Field(default_factory=datetime.now, description="Date and time of creation")
+    updated_at: Optional[datetime] = Field(default_factory=datetime.now, description="Date and time of last update")
+
+    @validator('total_costs')
+    def validate_total_costs(cls, v, values):
+        """Ensure total costs is less than gross salary"""
+        if 'gross_salary' in values:
+            if v > values['gross_salary']:
+                raise ValueError(f'Total costs must be less than gross salary. Got {v}')
         return v
-
-
-class SalaryCalculationCreate(SalaryCalculationBase):
-    """Schema for creating a new salary calculation"""
-    pass
-
-
-class SalaryCalculationUpdate(BaseModel):
-    """Schema for updating an existing salary calculation"""
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    gross_salary: Optional[float] = Field(None, gt=0)
-    essential_percentage: Optional[float] = Field(None, ge=0, le=100)
-    discretionary_percentage: Optional[float] = Field(None, ge=0, le=100)
-    notes: Optional[str] = Field(None, max_length=500)
 
 
 class SalaryCalculationResponse(SalaryCalculationBase):
     """Schema for salary calculation response"""
     id: str  # UUID string for DynamoDB
-    essential_amount: float
-    discretionary_amount: float
     created_at: datetime
     updated_at: datetime
 

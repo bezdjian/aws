@@ -1,10 +1,8 @@
-import boto3
-from boto3.dynamodb.conditions import Key, Attr
-from botocore.exceptions import ClientError
 import os
-from dotenv import load_dotenv
-from typing import Optional
 from pathlib import Path
+
+import boto3
+from dotenv import load_dotenv
 
 # Load environment variables from the backend directory (one level up from shared/)
 env_path = Path(__file__).parent.parent / ".env"
@@ -18,23 +16,22 @@ DYNAMODB_ENDPOINT_URL = os.getenv("DYNAMODB_ENDPOINT_URL")  # For local developm
 def get_dynamodb_resource():
     """Get DynamoDB resource with configuration"""
     config = {}
-    
+
     # Add endpoint URL for local development
     if DYNAMODB_ENDPOINT_URL:
-        print(f"Found DYNAMODB_ENDPOINT_URL: {DYNAMODB_ENDPOINT_URL}")
         config["endpoint_url"] = DYNAMODB_ENDPOINT_URL
-    
+
     return boto3.resource("dynamodb", **config)
 
 
 def get_dynamodb_client():
     """Get DynamoDB client with configuration"""
-    config = {}    
-    
+    config = {}
+
     # Add endpoint URL for local development
     if DYNAMODB_ENDPOINT_URL:
         config["endpoint_url"] = DYNAMODB_ENDPOINT_URL
-    
+
     return boto3.client("dynamodb", **config)
 
 

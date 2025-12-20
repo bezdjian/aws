@@ -1,10 +1,11 @@
-from fastapi import FastAPI, HTTPException, status
-from fastapi.middleware.cors import CORSMiddleware
-from typing import List
 import os
 import sys
 from pathlib import Path
+from typing import List
+
 from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 
 # Add parent directory to path to import shared module
 backend_dir = Path(__file__).parent.parent
@@ -58,15 +59,17 @@ async def health_check():
     tags=["Calculations"]
 )
 async def create_calculation(
-    calculation: schemas.SalaryCalculationCreate
+        calculation: schemas.SalaryCalculationBase
 ):
     """
     Create a new salary calculation.
     
-    - **name**: Name or description of the calculation
+    - **email**: Email of the consultant
+    - **client_name**: Name of the client
+    - **hourly_rate**: Hourly rate amount (must be positive)
+    - **hours_worked**: Hours worked amount (must be positive)
     - **gross_salary**: Gross salary amount (must be positive)
-    - **essential_percentage**: Percentage for essentials (default: 80%)
-    - **discretionary_percentage**: Percentage for discretionary spending (default: 20%)
+    - **total_costs**: Total costs amount (must be positive)
     - **notes**: Optional additional notes
     """
     try:
@@ -85,8 +88,8 @@ async def create_calculation(
     tags=["Calculations"]
 )
 async def get_calculations(
-    skip: int = 0,
-    limit: int = 100
+        skip: int = 0,
+        limit: int = 100
 ):
     """
     Retrieve all salary calculations with pagination.
@@ -105,7 +108,7 @@ async def get_calculations(
     tags=["Calculations"]
 )
 async def get_calculation(
-    calculation_id: str
+        calculation_id: str
 ):
     """
     Retrieve a specific salary calculation by ID.
@@ -128,8 +131,8 @@ async def get_calculation(
     tags=["Calculations"]
 )
 async def update_calculation(
-    calculation_id: str,
-    calculation_update: schemas.SalaryCalculationUpdate
+        calculation_id: str,
+        calculation_update: schemas.SalaryCalculationBase
 ):
     """
     Update an existing salary calculation.
@@ -156,7 +159,7 @@ async def update_calculation(
     tags=["Calculations"]
 )
 async def delete_calculation(
-    calculation_id: str
+        calculation_id: str
 ):
     """
     Delete a salary calculation.
@@ -174,11 +177,11 @@ async def delete_calculation(
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     host = os.getenv("API_HOST", "0.0.0.0")
     port = int(os.getenv("API_PORT", 8000))
     debug = os.getenv("DEBUG", "True").lower() == "true"
-    
+
     uvicorn.run(
         "main:app",
         host=host,
