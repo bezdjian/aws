@@ -10,7 +10,8 @@ class SalaryCalculationBase(BaseModel):
     client_name: str = Field(..., min_length=1, max_length=100, description="Name of the client")
     hourly_rate: float = Field(default=800, gt=0, description="Hourly rate amount")
     hours_worked: int = Field(default=160, gt=0, description="Hours worked amount")
-    invoiced_amount: float = Field(default=128000, gt=0, description="Invoiced amount, calculated by hourly_rate * hours_worked")
+    invoiced_amount: float = Field(default=128000, gt=0,
+                                   description="Invoiced amount, calculated by hourly_rate * hours_worked")
     after_deduction: float = Field(default=102400, gt=0, description="After deduction amount, 80% - invoiced_amount")
     save_to_buffer: float = Field(default=10000, gt=0, description="Save to buffer amount")
     gross_salary: float = Field(..., gt=0, description="Gross salary amount after deduction and save to buffer")

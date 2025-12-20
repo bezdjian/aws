@@ -110,7 +110,7 @@ def get_salary_calculation(calculation_id: str) -> Optional[Dict[str, Any]]:
         return None
 
 
-def get_salary_calculations(skip: int = 0, limit: int = 100) -> List[schemas.SalaryCalculationBase]:
+def get_salary_calculations(skip: int = 0, limit: int = 100) -> List[schemas.SalaryCalculationResponse]:
     """Get all salary calculations from DynamoDB with pagination"""
     table = database.get_table()
 
@@ -130,10 +130,13 @@ def get_salary_calculations(skip: int = 0, limit: int = 100) -> List[schemas.Sal
         # Apply skip and limit
         items = items[skip:skip + limit]
 
-        # Sort by created_at (most recent first)
-        items.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+        # Sort by date (most recent first)
+        items.sort(key=lambda x: x.get('date', ''), reverse=True)
 
-        return [item_to_dict(item) for item in items]
+        return [
+            schemas.SalaryCalculationResponse(**item_to_dict(item))
+            for item in items
+        ]
 
     except ClientError as e:
         print(f"Error scanning table: {e.response['Error']['Message']}")
