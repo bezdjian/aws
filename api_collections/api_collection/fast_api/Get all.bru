@@ -1,0 +1,21 @@
+meta {
+  name: Get all
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8000/calculations?skip=0&limit=100
+  body: none
+  auth: inherit
+}
+
+params:query {
+  skip: 0
+  limit: 100
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

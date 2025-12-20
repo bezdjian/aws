@@ -1,0 +1,37 @@
+meta {
+  name: Create
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8000/calculations
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "string",
+    "client_name": "string",
+    "hourly_rate": 800,
+    "hours_worked": 160,
+    "invoiced_amount": 128000,
+    "after_deduction": 102400,
+    "save_to_buffer": 10000,
+    "gross_salary": 1,
+    "total_costs": 1,
+    "notes": "string",
+    "date": "2025-12-20T22:51:53"
+  }
+}
+
+script:post-response {
+  let id = res.getBody().id
+  bru.setEnvVar("id", id)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
