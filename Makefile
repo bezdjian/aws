@@ -16,6 +16,8 @@ help:
 	@echo "  make start-api      - Start local API server"
 	@echo "  make logs           - Tail CloudWatch logs"
 	@echo "  make test           - Run CRUD tests"
+	@echo "  make dev            - Run FastAPI backend development server"
+	@echo "  make frontend       - Run React frontend development server"
 	@echo "  make clean          - Clean build artifacts"
 	@echo "  make delete         - Delete CloudFormation stack"
 	@echo ""
@@ -81,6 +83,11 @@ test:
 dev:
 	@echo "Starting FastAPI development server..."
 	cd backend && uvicorn fastapi_app.main:app --reload --reload-dir fastapi_app --reload-dir shared
+
+# Run local React server (for development)
+frontend:
+	@echo "Starting React development server..."
+	cd frontend && npm run start
 
 # Default table name (can be overridden on command line)
 ENVIRONMENT := ""

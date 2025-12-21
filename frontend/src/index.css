@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #f0f9ff;
+  --color-brand-100: #e0f2fe;
+  --color-brand-200: #bae6fd;
+  --color-brand-300: #7dd3fc;
+  --color-brand-400: #38bdf8;
+  --color-brand-500: #0ea5e9;
+  --color-brand-600: #0284c7;
+  --color-brand-700: #0369a1;
+  --color-brand-800: #075985;
+  --color-brand-900: #0c4a6e;
+  --color-brand-950: #082f49;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased font-sans transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl;
+  }
+
+  .input-label {
+    @apply block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1 transition-all;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-300 outline-none transition-all duration-200 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 focus:shadow-lg;
+  }
+
+  .btn-primary {
+    @apply w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-brand-600 hover:shadow-brand-500/20 active:scale-[0.98] transition-all duration-300 flex items-center justify-center space-x-2;
+  }
+
+  .btn-outline {
+    @apply w-full bg-white text-slate-900 border border-slate-200 font-bold py-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 active:scale-[0.98] transition-all duration-300 flex items-center justify-center space-x-3;
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
