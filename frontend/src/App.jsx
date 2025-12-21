@@ -60,7 +60,6 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Calculation data logged to console. In a real scenario, this would contact your FastAPI backend!');
     console.log('Submission Data:', formData);
   };
 
@@ -112,7 +111,7 @@ const App = () => {
       </section>
 
       {/* RIGHT SECTION: Calculation Form */}
-      <section className="md:w-[58%] h-screen overflow-y-auto bg-white p-8 md:p-16 flex flex-col">
+      <section className="md:w-[58%] bg-white p-8 md:p-16 flex flex-col">
         <div className="w-full max-w-2xl">
 
           <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
