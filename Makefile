@@ -57,10 +57,10 @@ deploy-prod: build
 # Test Lambda functions locally
 test-local: build
 	@echo "Testing CreateCalculationFunction..."
-	sam local invoke CreateCalculationFunction --event events/create.json
+	sam local invoke CreateCalculationFunction --event backend/lambda_app/events/create.json
 	@echo ""
 	@echo "Testing GetCalculationsFunction..."
-	sam local invoke GetCalculationsFunction --event events/get-all.json
+	sam local invoke GetCalculationsFunction --event backend/lambda_app/events/get-all.json
 
 # Start local API server
 start-api: build

@@ -80,7 +80,7 @@ make test
 ### Local SAM Invocation
 
 ```bash
-sam local invoke CreateCalculationFunction --event events/create.json
+sam local invoke CreateCalculationFunction --event backend/lambda_app/events/create.json
 ```
 
 ## 🛠️ Technology Stack
