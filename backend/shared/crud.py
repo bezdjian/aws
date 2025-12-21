@@ -92,7 +92,7 @@ def get_salary_calculation_by_email(email: str) -> Optional[Dict[str, Any]]:
         return None
 
 
-def get_salary_calculation(calculation_id: str) -> Optional[Dict[str, Any]]:
+def get_salary_calculation_by_id(calculation_id: str) -> Optional[Dict[str, Any]]:
     """Get a salary calculation by ID from DynamoDB"""
     table = database.get_table()
 

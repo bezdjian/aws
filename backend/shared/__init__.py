@@ -5,7 +5,7 @@ Used by both FastAPI and Lambda implementations.
 
 from .crud import (
     create_salary_calculation,
-    get_salary_calculation,
+    get_salary_calculation_by_id,
     get_salary_calculations,
     update_salary_calculation,
     delete_salary_calculation,
@@ -20,7 +20,7 @@ from .schemas import (
 __all__ = [
     # CRUD operations
     "create_salary_calculation",
-    "get_salary_calculation",
+    "get_salary_calculation_by_id",
     "get_salary_calculations",
     "update_salary_calculation",
     "delete_salary_calculation",

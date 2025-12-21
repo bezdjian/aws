@@ -115,7 +115,7 @@ async def get_calculation(
     
     - **calculation_id**: The ID of the calculation to retrieve
     """
-    calculation = crud.get_salary_calculation(calculation_id=calculation_id)
+    calculation = crud.get_salary_calculation_by_id(calculation_id=calculation_id)
     if calculation is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
