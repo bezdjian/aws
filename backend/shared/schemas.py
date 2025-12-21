@@ -14,8 +14,12 @@ class SalaryCalculationBase(BaseModel):
                                    description="Invoiced amount, calculated by hourly_rate * hours_worked")
     after_deduction: float = Field(default=102400, gt=0, description="After deduction amount, 80% - invoiced_amount")
     save_to_buffer: float = Field(default=10000, gt=0, description="Save to buffer amount")
-    gross_salary: float = Field(..., gt=0, description="Gross salary amount after deduction and save to buffer")
-    total_costs: float = Field(..., gt=0, description="Total costs amount after tax deductions")
+    pension_saving: float = Field(default=3000, gt=0, description="Pension saving amount")
+    gross_salary: float = Field(default=92400, gt=0, description="Gross salary amount after deduction and save to buffer")
+    
+    remaining_salary: float = Field(default=88050, gt=0, description="Remaining salary amount after total costs")
+    remaining_for_gross_salary: float = Field(default=66999, gt=0, description="Remaining salary for gross salary amount after total costs")
+    employer_fee: float = Field(default=21051, gt=0, description="Employer fee amount after total costs")
 
     notes: Optional[str] = Field(None, max_length=500, description="Additional notes")
     date: Optional[datetime] = Field(None, description="Date of the calculation")
@@ -23,7 +27,7 @@ class SalaryCalculationBase(BaseModel):
     created_at: Optional[datetime] = Field(default_factory=datetime.now, description="Date and time of creation")
     updated_at: Optional[datetime] = Field(default_factory=datetime.now, description="Date and time of last update")
 
-    @validator('total_costs')
+    @validator('gross_salary')
     def validate_total_costs(cls, v, values):
         """Ensure total costs is less than gross salary"""
         if 'gross_salary' in values:

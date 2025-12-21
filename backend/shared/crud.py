@@ -61,7 +61,6 @@ def create_salary_calculation(calculation: schemas.SalaryCalculationBase) -> Dic
         'after_deduction': float_to_decimal(calculation.after_deduction),
         'save_to_buffer': float_to_decimal(calculation.save_to_buffer),
         'gross_salary': float_to_decimal(calculation.gross_salary),
-        'total_costs': float_to_decimal(calculation.total_costs),
         'notes': calculation.notes,
         'date': calculation.date,
         'created_at': datetime.now(),
