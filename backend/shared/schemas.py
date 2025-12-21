@@ -15,10 +15,12 @@ class SalaryCalculationBase(BaseModel):
     after_deduction: float = Field(default=102400, gt=0, description="After deduction amount, 80% - invoiced_amount")
     save_to_buffer: float = Field(default=10000, gt=0, description="Save to buffer amount")
     pension_saving: float = Field(default=3000, gt=0, description="Pension saving amount")
-    gross_salary: float = Field(default=92400, gt=0, description="Gross salary amount after deduction and save to buffer")
-    
+    gross_salary: float = Field(default=92400, gt=0,
+                                description="Gross salary amount after deduction and save to buffer")
+
     remaining_salary: float = Field(default=88050, gt=0, description="Remaining salary amount after total costs")
-    remaining_for_gross_salary: float = Field(default=66999, gt=0, description="Remaining salary for gross salary amount after total costs")
+    remaining_for_gross_salary: float = Field(default=66999, gt=0,
+                                              description="Remaining salary for gross salary amount after total costs")
     employer_fee: float = Field(default=21051, gt=0, description="Employer fee amount after total costs")
 
     notes: Optional[str] = Field(None, max_length=500, description="Additional notes")
@@ -30,9 +32,8 @@ class SalaryCalculationBase(BaseModel):
     @validator('gross_salary')
     def validate_total_costs(cls, v, values):
         """Ensure total costs is less than gross salary"""
-        if 'gross_salary' in values:
-            if v > values['gross_salary']:
-                raise ValueError(f'Total costs must be less than gross salary. Got {v}')
+        if 'gross_salary' in values and v > values['gross_salary']:
+            raise ValueError(f'Total costs must be less than gross salary. Got {v}')
         return v
 
 
