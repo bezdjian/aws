@@ -1,4 +1,4 @@
-.PHONY: help validate build deploy deploy-guided test-local start-api logs clean delete install test
+.PHONY: help validate build deploy deploy-guided test-local start-api logs clean delete install test dev frontend db-info db-list outputs package sync resources endpoints deploy-localstack resources-localstack delete-localstack outputs-localstack
 
 # Default target
 help:
