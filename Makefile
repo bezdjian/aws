@@ -80,7 +80,7 @@ test:
 # Run local FastAPI server (for development)
 dev:
 	@echo "Starting FastAPI development server..."
-	cd backend/fastapi_app && python main.py
+	cd backend && uvicorn fastapi_app.main:app --reload --reload-dir fastapi_app --reload-dir shared
 
 # Default table name (can be overridden on command line)
 ENVIRONMENT := ""
