@@ -1,13 +1,15 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 from typing import List, Optional, Dict, Any
-
+import requests
 from botocore.exceptions import ClientError
+from requests import Response
 
 from . import database
 from . import schemas
 
+google_auth_url = "https://oauth2.googleapis.com"
 
 def decimal_to_float(obj):
     """Convert Decimal to float for JSON serialization"""
@@ -155,7 +157,7 @@ def update_salary_calculation(
         return None
 
     # Prepare update data
-    update_data = calculation_update.dict(exclude_unset=True)
+    update_data = calculation_update.model_dump(exclude_unset=True)
 
     if not update_data:
         return existing_item
@@ -166,7 +168,7 @@ def update_salary_calculation(
     expression_attribute_names = {}
 
     # Update timestamp
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(tz=timezone.utc).isoformat()
     update_expression_parts.append("#updated_at = :updated_at")
     expression_attribute_names["#updated_at"] = "updated_at"
     expression_attribute_values[":updated_at"] = now
@@ -188,7 +190,7 @@ def update_salary_calculation(
     try:
         response = table.update_item(
             Key={'email': email},
-            UpdateExpression=update_expression,
+            UpdateExpression=update_expression_parts,
             ExpressionAttributeNames=expression_attribute_names,
             ExpressionAttributeValues=expression_attribute_values,
             ReturnValues="ALL_NEW"
@@ -206,7 +208,7 @@ def delete_salary_calculation(calculation_id: str) -> bool:
     table = database.get_table()
 
     # Check if item exists
-    if not get_salary_calculation(calculation_id):
+    if not get_salary_calculation_by_id(calculation_id):
         return False
 
     try:
@@ -216,3 +218,8 @@ def delete_salary_calculation(calculation_id: str) -> bool:
     except ClientError as e:
         print(f"Error deleting item: {e.response['Error']['Message']}")
         return False
+
+
+def verify_token(token: str) -> Response:
+    """Verify the provided token (stub implementation)"""
+    return requests.get(f"{google_auth_url}?token={token}")
