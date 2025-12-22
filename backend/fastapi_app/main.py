@@ -51,13 +51,13 @@ async def health_check():
     return {"status": "healthy"}
 
 
-@app.get("auth/verify/{token}", tags=["Auth"])
+@app.get("/auth/verify/{token}", tags=["Auth"])
 async def verify_auth(token: str):
     """Authentication verification endpoint"""
     return service.verify_token(token=token)
 
 
-@app.get("auth/client_id", tags=["Auth"])
+@app.get("/auth/client_id", tags=["Auth"])
 async def get_client_id():
     """Authentication verification endpoint"""
     return service.get_client_id()

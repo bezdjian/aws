@@ -236,6 +236,15 @@ Resources:
                 "200":
                   description: Calculation deleted
 
+  GoogleClientIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: !Sub '/environment/services/eighty-twenty/google.client.id'
+      Value: 'your-google-client-id.apps.googleusercontent.com'
+      Tags:
+        eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
+
 # Outputs for easy reference
 Outputs:
   ApiUrl:

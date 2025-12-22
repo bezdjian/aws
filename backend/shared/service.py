@@ -1,4 +1,3 @@
-import os
 import uuid
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -10,6 +9,7 @@ from requests import Response
 
 from . import database
 from . import schemas
+from .SsmService import get_google_client_id
 from .TokenInfo import TokenInfo
 
 google_auth_url = "https://oauth2.googleapis.com"
@@ -231,7 +231,7 @@ def verify_token(token: str) -> Response:
 
 def get_client_id() -> Optional[str]:
     """Verify the provided token (stub implementation)"""
-    return os.getenv("GOOGLE_CLIENT_ID")
+    return get_google_client_id()
 
 
 def validate_token(token_info: TokenInfo):
