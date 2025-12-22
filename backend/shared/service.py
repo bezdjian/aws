@@ -10,6 +10,7 @@ from requests import Response
 
 from . import database
 from . import schemas
+from .TokenInfo import TokenInfo
 
 google_auth_url = "https://oauth2.googleapis.com"
 
@@ -227,6 +228,29 @@ def verify_token(token: str) -> Response:
     """Verify the provided token (stub implementation)"""
     return requests.get(f"{google_auth_url}?token={token}")
 
+
 def get_client_id() -> Optional[str]:
     """Verify the provided token (stub implementation)"""
     return os.getenv("GOOGLE_CLIENT_ID")
+
+
+def validate_token(token_info: TokenInfo):
+    """Validate the token information"""
+
+    if token_info is None:
+        raise RuntimeError("Invalid ID token.")
+
+    if "accounts.google.com" not in token_info.iss():
+        raise RuntimeError(f"Invalid issuer: {token_info.iss()}")
+
+    if token_info.aud() != get_client_id():  # TODO: Cache client ID or make a better call
+        raise RuntimeError(f"Invalid audience: {token_info.aud()}")
+
+    if token_info.hd() != "solidbeans.com" and not token_info.email_verified():
+        raise RuntimeError(f"Invalid domain or unverified email: {token_info.hd()}")
+
+    if token_info.sub() is None:
+        raise RuntimeError("Invalid sub. GoogleId is null.")
+
+    if 0 < token_info.exp() < (datetime.now().timestamp()):
+        raise RuntimeError("Token has expired.")
