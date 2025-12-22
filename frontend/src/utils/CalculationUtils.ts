@@ -1,6 +1,7 @@
-class CalculationUtils {
+import { SalaryCalculation } from "../types";
 
-    static calculateRemainingSalary(formData) {
+class CalculationUtils {
+    static calculateRemainingSalary(formData: SalaryCalculation): number {
         const { hourly_rate, hours_worked, save_to_buffer } = formData;
         const invoiced = hourly_rate * hours_worked;
         const afterDed = invoiced * 0.8;
@@ -10,7 +11,7 @@ class CalculationUtils {
         return remainingSalary;
     }
 
-    static calculateRemainingForGrossSalary(formData) {
+    static calculateRemainingForGrossSalary(formData: SalaryCalculation): number {
         const { hourly_rate, hours_worked, save_to_buffer } = formData;
         const invoiced = hourly_rate * hours_worked;
         const afterDed = invoiced * 0.8;
@@ -21,7 +22,7 @@ class CalculationUtils {
         return remainingForGrossSalary;
     }
 
-    static calculateEmployerFee(formData) {
+    static calculateEmployerFee(formData: SalaryCalculation): number {
         const { hourly_rate, hours_worked, save_to_buffer } = formData;
         const invoiced = hourly_rate * hours_worked;
         const afterDed = invoiced * 0.8;
@@ -33,27 +34,28 @@ class CalculationUtils {
         return employerFee;
     }
 
-    static calculateInvoicedAmount(formData) {
+    static calculateInvoicedAmount(formData: SalaryCalculation): number {
         const { hourly_rate, hours_worked } = formData;
         const invoiced = hourly_rate * hours_worked;
         return invoiced;
     }
 
-    static calculateAfterDeduction(formData) {
+    static calculateAfterDeduction(formData: SalaryCalculation): number {
         const { hourly_rate, hours_worked } = formData;
         const invoiced = hourly_rate * hours_worked;
         const afterDed = invoiced * 0.8;
         return afterDed;
     }
 
-    static calculateGrossSalary(formData) {
+    static calculateGrossSalary(formData: SalaryCalculation): number {
         const { hourly_rate, hours_worked, save_to_buffer } = formData;
         const invoiced = hourly_rate * hours_worked;
         const afterDed = invoiced * 0.8;
         const gross = afterDed - save_to_buffer;
         return gross;
     }
-    static calculateTotalCosts(formData) {
+
+    static calculateTotalCosts(formData: SalaryCalculation): number {
         const { pension_saving } = formData;
 
         // Swedish Fixed Cost Parameters
