@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
-from shared import crud, schemas
+from shared import service, schemas
 
 # Load environment variables from the backend directory
 load_dotenv(backend_dir / ".env")
@@ -51,6 +51,18 @@ async def health_check():
     return {"status": "healthy"}
 
 
+@app.get("auth/verify/{token}", tags=["Auth"])
+async def verify_auth(token: str):
+    """Authentication verification endpoint"""
+    return service.verify_token(token=token)
+
+
+@app.get("auth/client_id", tags=["Auth"])
+async def get_client_id():
+    """Authentication verification endpoint"""
+    return service.get_client_id()
+
+
 # CREATE - Create a new salary calculation
 @app.post(
     "/calculations",
@@ -73,7 +85,7 @@ async def create_calculation(
     - **notes**: Optional additional notes
     """
     try:
-        return crud.create_salary_calculation(calculation=calculation)
+        return service.create_salary_calculation(calculation=calculation)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -97,7 +109,7 @@ async def get_calculations(
     - **skip**: Number of records to skip (default: 0)
     - **limit**: Maximum number of records to return (default: 100)
     """
-    calculations = crud.get_salary_calculations(skip=skip, limit=limit)
+    calculations = service.get_salary_calculations(skip=skip, limit=limit)
     return calculations
 
 
@@ -115,7 +127,7 @@ async def get_calculation(
     
     - **calculation_id**: The ID of the calculation to retrieve
     """
-    calculation = crud.get_salary_calculation_by_id(calculation_id=calculation_id)
+    calculation = service.get_salary_calculation_by_id(calculation_id=calculation_id)
     if calculation is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -140,7 +152,7 @@ async def update_calculation(
     - **calculation_id**: The ID of the calculation to update
     - All fields are optional; only provided fields will be updated
     """
-    updated_calculation = crud.update_salary_calculation(
+    updated_calculation = service.update_salary_calculation(
         calculation_id=calculation_id,
         calculation_update=calculation_update
     )
@@ -166,7 +178,7 @@ async def delete_calculation(
     
     - **calculation_id**: The ID of the calculation to delete
     """
-    success = crud.delete_salary_calculation(calculation_id=calculation_id)
+    success = service.delete_salary_calculation(calculation_id=calculation_id)
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

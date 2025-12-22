@@ -3,7 +3,7 @@ Shared business logic for eighty-twenty application.
 Used by both FastAPI and Lambda implementations.
 """
 
-from .crud import (
+from .service import (
     create_salary_calculation,
     get_salary_calculation_by_id,
     get_salary_calculations,
