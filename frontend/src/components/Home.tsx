@@ -186,7 +186,7 @@ const Home: React.FC = () => {
 
       <main className="flex-grow flex flex-col md:flex-row">
         {/* LEFT SECTION: User Welcome & History Placeholder */}
-        <section className="md:w-[42%] bg-slate-50/50 p-8 md:p-16 flex flex-col justify-start relative overflow-hidden">
+        <section className="md:w-[30%] bg-slate-50/50 p-8 md:p-12 lg:p-16 flex flex-col justify-start relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full">
             <div className="absolute top-10 left-10 w-64 h-64 bg-brand-100/30 rounded-full blur-3xl"></div>
             <div className="absolute bottom-10 right-10 w-80 h-80 bg-emerald-100/20 rounded-full blur-3xl"></div>
@@ -197,15 +197,15 @@ const Home: React.FC = () => {
               <span className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-pulse"></span>
               <span>Dashboard Active</span>
             </span>
-            <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight tracking-tight">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 mb-6 leading-tight tracking-tight">
               Welcome back,
               <br />
-              <span className="text-brand-600">
+              <span className="text-medium text-brand-600">
                 {user?.getName().split(" ")[0]}
               </span>
               .
             </h1>
-            <p className="text-lg text-slate-500 mb-10 leading-relaxed font-medium max-w-sm">
+            <p className="text-medium text-slate-500 mb-10 leading-relaxed font-medium max-w-sm">
               Ready to optimize your finances? Use the model to calculate your
               take-home pay and save your records.
             </p>
@@ -236,7 +236,7 @@ const Home: React.FC = () => {
 
         {/* RIGHT SECTION: Calculation Form */}
         <section className="md:w-[58%] bg-white p-8 md:p-16 flex flex-col">
-          <div className="w-full max-w-2xl mx-auto">
+          <div className="w-full max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
               <h2 className="text-2xl font-black text-slate-900">
                 New Calculation
