@@ -153,6 +153,7 @@ const History: React.FC = () => {
             {filteredCalculations.map((calc) => (
               <div
                 key={calc.id}
+                onClick={() => navigate(`/calculation/${calc.id}`)}
                 className="group relative bg-white rounded-[2rem] border border-slate-100 hover:border-brand-200 p-6 md:p-8 shadow-sm hover:shadow-xl hover:shadow-brand-500/5 transition-all duration-500 cursor-pointer overflow-hidden"
               >
                 {/* Decorative element */}
