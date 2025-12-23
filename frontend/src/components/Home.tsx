@@ -15,6 +15,7 @@ import { SalaryCalculation } from "../types";
 import { useUser } from "../context/UserContext";
 import { useToast } from "../context/ToastContext";
 import { createCalculation } from "../backend/service";
+import { calculateTax } from "../backend/taxService";
 
 import { useNavigate } from "react-router-dom";
 
@@ -24,6 +25,10 @@ const Home: React.FC = () => {
   const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [isCalculatingTax, setIsCalculatingTax] = useState(false);
+  const [taxResult, setTaxResult] = useState<{
+    skatteavdrag: number;
+    lonefterskatt: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -74,6 +79,16 @@ const Home: React.FC = () => {
     formData.pension_saving,
   ]);
 
+  // Reset tax result when form data changes
+  useEffect(() => {
+    setTaxResult(null);
+  }, [
+    formData.hourly_rate,
+    formData.hours_worked,
+    formData.save_to_buffer,
+    formData.pension_saving,
+  ]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -106,11 +121,16 @@ const Home: React.FC = () => {
 
   const handleCalculateTax = () => {
     setIsCalculatingTax(true);
-    // Simulating a calculation delay or future API call
-    setTimeout(() => {
-      setIsCalculatingTax(false);
-      showToast("Salary after tax calculated (Demo Only)", "info");
-    }, 1500);
+    calculateTax(formData.remaining_for_gross_salary)
+      .then((response) => {
+        setTaxResult(response.data);
+      })
+      .catch((error) => {
+        showToast("Failed to calculate tax: " + error.message, "error");
+      })
+      .finally(() => {
+        setIsCalculatingTax(false);
+      });
   };
 
   return (
@@ -333,8 +353,18 @@ const Home: React.FC = () => {
                 </div>
 
                 <div className="col-span-full space-y-4">
-                  <div className="p-6 rounded-3xl bg-emerald-50 text-emerald-700 border border-emerald-100 text-center">
-                    <span className="text-[10px] font-black uppercase text-emerald-500 tracking-[0.2em] block mb-2">
+                  <div
+                    className={`p-6 rounded-3xl transition-all duration-500 ${
+                      taxResult
+                        ? "bg-slate-900 text-white"
+                        : "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                    } text-center`}
+                  >
+                    <span
+                      className={`text-[10px] font-black uppercase ${
+                        taxResult ? "text-slate-400" : "text-emerald-500"
+                      } tracking-[0.2em] block mb-2`}
+                    >
                       Remaining for Gross Salary
                     </span>
                     <div className="text-3xl font-black font-mono">
@@ -343,6 +373,32 @@ const Home: React.FC = () => {
                       )}
                     </div>
                   </div>
+
+                  {taxResult && (
+                    <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                      <div className="p-5 rounded-2xl bg-red-50 text-red-700 border border-red-100 flex flex-col items-center">
+                        <span className="text-[9px] font-black uppercase text-red-400 tracking-wider mb-2">
+                          Estimated Tax
+                        </span>
+                        <div className="text-xl font-bold font-mono">
+                          -
+                          {CalculationUtils.formatCurrency(
+                            taxResult.skatteavdrag
+                          )}
+                        </div>
+                      </div>
+                      <div className="p-5 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex flex-col items-center">
+                        <span className="text-[9px] font-black uppercase text-emerald-400 tracking-wider mb-2">
+                          Net Salary
+                        </span>
+                        <div className="text-xl font-bold font-mono">
+                          {CalculationUtils.formatCurrency(
+                            taxResult.lonefterskatt
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* NOTES SECTION */}
@@ -374,7 +430,7 @@ const Home: React.FC = () => {
                     ) : (
                       <>
                         <Calculator size={18} />
-                        <span>Get Salary After Taxes</span>
+                        <span>Calculate salary after tax</span>
                       </>
                     )}
                   </button>
@@ -389,7 +445,7 @@ const Home: React.FC = () => {
                     ) : (
                       <>
                         <Save size={18} />
-                        <span>Save Calculation</span>
+                        <span>Save calculation</span>
                       </>
                     )}
                   </button>
