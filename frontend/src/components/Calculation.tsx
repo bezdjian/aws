@@ -137,16 +137,15 @@ const CalculationView: React.FC = () => {
                 className="group-hover:-translate-x-0.5 transition-transform print:hidden"
               />
             </button>
-            <div className="h-8 w-px bg-slate-100 print:hidden"></div>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-600 shadow-sm">
                 <Calculator size={20} />
               </div>
               <div className="print:block">
-                <h1 className="text-lg font-black text-slate-900 line-clamp-1">
+                <h1 className="text-xl font-black text-slate-900 line-clamp-1">
                   {calculation.client_name || "General Scenario"}
                 </h1>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mt-0.5">
+                <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">
                   Simulation Record
                 </p>
               </div>
@@ -163,9 +162,9 @@ const CalculationView: React.FC = () => {
             </button>
             <button
               onClick={() => window.print()}
-              className="hidden sm:flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 shadow-inner print:hidden"
+              className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 print:hidden"
             >
-              <Download size={18} />
+              <Download size={16} />
               <span>Export PDF</span>
             </button>
           </div>
