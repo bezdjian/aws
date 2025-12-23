@@ -12,6 +12,7 @@ import {
   FileDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header";
 import { useUser } from "../context/UserContext";
 import { getCalculationsByEmail, deleteCalculation } from "../backend/service";
 import { SalaryCalculation } from "../types";
@@ -149,8 +150,9 @@ const History: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-brand-100">
-      {/* HEADER */}
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50">
+      <Header />
+      {/* PAGE HEADER */}
+      <header className="bg-white border-b border-slate-100 sticky top-16 z-40">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <button

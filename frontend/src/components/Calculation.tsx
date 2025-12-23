@@ -19,6 +19,7 @@ import { SalaryCalculation } from "../types";
 import CalculationUtils from "../utils/CalculationUtils";
 import { useUser } from "../context/UserContext";
 import { useToast } from "../context/ToastContext";
+import Header from "./Header";
 
 const CalculationView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -123,7 +124,8 @@ const CalculationView: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-brand-100 pb-20">
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+      <Header />
+      <header className="bg-white border-b border-slate-100 sticky top-16 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <button

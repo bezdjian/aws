@@ -7,9 +7,9 @@ import {
   PiggyBank,
   TrendingUp,
   Save,
-  LogOut,
   ChevronRight,
 } from "lucide-react";
+import Header from "./Header";
 import CalculationUtils from "../utils/CalculationUtils";
 import { SalaryCalculation } from "../types";
 import { useUser } from "../context/UserContext";
@@ -20,7 +20,7 @@ import { calculateTax } from "../backend/taxService";
 import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
-  const { user, handleSignOut, isLoading } = useUser();
+  const { user, isLoading } = useUser();
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -135,54 +135,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* NAVIGATION BAR */}
-      <nav className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-lg rotate-3">
-                <Calculator size={18} strokeWidth={2.5} />
-              </div>
-              <span className="font-extrabold text-xl tracking-tighter text-slate-800">
-                EightyTwenty.
-              </span>
-            </div>
-
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-3 pr-6 border-r border-slate-100">
-                <div className="text-right hidden sm:block">
-                  <p className="text-xs font-black text-slate-900 leading-none mb-1 uppercase tracking-wider">
-                    {user?.getName()}
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-medium leading-none">
-                    {user?.getEmail()}
-                  </p>
-                </div>
-                <img
-                  src={user?.getImageUrl()}
-                  alt="Avatar"
-                  className="w-8 h-8 rounded-full border border-slate-200 ring-4 ring-slate-50"
-                  onError={(e) => {
-                    (
-                      e.target as HTMLImageElement
-                    ).src = `https://ui-avatars.com/api/?name=${user?.getName()}&background=0f172a&color=fff`;
-                  }}
-                />
-              </div>
-              <button
-                onClick={handleSignOut}
-                className="text-slate-400 hover:text-red-500 transition-colors flex items-center space-x-2"
-                title="Sign Out"
-              >
-                <LogOut size={18} />
-                <span className="text-sm font-bold hidden sm:block">
-                  Sign Out
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       <main className="flex-grow flex flex-col md:flex-row">
         {/* LEFT SECTION: User Welcome & History Placeholder */}
