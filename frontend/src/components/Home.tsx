@@ -146,10 +146,6 @@ const Home: React.FC = () => {
           </div>
 
           <div className="relative z-10">
-            <span className="inline-flex items-center space-x-2 bg-brand-50 text-brand-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
-              <span className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-pulse"></span>
-              <span>Dashboard Active</span>
-            </span>
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 mb-6 leading-tight tracking-tight">
               Welcome back,
               <br />
@@ -159,8 +155,8 @@ const Home: React.FC = () => {
               .
             </h1>
             <p className="text-medium text-slate-500 mb-10 leading-relaxed font-medium max-w-sm">
-              Ready to optimize your finances? Use the model to calculate your
-              take-home pay and save your records.
+              Ready to optimize your finances? Use the calculator to estimate
+              your net income and keep a secure record of your earnings.
             </p>
 
             <div className="space-y-4">
