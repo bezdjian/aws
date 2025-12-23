@@ -5,7 +5,6 @@ from typing import List, Optional, Dict, Any
 
 import requests
 from botocore.exceptions import ClientError
-from requests import Response
 
 from . import database
 from . import schemas
@@ -224,9 +223,39 @@ def delete_salary_calculation(calculation_id: str) -> bool:
         return False
 
 
-def verify_token(token: str) -> Response:
-    """Verify the provided token (stub implementation)"""
-    return requests.get(f"{google_auth_url}?token={token}")
+def verify_token(token: str) -> Dict[str, Any]:
+    """Verify the provided token with Google and return user info"""
+    try:
+        # Use Google's tokeninfo endpoint
+        response = requests.get(
+            f"https://oauth2.googleapis.com/tokeninfo?id_token={token}"
+        )
+
+        if response.status_code != 200:
+            print(f"Token verification failed: {response.text}")
+            from fastapi import HTTPException
+
+            raise HTTPException(status_code=401, detail="Invalid Google token")
+
+        data = response.json()
+
+        # Map Google fields to what our frontend expects
+        return {
+            "fullname": data.get("name"),
+            "email": data.get("email"),
+            "pictureUrl": data.get("picture"),
+            "googleId": data.get("sub"),
+            "userId": data.get("sub"),  # Use sub as userId for now
+            "given_name": data.get("given_name"),
+            "family_name": data.get("family_name"),
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error verifying token: {e}")
+        from fastapi import HTTPException
+
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 def get_client_id() -> Optional[str]:

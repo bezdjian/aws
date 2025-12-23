@@ -50,3 +50,8 @@ class SalaryCalculationResponse(SalaryCalculationBase):
 class MessageResponse(BaseModel):
     """Generic message response"""
     message: str
+
+
+class TokenVerify(BaseModel):
+    """Schema for token verification"""
+    token: str

@@ -26,9 +26,18 @@ app = FastAPI(
 )
 
 # Configure CORS
+origins = [
+    "http://localhost:5173",
+    "https://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://127.0.0.1:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,10 +60,10 @@ async def health_check():
     return {"status": "healthy"}
 
 
-@app.get("/auth/verify/{token}", tags=["Auth"])
-async def verify_auth(token: str):
+@app.post("/auth/verify", tags=["Auth"])
+async def verify_auth(token_data: schemas.TokenVerify):
     """Authentication verification endpoint"""
-    return service.verify_token(token=token)
+    return service.verify_token(token=token_data.token)
 
 
 @app.get("/auth/client_id", tags=["Auth"])
