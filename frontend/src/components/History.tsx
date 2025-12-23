@@ -255,9 +255,6 @@ const History: React.FC = () => {
                   {/* Info Column */}
                   <div className="md:col-span-4 space-y-4">
                     <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-all duration-500 shadow-inner">
-                        <Banknote size={22} />
-                      </div>
                       <div>
                         <h3 className="text-lg font-black text-slate-900 decoration-brand-500/30 group-hover:decoration-brand-500 group-hover:underline underline-offset-4 transition-all tracking-tight">
                           {calc.client_name || "General Calculation"}
