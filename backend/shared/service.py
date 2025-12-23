@@ -148,14 +148,14 @@ def get_salary_calculations(skip: int = 0, limit: int = 100) -> List[schemas.Sal
 
 
 def update_salary_calculation(
-        email: str,
+        calculation_id: str,
         calculation_update: schemas.SalaryCalculationBase
 ) -> Optional[Dict[str, Any]]:
     """Update an existing salary calculation in DynamoDB"""
     table = database.get_table()
 
     # First, get the existing item
-    existing_item = get_salary_calculation_by_email(email)
+    existing_item = get_salary_calculation_by_id(calculation_id)
     if not existing_item:
         return None
 
@@ -192,7 +192,7 @@ def update_salary_calculation(
 
     try:
         response = table.update_item(
-            Key={'email': email},
+            Key={'id': calculation_id},
             UpdateExpression=update_expression_parts,
             ExpressionAttributeNames=expression_attribute_names,
             ExpressionAttributeValues=expression_attribute_values,
