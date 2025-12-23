@@ -10,6 +10,8 @@ import {
   Share2,
   User,
   Info,
+  AlertTriangle,
+  X,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCalculationById, deleteCalculation } from "../backend/service";
@@ -34,6 +36,7 @@ const CalculationView: React.FC = () => {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (!userLoading && !user) {
@@ -66,8 +69,12 @@ const CalculationView: React.FC = () => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!calculation?.id || !window.confirm("Delete this simulation?")) return;
+  const handleDeleteClick = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!calculation?.id) return;
 
     try {
       setIsDeleting(true);
@@ -76,8 +83,8 @@ const CalculationView: React.FC = () => {
       navigate("/history");
     } catch (error) {
       showToast("Failed to delete record", "error");
-    } finally {
       setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -146,7 +153,7 @@ const CalculationView: React.FC = () => {
 
           <div className="flex items-center space-x-2">
             <button
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
               disabled={isDeleting}
               className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all disabled:opacity-50"
             >
@@ -162,6 +169,69 @@ const CalculationView: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* CONFIRMATION MODAL */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => !isDeleting && setShowDeleteConfirm(false)}
+          ></div>
+          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="absolute top-0 right-0 p-6">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-8 md:p-10 flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner animate-bounce-subtle">
+                <AlertTriangle size={32} />
+              </div>
+
+              <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">
+                Delete Simulation?
+              </h3>
+              <p className="text-slate-500 font-medium leading-relaxed mb-8">
+                This action is permanent and cannot be undone. Are you sure you
+                want to remove{" "}
+                <span className="text-slate-900 font-bold">
+                  "{calculation.client_name}"
+                </span>
+                ?
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 w-full">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                  className="px-6 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black hover:bg-slate-100 transition-all active:scale-95 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  disabled={isDeleting}
+                  className="px-6 py-4 bg-red-600 text-white rounded-2xl font-black hover:bg-red-700 transition-all shadow-lg shadow-red-600/20 active:scale-95 disabled:opacity-50 flex items-center justify-center space-x-2"
+                >
+                  {isDeleting ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <Trash2 size={18} />
+                      <span>Delete</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-5xl mx-auto w-full px-6 py-12 space-y-8">
         {/* SUMMARY HERO */}
