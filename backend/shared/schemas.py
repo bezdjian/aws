@@ -91,3 +91,12 @@ class TokenVerify(BaseModel):
     """Schema for token verification"""
 
     token: str
+
+
+class TaxCalculationRequest(BaseModel):
+    """Schema for tax calculation request"""
+
+    gross_salary: int
+    birth_year: int = 1987
+    tax_rate: int = 32
+    type: str = "L"

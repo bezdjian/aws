@@ -283,3 +283,25 @@ def validate_token(token_info: TokenInfo):
 
     if 0 < token_info.exp() < (datetime.now().timestamp()):
         raise RuntimeError("Token has expired.")
+
+
+def calculate_tax(tax_request: schemas.TaxCalculationRequest) -> Dict[str, Any]:
+    """Calculate tax by proxying to Skatteverket API"""
+    url = "https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattetabell/2025/beraknaSkatteavdrag"
+    data = {
+        "skattesats": tax_request.tax_rate,
+        "inkomst": tax_request.gross_salary,
+        "fodelsear": tax_request.birth_year,
+        "typ": tax_request.type,
+    }
+    try:
+        response = requests.post(url, json=data)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error calculating tax: {e}")
+        from fastapi import HTTPException
+
+        raise HTTPException(
+            status_code=500, detail=f"Error calculating tax from Skatteverket: {str(e)}"
+        )

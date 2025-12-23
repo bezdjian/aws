@@ -196,6 +196,14 @@ async def delete_calculation(
     return schemas.MessageResponse(message=f"Calculation {calculation_id} deleted successfully")
 
 
+@app.post("/compute-tax", tags=["Calculations"])
+async def compute_tax(tax_request: schemas.TaxCalculationRequest):
+    """
+    Calculate tax by proxying to Skatteverket API.
+    """
+    return service.calculate_tax(tax_request=tax_request)
+
+
 if __name__ == "__main__":
     import uvicorn
 
