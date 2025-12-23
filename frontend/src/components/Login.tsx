@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { verifyToken, getClientId } from "../backend/service";
+import { verifyToken } from "../backend/service";
 import { useToast } from "../context/ToastContext";
 import { useNavigate } from "react-router-dom";
 import { createUserProfile } from "../model/UserProfile";
@@ -16,9 +16,8 @@ interface CredentialResponse {
 }
 
 const Login: React.FC = () => {
-  const [clientId, setClientId] = useState<string | null>(null);
+  const { handleLoginSuccess, clientId } = useUser();
   const navigate = useNavigate();
-  const { handleLoginSuccess } = useUser();
   const { showToast } = useToast();
 
   const finishLogin = useCallback(
@@ -29,21 +28,8 @@ const Login: React.FC = () => {
       console.log("User logged in: ", userProfile.getName());
       navigate("/home", { replace: true });
     },
-    [navigate] // dependencies
+    [navigate, handleLoginSuccess]
   );
-
-  useEffect(() => {
-    getClientId()
-      .then((id) => {
-        console.log("Client ID: " + id);
-        setClientId(id);
-        localStorage.setItem("googleClientId", id);
-      })
-      .catch((e) => {
-        console.log("Error fetching client ID: " + e.message);
-        showToast("Error fetching client ID: " + e.message, "error");
-      });
-  }, [showToast]);
 
   const handleCredentialResponse = useCallback(
     (response: CredentialResponse) => {
