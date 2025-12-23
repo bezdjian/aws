@@ -19,7 +19,7 @@ class CalculationUtils {
         const calculatedTotalCosts = CalculationUtils.calculateTotalCosts(formData);
         const remainingSalary = gross - calculatedTotalCosts;
         const remainingForGrossSalary = remainingSalary / 1.3142;
-        return remainingForGrossSalary;
+        return parseFloat(remainingForGrossSalary.toFixed(0));
     }
 
     static calculateEmployerFee(formData: SalaryCalculation): number {
@@ -31,7 +31,7 @@ class CalculationUtils {
         const remainingSalary = gross - calculatedTotalCosts;
         const remainingForGrossSalary = remainingSalary / 1.3142;
         const employerFee = remainingForGrossSalary * 0.3142;
-        return employerFee;
+        return parseFloat(employerFee.toFixed(0));
     }
 
     static calculateInvoicedAmount(formData: SalaryCalculation): number {
@@ -70,6 +70,15 @@ class CalculationUtils {
 
         return pensionPlan + pensionSavingTax + healthInsuranceKClass + healthCareDocTax;
     }
+
+    static formatCurrency(amount?: number) {
+        if (amount === undefined) return "0 SEK";
+        return new Intl.NumberFormat("sv-SE", {
+          style: "currency",
+          currency: "SEK",
+          maximumFractionDigits: 0,
+        }).format(amount);
+      }
 }
 
 export default CalculationUtils;

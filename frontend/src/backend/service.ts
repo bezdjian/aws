@@ -25,22 +25,32 @@ export const getClientId = async (): Promise<string> => {
     }
 }
 
-export const getAllCalculations = () => {
+
+export const deleteUserToken = async (userId: string) => {
+    try {
+        console.log("Not Implemented:Deleting user token for user ID: " + userId);
+    } catch (error) {
+        console.error("Error deleting user token:", error);
+    }
+}
+
+export const getAllCalculations = async () => {
     return axios.get<SalaryCalculation[]>(`${BASE_URL}/calculations`);
 }
 
-export const getCalculationById = (calculation_id: string) => {
+export const getCalculationById = async (calculation_id: string) => {
     return axios.get<SalaryCalculation>(`${BASE_URL}/calculations/${calculation_id}`);
 }
 
-export const createCalculation = (calculation: SalaryCalculation) => {
-    return axios.post(`${BASE_URL}/calculations`, calculation);
+export const createCalculation = async (calculation: SalaryCalculation) => {
+    console.log("Creating calculation:", calculation);
+    return axios.post(`${BASE_URL}/calculations`, calculation)
 }
 
-export const updateCalculation = (id: string, calculation: SalaryCalculation) => {
+export const updateCalculation = async (id: string, calculation: SalaryCalculation) => {
     return axios.put(`${BASE_URL}/calculations/${id}`, calculation);
 }
 
-export const deleteCalculation = (id: string) => {
+export const deleteCalculation = async (id: string) => {
     return axios.delete(`${BASE_URL}/calculations/${id}`);
 }

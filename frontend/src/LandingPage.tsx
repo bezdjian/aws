@@ -10,8 +10,19 @@ import {
 import CalculationUtils from "./utils/CalculationUtils";
 import { SalaryCalculation } from "./types";
 import Login from "./components/Login";
+import { useUser } from "./context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage: React.FC = () => {
+  const { user } = useUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/home", { replace: true });
+    }
+  }, [user, navigate]);
+
   const [formData, setFormData] = useState<SalaryCalculation>({
     hourly_rate: 800,
     hours_worked: 160,
@@ -68,15 +79,6 @@ const LandingPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submission Data:", formData);
-  };
-
-  const formatCurrency = (amount?: number) => {
-    if (amount === undefined) return "0 SEK";
-    return new Intl.NumberFormat("sv-SE", {
-      style: "currency",
-      currency: "SEK",
-      maximumFractionDigits: 0,
-    }).format(amount);
   };
 
   return (
@@ -214,7 +216,7 @@ const LandingPage: React.FC = () => {
                     Invoiced Amount
                   </span>
                   <div className="text-xl font-bold font-mono leading-none">
-                    {formatCurrency(formData.invoiced_amount)}
+                    {CalculationUtils.formatCurrency(formData.invoiced_amount)}
                   </div>
                 </div>
                 <div className="p-5 rounded-2xl bg-slate-100 text-slate-900 border border-slate-200">
@@ -222,7 +224,7 @@ const LandingPage: React.FC = () => {
                     After Deduction (80%)
                   </span>
                   <div className="text-xl font-bold font-mono text-slate-400 leading-none">
-                    {formatCurrency(formData.after_deduction)}
+                    {CalculationUtils.formatCurrency(formData.after_deduction)}
                   </div>
                 </div>
                 <div className="p-5 rounded-2xl bg-brand-50 text-brand-700 border border-brand-100">
@@ -230,7 +232,7 @@ const LandingPage: React.FC = () => {
                     Gross Salary Basis
                   </span>
                   <div className="text-xl font-bold font-mono leading-none">
-                    {formatCurrency(formData.gross_salary)}
+                    {CalculationUtils.formatCurrency(formData.gross_salary)}
                   </div>
                 </div>
               </div>
@@ -241,7 +243,7 @@ const LandingPage: React.FC = () => {
                   Remaining Salary after fixed costs
                 </span>
                 <div className="text-xl font-bold font-mono leading-none">
-                  {formatCurrency(formData.remaining_salary)}
+                  {CalculationUtils.formatCurrency(formData.remaining_salary)}
                 </div>
               </div>
 
@@ -250,7 +252,7 @@ const LandingPage: React.FC = () => {
                   Employer Fee
                 </span>
                 <div className="text-xl font-bold font-mono text-slate-400 leading-none">
-                  {formatCurrency(formData.employer_fee)}
+                  {CalculationUtils.formatCurrency(formData.employer_fee)}
                 </div>
               </div>
 
@@ -260,7 +262,9 @@ const LandingPage: React.FC = () => {
                     Remaining Salary for Gross Salary
                   </span>
                   <div className="text-xl font-bold font-mono leading-none">
-                    {formatCurrency(formData.remaining_for_gross_salary)}
+                    {CalculationUtils.formatCurrency(
+                      formData.remaining_for_gross_salary
+                    )}
                   </div>
                 </div>
               </div>
