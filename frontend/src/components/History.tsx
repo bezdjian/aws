@@ -15,6 +15,7 @@ import { getCalculationsByEmail, deleteCalculation } from "../backend/service";
 import { SalaryCalculation } from "../types";
 import CalculationUtils from "../utils/CalculationUtils";
 import { useToast } from "../context/ToastContext";
+import ConfirmationModal from "./ConfirmationModal";
 
 const History: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
@@ -23,6 +24,12 @@ const History: React.FC = () => {
   const [calculations, setCalculations] = useState<SalaryCalculation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [calculationToDelete, setCalculationToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!userLoading && !user) {
@@ -50,17 +57,28 @@ const History: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
+  const handleDelete = (id: string, name: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!window.confirm("Are you sure you want to delete this simulation?"))
-      return;
+    setCalculationToDelete({ id, name });
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!calculationToDelete) return;
 
     try {
-      await deleteCalculation(id);
+      setIsDeleting(true);
+      await deleteCalculation(calculationToDelete.id);
       showToast("Simulation deleted successfully", "success");
-      setCalculations((prev) => prev.filter((calc) => calc.id !== id));
+      setCalculations((prev) =>
+        prev.filter((calc) => calc.id !== calculationToDelete.id)
+      );
     } catch (error) {
       showToast("Failed to delete simulation", "error");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+      setCalculationToDelete(null);
     }
   };
 
@@ -229,7 +247,13 @@ const History: React.FC = () => {
                   {/* Actions */}
                   <div className="md:col-span-2 flex items-center justify-end space-x-3">
                     <button
-                      onClick={(e) => handleDelete(calc.id!, e)}
+                      onClick={(e) =>
+                        handleDelete(
+                          calc.id!,
+                          calc.client_name || "General Calculation",
+                          e
+                        )
+                      }
                       className="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
                       title="Delete record"
                     >
@@ -255,6 +279,25 @@ const History: React.FC = () => {
           </div>
         )}
       </main>
+
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => !isDeleting && setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        title="Delete Simulation?"
+        message={
+          <>
+            This action is permanent and cannot be undone. Are you sure you want
+            to remove{" "}
+            <span className="text-slate-900 font-bold">
+              "{calculationToDelete?.name}"
+            </span>
+            ?
+          </>
+        }
+        confirmText="Delete"
+        isProcessing={isDeleting}
+      />
     </div>
   );
 };
