@@ -46,7 +46,7 @@ const Header: React.FC = () => {
             </div>
             <button
               onClick={handleSignOut}
-              className="text-slate-400 hover:text-red-500 transition-colors flex items-center space-x-2"
+              className="text-slate-400 hover:text-red-500 transition-colors flex items-center space-x-2 cursor-pointer"
               title="Sign Out"
             >
               <LogOut size={18} />

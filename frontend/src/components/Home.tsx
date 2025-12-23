@@ -401,7 +401,7 @@ const Home: React.FC = () => {
                     type="button"
                     onClick={handleCalculateTax}
                     disabled={isCalculatingTax}
-                    className="flex items-center justify-center space-x-2 bg-slate-900 text-white py-5 px-8 rounded-2xl font-bold hover:bg-slate-800 hover:-translate-y-1 transition-all active:translate-y-0 shadow-lg shadow-slate-200 disabled:opacity-50 disabled:translate-y-0 disabled:cursor-not-allowed"
+                    className="flex items-center justify-center space-x-2 bg-slate-900 text-white py-5 px-8 rounded-2xl font-bold hover:bg-slate-800 cursor-pointer transition-all active:translate-y-0 shadow-lg shadow-slate-200 disabled:opacity-50 disabled:translate-y-0 disabled:cursor-not-allowed"
                   >
                     {isCalculatingTax ? (
                       <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -416,7 +416,7 @@ const Home: React.FC = () => {
                     type="button"
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center justify-center space-x-2 bg-brand-600 text-white py-5 px-8 rounded-2xl font-bold hover:bg-brand-700 hover:-translate-y-1 transition-all active:translate-y-0 shadow-lg shadow-brand-100 disabled:opacity-50 disabled:translate-y-0 disabled:cursor-not-allowed"
+                    className="flex items-center justify-center space-x-2 bg-brand-600 text-white py-5 px-8 rounded-2xl font-bold hover:bg-brand-700 cursor-pointer transition-all active:translate-y-0 shadow-lg shadow-brand-100 disabled:opacity-50 disabled:translate-y-0 disabled:cursor-not-allowed"
                   >
                     {isSaving ? (
                       <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
