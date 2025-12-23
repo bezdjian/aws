@@ -6,6 +6,7 @@ import {
   Clock,
   PiggyBank,
   TrendingUp,
+  Target,
 } from "lucide-react";
 import CalculationUtils from "./utils/CalculationUtils";
 import { SalaryCalculation } from "./types";
@@ -37,22 +38,47 @@ const LandingPage: React.FC = () => {
     date: new Date().toISOString().split("T")[0],
   });
 
+  const [calculationMode, setCalculationMode] = useState<"DIRECT" | "GOAL">(
+    "DIRECT"
+  );
+  const [targetGross, setTargetGross] = useState<number>(60000);
+
   // Derived calculations
   useEffect(() => {
+    let currentHourlyRate = formData.hourly_rate;
+
+    if (calculationMode === "GOAL") {
+      currentHourlyRate = CalculationUtils.calculateRequiredHourlyRate(
+        targetGross,
+        formData.hours_worked,
+        formData.save_to_buffer,
+        formData.pension_saving
+      );
+    }
+
     // Core Billing Calculations
-    const invoiced = CalculationUtils.calculateInvoicedAmount(formData);
-    const afterDed = CalculationUtils.calculateAfterDeduction(formData);
+    const invoiced = currentHourlyRate * formData.hours_worked;
+    const afterDed = invoiced * 0.8;
     const gross = afterDed - formData.save_to_buffer;
 
     // Calculate remaining salary and employer fee
-    const remainingSalary = CalculationUtils.calculateRemainingSalary(formData);
+    const remainingSalary = CalculationUtils.calculateRemainingSalary({
+      ...formData,
+      hourly_rate: currentHourlyRate,
+    });
     const remainingForGrossSalary =
-      CalculationUtils.calculateRemainingForGrossSalary(formData);
-    const employerFee = CalculationUtils.calculateEmployerFee(formData);
+      CalculationUtils.calculateRemainingForGrossSalary({
+        ...formData,
+        hourly_rate: currentHourlyRate,
+      });
+    const employerFee = CalculationUtils.calculateEmployerFee({
+      ...formData,
+      hourly_rate: currentHourlyRate,
+    });
 
-    // Update state once with all derived values
     setFormData((prev) => ({
       ...prev,
+      hourly_rate: currentHourlyRate,
       invoiced_amount: invoiced,
       after_deduction: afterDed,
       gross_salary: gross,
@@ -61,6 +87,8 @@ const LandingPage: React.FC = () => {
       employer_fee: employerFee,
     }));
   }, [
+    calculationMode,
+    targetGross,
     formData.hourly_rate,
     formData.hours_worked,
     formData.save_to_buffer,
@@ -149,22 +177,77 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
 
+          <div className="flex bg-slate-100/50 p-1.5 rounded-[1.25rem] mb-10 w-full sm:w-fit border border-slate-100">
+            <button
+              type="button"
+              onClick={() => setCalculationMode("DIRECT")}
+              className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                calculationMode === "DIRECT"
+                  ? "bg-white text-slate-900 shadow-sm border border-slate-100"
+                  : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              Direct Simulation
+            </button>
+            <button
+              type="button"
+              onClick={() => setCalculationMode("GOAL")}
+              className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center space-x-2 ${
+                calculationMode === "GOAL"
+                  ? "bg-white text-slate-900 shadow-sm border border-slate-100"
+                  : "text-slate-400 hover:text-slate-600"
+              }`}
+            >
+              <Target
+                size={12}
+                className={calculationMode === "GOAL" ? "text-brand-500" : ""}
+              />
+              <span>Goal-Oriented</span>
+            </button>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               {/* Input Fields */}
               <div className="space-y-1">
-                <label className="input-label flex items-center">
-                  <Coins size={12} className="mr-1" /> Hourly Rate (SEK)
+                <label className="input-label flex items-center capitalize">
+                  {calculationMode === "DIRECT" ? (
+                    <>
+                      <Coins size={12} className="mr-1" /> Hourly Rate (SEK)
+                    </>
+                  ) : (
+                    <>
+                      <Target size={12} className="mr-1" /> Target Gross Salary
+                      (SEK)
+                    </>
+                  )}
                 </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="hourly_rate"
-                    value={formData.hourly_rate}
-                    onChange={handleChange}
-                    className="input-field font-mono"
-                  />
-                </div>
+                {calculationMode === "DIRECT" ? (
+                  <div className="relative">
+                    <input
+                      type="number"
+                      name="hourly_rate"
+                      value={formData.hourly_rate}
+                      onChange={handleChange}
+                      className="input-field font-mono"
+                    />
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={targetGross}
+                      onChange={(e) =>
+                        setTargetGross(parseFloat(e.target.value) || 0)
+                      }
+                      placeholder="e.g. 50000"
+                      className="input-field font-mono border-brand-200 bg-brand-50/20 text-brand-900"
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white px-2 py-1 rounded-lg border border-brand-100 text-[12px] font-black text-brand-600 uppercase tracking-tighter">
+                      Required: {formData.hourly_rate} kr/h
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="space-y-1">
                 <label className="input-label flex items-center">

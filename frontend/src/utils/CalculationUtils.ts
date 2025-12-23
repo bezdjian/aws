@@ -71,6 +71,28 @@ class CalculationUtils {
         return pensionPlan + pensionSavingTax + healthInsuranceKClass + healthCareDocTax;
     }
 
+    static calculateRequiredHourlyRate(targetGrossSalary: number, hoursWorked: number, saveToBuffer: number, pensionSaving: number): number {
+        // We use the same fixed costs logic
+        const dummyFormData = {
+            hourly_rate: 0,
+            hours_worked: hoursWorked,
+            save_to_buffer: saveToBuffer,
+            pension_saving: pensionSaving,
+            gross_salary: targetGrossSalary
+        } as SalaryCalculation;
+        
+        const fixedCosts = CalculationUtils.calculateTotalCosts(dummyFormData);
+        
+        // G = (invoiced * 0.8 - saveToBuffer - fixedCosts) / 1.3142
+        // invoiced * 0.8 = G * 1.3142 + saveToBuffer + fixedCosts
+        // invoiced = (G * 1.3142 + saveToBuffer + fixedCosts) / 0.8
+        
+        const requiredInvoiced = (targetGrossSalary * 1.3142 + saveToBuffer + fixedCosts) / 0.8;
+        const requiredHourlyRate = requiredInvoiced / hoursWorked;
+        
+        return Math.ceil(requiredHourlyRate);
+    }
+
     static formatCurrency(amount?: number) {
         if (amount === undefined) return "0 SEK";
         return new Intl.NumberFormat("sv-SE", {
