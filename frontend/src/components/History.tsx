@@ -9,6 +9,7 @@ import {
   Trash2,
   Clock,
   TrendingUp,
+  FileDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
@@ -83,6 +84,63 @@ const History: React.FC = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    if (calculations.length === 0) {
+      showToast("No data to export", "error");
+      return;
+    }
+
+    const headers = [
+      "Date",
+      "Client Name",
+      "Hourly Rate",
+      "Hours Worked",
+      "Invoiced Amount",
+      "After Deduction (80%)",
+      "Save to Buffer",
+      "Pension Saving",
+      "Employer Fee",
+      "Gross Salary",
+      "Remaining for Net",
+      "Notes",
+    ];
+
+    const csvRows = calculations.map((calc) => [
+      calc.date?.split("T")[0] || "",
+      `"${calc.client_name || ""}"`,
+      calc.hourly_rate || 0,
+      calc.hours_worked || 0,
+      calc.invoiced_amount || 0,
+      calc.after_deduction,
+      calc.save_to_buffer || 0,
+      calc.pension_saving || 0,
+      calc.employer_fee || 0,
+      calc.gross_salary || 0,
+      calc.remaining_for_gross_salary || 0,
+      `"${calc.notes || ""}"`,
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...csvRows.map((row) => row.join(",")),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `eighty_twenty_export_${new Date().toISOString().split("T")[0]}.csv`
+    );
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast("CSV History exported successfully", "success");
+  };
+
   const filteredCalculations = calculations.filter(
     (calc) =>
       calc.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -135,10 +193,17 @@ const History: React.FC = () => {
             </div>
             <button
               onClick={() => navigate("/insights")}
-              className="flex items-center space-x-2 px-4 py-2 bg-brand-50 text-brand-600 rounded-2xl font-black text-sm hover:bg-brand-100 transition-all"
+              className="hidden lg:flex items-center space-x-2 px-4 py-2 bg-slate-50 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-100 transition-all border border-slate-100"
             >
               <TrendingUp size={16} />
-              <span className="hidden sm:block">Analytics</span>
+              <span>Analytics</span>
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20"
+            >
+              <FileDown size={16} />
+              <span className="hidden sm:block">Export CSV</span>
             </button>
           </div>
         </div>
