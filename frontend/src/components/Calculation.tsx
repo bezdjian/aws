@@ -117,41 +117,49 @@ const CalculationView: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-brand-100 pb-20">
-      {/* TOP BAR */}
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 px-6 h-20 flex items-center justify-between shadow-sm">
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => navigate("/history")}
-            className="p-2.5 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-900"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div className="h-6 w-px bg-slate-100"></div>
-          <div>
-            <h1 className="text-lg font-black text-slate-900 line-clamp-1">
-              {calculation.client_name || "General Scenario"}
-            </h1>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mt-0.5">
-              Simulation Record
-            </p>
+      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center space-x-6">
+            <button
+              onClick={() => navigate("/history")}
+              className="p-2.5 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-900 group"
+            >
+              <ArrowLeft
+                size={20}
+                className="group-hover:-translate-x-0.5 transition-transform"
+              />
+            </button>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-600 shadow-sm">
+                <Calculator size={20} />
+              </div>
+              <div>
+                <h1 className="text-lg font-black text-slate-900 line-clamp-1">
+                  {calculation.client_name || "General Scenario"}
+                </h1>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mt-0.5">
+                  Simulation Record
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all disabled:opacity-50"
-          >
-            <Trash2 size={20} />
-          </button>
-          <button
-            onClick={() => window.print()}
-            className="hidden sm:flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 shadow-inner"
-          >
-            <Download size={18} />
-            <span>Export PDF</span>
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all disabled:opacity-50"
+            >
+              <Trash2 size={20} />
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="hidden sm:flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 shadow-inner"
+            >
+              <Download size={18} />
+              <span>Export PDF</span>
+            </button>
+          </div>
         </div>
       </header>
 

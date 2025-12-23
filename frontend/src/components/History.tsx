@@ -85,7 +85,6 @@ const History: React.FC = () => {
                 className="group-hover:-translate-x-0.5 transition-transform"
               />
             </button>
-            <div className="h-8 w-px bg-slate-100"></div>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-600">
                 <HistoryIcon size={20} />
