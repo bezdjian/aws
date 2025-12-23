@@ -214,7 +214,10 @@ const Home: React.FC = () => {
           <div className="w-full max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
               <h2 className="text-2xl font-black text-slate-900">
-                New Calculation
+                <span className="flex items-center">
+                  <Calculator className="mr-3 text-brand-600" size={24} />
+                  New Simulation
+                </span>
               </h2>
               <div className="flex items-center space-x-2 text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
                 <Calendar size={16} />
