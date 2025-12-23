@@ -8,6 +8,7 @@ import {
   Search,
   Trash2,
   Clock,
+  TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
@@ -118,18 +119,27 @@ const History: React.FC = () => {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center bg-slate-100 rounded-2xl px-4 py-2 border border-slate-200/50 w-72 group focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-500/10 focus-within:border-brand-500 transition-all">
-            <Search
-              size={18}
-              className="text-slate-400 group-focus-within:text-brand-500 transition-colors"
-            />
-            <input
-              type="text"
-              placeholder="Search simulations..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-900 placeholder:text-slate-400 w-full ml-2"
-            />
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center bg-slate-100 rounded-2xl px-4 py-2 border border-slate-200/50 w-72 group focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-500/10 focus-within:border-brand-500 transition-all">
+              <Search
+                size={18}
+                className="text-slate-400 group-focus-within:text-brand-500 transition-colors"
+              />
+              <input
+                type="text"
+                placeholder="Search simulations..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-900 placeholder:text-slate-400 w-full ml-2"
+              />
+            </div>
+            <button
+              onClick={() => navigate("/insights")}
+              className="flex items-center space-x-2 px-4 py-2 bg-brand-50 text-brand-600 rounded-2xl font-black text-sm hover:bg-brand-100 transition-all"
+            >
+              <TrendingUp size={16} />
+              <span className="hidden sm:block">Analytics</span>
+            </button>
           </div>
         </div>
       </header>

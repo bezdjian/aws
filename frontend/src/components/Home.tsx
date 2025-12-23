@@ -216,7 +216,7 @@ const Home: React.FC = () => {
                 className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-brand-200 transition-all font-sans"
               >
                 <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                  <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-all duration-500">
                     <Calendar size={18} />
                   </div>
                   <div>
@@ -225,6 +225,29 @@ const Home: React.FC = () => {
                     </p>
                     <p className="text-xs text-slate-400">
                       Access your saved calculations
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight
+                  size={16}
+                  className="text-slate-300 group-hover:text-brand-500 group-hover:translate-x-1 transition-all"
+                />
+              </div>
+
+              <div
+                onClick={() => navigate("/insights")}
+                className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-brand-200 transition-all font-sans"
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-all duration-500">
+                    <TrendingUp size={18} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">
+                      Analytics & Insights
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      Financial performance charts
                     </p>
                   </div>
                 </div>

@@ -8,6 +8,7 @@ import UserProvider from "./context/UserContext";
 import Home from "./components/Home";
 import History from "./components/History";
 import CalculationView from "./components/Calculation";
+import Insights from "./components/Insights";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/home" element={<Home />} />
             <Route path="/history" element={<History />} />
             <Route path="/calculation/:id" element={<CalculationView />} />
+            <Route path="/insights" element={<Insights />} />
           </Routes>
         </BrowserRouter>
       </ToastProvider>
