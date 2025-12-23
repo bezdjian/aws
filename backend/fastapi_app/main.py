@@ -97,7 +97,7 @@ async def create_calculation(
         return service.create_salary_calculation(calculation=calculation)
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error creating calculation: {str(e)}"
         )
 
