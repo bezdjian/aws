@@ -38,6 +38,12 @@ export const getAllCalculations = async () => {
   return axios.get<SalaryCalculation[]>(`${BASE_URL}/calculations`);
 };
 
+export const getCalculationsByEmail = async (email: string) => {
+  return axios.get<SalaryCalculation[]>(
+    `${BASE_URL}/calculations/email/${email}`
+  );
+};
+
 export const getCalculationById = async (calculation_id: string) => {
   return axios.get<SalaryCalculation>(
     `${BASE_URL}/calculations/${calculation_id}`

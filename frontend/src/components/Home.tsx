@@ -211,7 +211,10 @@ const Home: React.FC = () => {
             </p>
 
             <div className="space-y-4">
-              <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-brand-200 transition-all">
+              <div
+                onClick={() => navigate("/history")}
+                className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group cursor-pointer hover:border-brand-200 transition-all font-sans"
+              >
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
                     <Calendar size={18} />
