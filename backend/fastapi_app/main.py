@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
-from shared import service, schemas
+from shared import service, schemas  # noqa: E402
 
 # Load environment variables from the backend directory
 load_dotenv(backend_dir / ".env")
@@ -143,6 +143,20 @@ async def get_calculation(
             detail=f"Calculation with id {calculation_id} not found"
         )
     return calculation
+
+
+@app.get(
+    "/calculations/email/{email}",
+    response_model=List[schemas.SalaryCalculationResponse],
+    tags=["Calculations"],
+)
+async def get_calculations_by_email(email: str):
+    """
+    Retrieve all salary calculations for a specific user email.
+
+    - **email**: The email of the consultant to retrieve calculations for
+    """
+    return service.get_salary_calculations_by_email(email=email)
 
 
 # UPDATE - Update an existing salary calculation

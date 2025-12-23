@@ -5,6 +5,7 @@ from typing import List, Optional, Dict, Any
 
 import requests
 from botocore.exceptions import ClientError
+from boto3.dynamodb.conditions import Attr
 
 from . import database
 from . import schemas
@@ -144,6 +145,34 @@ def get_salary_calculations(skip: int = 0, limit: int = 100) -> List[schemas.Sal
 
     except ClientError as e:
         print(f"Error scanning table: {e.response['Error']['Message']}")
+        return []
+
+
+def get_salary_calculations_by_email(
+    email: str,
+) -> List[schemas.SalaryCalculationResponse]:
+    """Get all salary calculations for a specific email from DynamoDB"""
+    table = database.get_table()
+
+    try:
+        # Use scan with a FilterExpression
+        response = table.scan(FilterExpression=Attr("email").eq(email))
+        items = response.get("Items", [])
+
+        # Sort by date (most recent first)
+        items.sort(
+            key=lambda x: (
+                x.get("date", "") if x.get("date") else x.get("created_at", "")
+            ),
+            reverse=True,
+        )
+
+        return [
+            schemas.SalaryCalculationResponse(**item_to_dict(item)) for item in items
+        ]
+
+    except ClientError as e:
+        print(f"Error scanning by email: {e.response['Error']['Message']}")
         return []
 
 
