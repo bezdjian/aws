@@ -132,14 +132,15 @@ const CalculationView: React.FC = () => {
             >
               <ArrowLeft
                 size={20}
-                className="group-hover:-translate-x-0.5 transition-transform"
+                className="group-hover:-translate-x-0.5 transition-transform print:hidden"
               />
             </button>
+            <div className="h-8 w-px bg-slate-100 print:hidden"></div>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-brand-50 rounded-xl flex items-center justify-center text-brand-600 shadow-sm">
                 <Calculator size={20} />
               </div>
-              <div>
+              <div className="print:block">
                 <h1 className="text-lg font-black text-slate-900 line-clamp-1">
                   {calculation.client_name || "General Scenario"}
                 </h1>
@@ -154,13 +155,13 @@ const CalculationView: React.FC = () => {
             <button
               onClick={handleDeleteClick}
               disabled={isDeleting}
-              className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all disabled:opacity-50"
+              className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all disabled:opacity-50 print:hidden"
             >
               <Trash2 size={20} />
             </button>
             <button
               onClick={() => window.print()}
-              className="hidden sm:flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 shadow-inner"
+              className="hidden sm:flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 shadow-inner print:hidden"
             >
               <Download size={18} />
               <span>Export PDF</span>
@@ -442,6 +443,21 @@ const CalculationView: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* PRINT-ONLY FOOTER */}
+      <footer className="hidden print:block fixed bottom-12 left-0 right-0 text-center">
+        <div className="max-w-7xl mx-auto px-12 border-t border-slate-100 pt-8">
+          <p className="text-sm font-black text-slate-900 tracking-widest uppercase">
+            Eighty-Twenty Simulation
+          </p>
+          <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-[0.2em]">
+            Generated via Eighty-Twenty Analytics Portal
+          </p>
+          <p className="text-[9px] text-slate-300 mt-6 font-mono">
+            {new Date().toLocaleString()} • Record ID: {calculation.id}
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

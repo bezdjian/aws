@@ -8,6 +8,8 @@ import {
   Zap,
   ShieldCheck,
   Briefcase,
+  FileDown,
+  HelpCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
@@ -109,25 +111,99 @@ const Insights: React.FC = () => {
       .reverse(); // Simplified sort for demo
   }, [calculations]);
 
-  // 3. Chart Data: Breakdown distribution
+  // 3. Chart Data: Average Efficiency Breakdown
   const distributionData = useMemo(() => {
     if (calculations.length === 0) return [];
 
-    // Use the latest calculation as the "Current Distribution" profile
-    const latest = calculations[0];
-    const invoiced = latest.invoiced_amount || 0;
-    const modelFee = invoiced * 0.2; // 20% model fee
-    const buffer = latest.save_to_buffer || 0;
-    const netSalary = latest.remaining_for_gross_salary || 0;
-    const taxAndFees = invoiced - modelFee - buffer - netSalary;
+    const count = calculations.length;
+
+    // Sum up everything to calculate true averages
+    const totalInvoiced = calculations.reduce(
+      (acc, curr) => acc + (curr.invoiced_amount || 0),
+      0
+    );
+    const totalBuffer = calculations.reduce(
+      (acc, curr) => acc + (curr.save_to_buffer || 0),
+      0
+    );
+    const totalGross = calculations.reduce(
+      (acc, curr) => acc + (curr.remaining_for_gross_salary || 0),
+      0
+    );
+    const totalSocialPension = calculations.reduce(
+      (acc, curr) =>
+        acc + (curr.employer_fee || 0) + (curr.pension_saving || 0),
+      0
+    );
+
+    // 20% Model Fee is consistent across all
+    const avgModelFee = (totalInvoiced * 0.2) / count;
+    const avgBuffer = totalBuffer / count;
+    const avgGross = totalGross / count;
+    const avgSocialPension = totalSocialPension / count;
 
     return [
-      { name: "Model Fee (20%)", value: modelFee, color: "#6366f1" }, // brand-500
-      { name: "Safety Buffer", value: buffer, color: "#f59e0b" }, // amber-500
-      { name: "Take-home (Net)", value: netSalary, color: "#10b981" }, // emerald-500
-      { name: "Tax & Employer Fees", value: taxAndFees, color: "#ef4444" }, // red-500
+      { name: "Model Fee (20%)", value: avgModelFee, color: "#6366f1" }, // brand-500
+      { name: "Safety Buffer", value: avgBuffer, color: "#f59e0b" }, // amber-500
+      { name: "Gross Salary Basis", value: avgGross, color: "#10b981" }, // emerald-500
+      { name: "Social & Pension", value: avgSocialPension, color: "#ef4444" }, // red-500
     ];
   }, [calculations]);
+
+  const handleExportCSV = () => {
+    if (calculations.length === 0) {
+      showToast("No data to export", "error");
+      return;
+    }
+
+    const rows = [];
+
+    // Section 1: Core Statistics
+    rows.push(["FINANCIAL SUMMARY REPORT"]);
+    rows.push(["Generated on", new Date().toLocaleString()]);
+    rows.push([]);
+    rows.push(["Metric", "Value"]);
+    rows.push(["Total Accumulated Billing", stats.totalInvoiced]);
+    rows.push(["Total Projected Net (Gross)", stats.totalNet]);
+    rows.push(["Total Accumulated Safety Buffer", stats.totalBuffer]);
+    rows.push(["Average Hourly Rate", Math.round(stats.avgRate)]);
+    rows.push(["Total Saved Scenarios", stats.count]);
+    rows.push([]);
+
+    // Section 2: Monthly Performance
+    rows.push(["MONTHLY REVENUE PERFORMANCE"]);
+    rows.push(["Month", "Revenue"]);
+    monthlyData.forEach((item) => {
+      rows.push([item.name, item.value]);
+    });
+    rows.push([]);
+
+    // Section 3: Latest Distribution Profile
+    rows.push(["80/20 DISTRIBUTION (LATEST PROFILE)"]);
+    rows.push(["Category", "Amount"]);
+    distributionData.forEach((item) => {
+      rows.push([item.name, item.value]);
+    });
+
+    const csvContent = rows.map((row) => row.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `eighty_twenty_insights_summary_${
+        new Date().toISOString().split("T")[0]
+      }.csv`
+    );
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast("Insights Summary exported successfully", "success");
+  };
 
   if (isLoading) {
     return (
@@ -170,6 +246,14 @@ const Insights: React.FC = () => {
               </div>
             </div>
           </div>
+
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20"
+          >
+            <FileDown size={18} />
+            <span className="hidden sm:block">Export Data</span>
+          </button>
         </div>
       </header>
 
@@ -352,9 +436,14 @@ const Insights: React.FC = () => {
                   <div className="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center">
                     <PieChartIcon size={20} />
                   </div>
-                  <h3 className="text-xl font-black text-slate-900">
-                    80/20 Efficiency
-                  </h3>
+                  <div className="flex flex-col">
+                    <h3 className="text-xl font-black text-slate-900">
+                      80/20 Efficiency
+                    </h3>
+                    <p className="text-[10px] font-bold text-brand-600 uppercase tracking-widest mt-0.5">
+                      Average performance profile
+                    </p>
+                  </div>
                 </div>
 
                 <div className="h-[300px] w-full relative mb-8 min-w-0">
@@ -390,10 +479,10 @@ const Insights: React.FC = () => {
                   {/* Center Text Overlay */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                     <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
-                      Latest Profile
+                      Your Average
                     </span>
                     <span className="text-2xl font-black text-slate-900 mt-1">
-                      80%
+                      80/20
                     </span>
                   </div>
                 </div>
@@ -410,7 +499,7 @@ const Insights: React.FC = () => {
                           style={{ backgroundColor: item.color }}
                         ></div>
                         <span className="text-xs font-bold text-slate-500">
-                          {item.name}
+                          Avg. {item.name}
                         </span>
                       </div>
                       <span className="text-xs font-black text-slate-900 font-mono">
@@ -418,6 +507,23 @@ const Insights: React.FC = () => {
                       </span>
                     </div>
                   ))}
+                </div>
+
+                <div className="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-100/50">
+                  <div className="flex items-start space-x-3">
+                    <HelpCircle
+                      size={14}
+                      className="text-slate-400 mt-0.5 shrink-0"
+                    />
+                    <p className="text-[10px] leading-relaxed text-slate-500 font-medium">
+                      This represents your{" "}
+                      <span className="text-slate-900 font-bold">
+                        typical revenue split
+                      </span>
+                      . It averages every simulation to show how much actually
+                      stays in your pocket vs. overhead and taxes.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
