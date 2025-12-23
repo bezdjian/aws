@@ -10,6 +10,7 @@ import {
   Clock,
   TrendingUp,
   FileDown,
+  Banknote,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
@@ -250,15 +251,12 @@ const History: React.FC = () => {
                 onClick={() => navigate(`/calculation/${calc.id}`)}
                 className="group relative bg-white rounded-[2rem] border border-slate-100 hover:border-brand-200 p-6 md:p-8 shadow-sm hover:shadow-xl hover:shadow-brand-500/5 transition-all duration-500 cursor-pointer overflow-hidden"
               >
-                {/* Decorative element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-brand-500/10 transition-colors"></div>
-
                 <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                   {/* Info Column */}
                   <div className="md:col-span-4 space-y-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-all duration-500 shadow-inner">
-                        <User size={22} />
+                        <Banknote size={22} />
                       </div>
                       <div>
                         <h3 className="text-lg font-black text-slate-900 decoration-brand-500/30 group-hover:decoration-brand-500 group-hover:underline underline-offset-4 transition-all tracking-tight">
