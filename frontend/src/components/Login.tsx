@@ -25,7 +25,6 @@ const Login: React.FC = () => {
       localStorage.setItem("googleCredentials", JSON.stringify(user));
       const userProfile = createUserProfile(user);
       handleLoginSuccess(userProfile);
-      console.log("User logged in: ", userProfile.getName());
       navigate("/home", { replace: true });
     },
     [navigate, handleLoginSuccess]
@@ -35,11 +34,9 @@ const Login: React.FC = () => {
     (response: CredentialResponse) => {
       verifyToken(response.credential)
         .then((user) => {
-          console.log("verify_token: User: ", user);
           finishLogin(user);
         })
         .catch((error) => {
-          console.log("verify_token: Error: ", error);
           showToast("Error verifying token: " + error.message, "error");
         });
     },
