@@ -232,13 +232,21 @@ const CalculationView: React.FC = () => {
                 <div className="flex items-center justify-between py-4 border-b border-slate-50 group/item">
                   <div className="space-y-1">
                     <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+                      Hours Worked
+                    </p>
+                  </div>
+                  <p className="text-xl font-black text-slate-900 font-mono tracking-tight group-hover/item:text-brand-600 transition-colors">
+                    {calculation?.hours_worked || 0}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between py-4 border-b border-slate-50 group/item">
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">
                       Hourly Rate
                     </p>
                   </div>
                   <p className="text-xl font-black text-slate-900 font-mono tracking-tight group-hover/item:text-brand-600 transition-colors">
-                    {CalculationUtils.formatCurrency(
-                      calculation.hourly_rate || 0
-                    )}
+                    {calculation?.hourly_rate || 0}
                   </p>
                 </div>
                 <div className="flex items-center justify-between py-4 border-b border-slate-50 group/item">
@@ -301,9 +309,25 @@ const CalculationView: React.FC = () => {
                       Base for employer contributions and gross salary
                     </p>
                   </div>
-                  <p className="text-2xl font-black text-brand-600 font-mono tracking-tighter">
+                  <p className="text-xl font-black text-brand-600 font-mono tracking-tighter">
                     {CalculationUtils.formatCurrency(
                       calculation.gross_salary || 0
+                    )}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-6 group/item">
+                  <div className="space-y-1">
+                    <p className="text-sm font-black text-slate-900 uppercase tracking-[0.1em]">
+                      Remaining salary after fixed costs
+                    </p>
+                    <p className="text-xs text-slate-400 font-medium">
+                      Before employer contributions
+                    </p>
+                  </div>
+                  <p className="text-xl font-black text-brand-600 font-mono tracking-tighter">
+                    {CalculationUtils.formatCurrency(
+                      calculation.remaining_salary || 0
                     )}
                   </p>
                 </div>
