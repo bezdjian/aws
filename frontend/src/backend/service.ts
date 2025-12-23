@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SalaryCalculation } from "../types";
 
-const BASE_URL = process.env.VITE_BACKEND_API_URL || "http://localhost:8000";
+const BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
 
 export const verifyToken = async (token: string) => {
     try {
