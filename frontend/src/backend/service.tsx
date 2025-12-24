@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SalaryCalculation } from "../types";
+import { SalaryCalculation, UserSettings } from "../types";
 
 const BASE_URL =
   import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
@@ -73,4 +73,12 @@ export const updateCalculation = async (
 
 export const deleteCalculation = async (id: string) => {
   return axios.delete(`${BASE_URL}/calculations/${id}`);
+};
+
+export const getUserSettings = async (email: string) => {
+  return axios.get<UserSettings>(`${BASE_URL}/settings/${email}`);
+};
+
+export const updateUserSettings = async (settings: UserSettings) => {
+  return axios.post<UserSettings>(`${BASE_URL}/settings`, settings);
 };

@@ -18,6 +18,7 @@ import {
   createCalculation,
   checkDuplicateCalculation,
   updateCalculation,
+  getUserSettings,
 } from "../backend/service";
 import { calculateTax } from "../backend/taxService";
 import ConfirmationModal from "./ConfirmationModal";
@@ -42,8 +43,24 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (!isLoading && !user) {
       navigate("/", { replace: true });
+    } else if (user) {
+      fetchDefaults();
     }
   }, [user, isLoading, navigate]);
+
+  const fetchDefaults = async () => {
+    try {
+      const response = await getUserSettings(user?.getEmail() || "");
+      const settings = response.data;
+
+      setFormData((prev) => ({
+        ...prev,
+        save_to_buffer: settings.default_buffer_amount,
+      }));
+    } catch (error) {
+      console.error("Failed to fetch defaults:", error);
+    }
+  };
 
   const [formData, setFormData] = useState<SalaryCalculation>({
     email: user?.getEmail() || "",

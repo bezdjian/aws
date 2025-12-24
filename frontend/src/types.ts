@@ -22,3 +22,10 @@ export interface UserProfile {
   picture: string;
   userId?: string;
 }
+
+export interface UserSettings {
+  email: string;
+  default_tax_rate: number;
+  default_buffer_amount: number;
+  updated_at?: string;
+}
