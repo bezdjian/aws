@@ -1,6 +1,7 @@
 # Eighty-Twenty Backend
 
-Modular backend for the Eighty-Twenty salary calculator, supporting both local development (FastAPI) and production deployment (AWS Lambda).
+Modular backend for the Eighty-Twenty salary calculator, supporting both local development (FastAPI)
+and production deployment (AWS Lambda).
 
 ## 🏗️ Structure
 
@@ -49,7 +50,8 @@ Visit: http://localhost:8000/docs
 
 ## 📊 Database Management
 
-Database operations are handled via the `Makefile` using the AWS CLI. By default, these commands use `ENVIRONMENT=localstack`.
+Database operations are handled via the `Makefile` using the AWS CLI. By default, these commands use
+`ENVIRONMENT=localstack`.
 
 ### View Table Info
 
@@ -67,7 +69,8 @@ make db-list
 make db-list ENVIRONMENT=staging
 ```
 
-> **Note:** The DynamoDB table is managed via CloudFormation/SAM (`template.yaml`). Use `sam deploy` to create it and `sam delete` to remove it.
+> **Note:** The DynamoDB table is managed via CloudFormation/SAM (`template.yaml`). Use `sam deploy`
+> to create it and `sam delete` to remove it.
 
 ## 🧪 Testing
 

@@ -1,8 +1,8 @@
 {
-    "httpMethod": "POST",
-    "path": "/calculations",
-    "headers": {
-        "Content-Type": "application/json"
-    },
-    "body": "{\"name\":\"Monthly Salary\",\"gross_salary\":5000,\"essential_percentage\":80,\"discretionary_percentage\":20,\"notes\":\"January 2024\"}"
+  "httpMethod": "POST",
+  "path": "/calculations",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"name\":\"Monthly Salary\",\"gross_salary\":5000,\"essential_percentage\":80,\"discretionary_percentage\":20,\"notes\":\"January 2024\"}"
 }

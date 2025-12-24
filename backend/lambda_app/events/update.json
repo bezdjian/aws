@@ -1,11 +1,11 @@
 {
-    "httpMethod": "PUT",
-    "path": "/calculations/123e4567-e89b-12d3-a456-426614174000",
-    "pathParameters": {
-        "id": "123e4567-e89b-12d3-a456-426614174000"
-    },
-    "headers": {
-        "Content-Type": "application/json"
-    },
-    "body": "{\"gross_salary\":6000,\"notes\":\"Updated salary\"}"
+  "httpMethod": "PUT",
+  "path": "/calculations/123e4567-e89b-12d3-a456-426614174000",
+  "pathParameters": {
+    "id": "123e4567-e89b-12d3-a456-426614174000"
+  },
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"gross_salary\":6000,\"notes\":\"Updated salary\"}"
 }
