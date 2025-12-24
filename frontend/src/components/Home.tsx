@@ -199,8 +199,8 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <Header />
+    <div className="min-h-screen bg-slate-50">
+      <Header onSettingsUpdate={fetchDefaults} />
 
       <main className="flex-grow flex flex-col md:flex-row">
         {/* LEFT SECTION: User Welcome & History Placeholder */}

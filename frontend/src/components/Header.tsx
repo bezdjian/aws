@@ -4,7 +4,11 @@ import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import SettingsModal from "./SettingsModal";
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onSettingsUpdate?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
   const { user, handleSignOut } = useUser();
   const navigate = useNavigate();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -75,6 +79,7 @@ const Header: React.FC = () => {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+        onSaveSuccess={onSettingsUpdate}
       />
     </>
   );

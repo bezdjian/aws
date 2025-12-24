@@ -8,9 +8,14 @@ import { UserSettings as UserSettingsType } from "../types";
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSaveSuccess?: () => void;
 }
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
+const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen,
+  onClose,
+  onSaveSuccess,
+}) => {
   const { user } = useUser();
   const { showToast } = useToast();
   const [settings, setSettings] = useState<UserSettingsType>({
@@ -44,6 +49,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     try {
       await updateUserSettings(settings);
       showToast("Settings saved successfully!", "success");
+      if (onSaveSuccess) onSaveSuccess();
       onClose();
     } catch (error: any) {
       showToast("Failed to save settings: " + error.message, "error");
