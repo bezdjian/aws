@@ -56,6 +56,7 @@ const Home: React.FC = () => {
       setFormData((prev) => ({
         ...prev,
         save_to_buffer: settings.default_buffer_amount,
+        hourly_rate: settings.default_hourly_rate,
       }));
     } catch (error) {
       console.error("Failed to fetch defaults:", error);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Settings, Percent, Wallet, Save } from "lucide-react";
+import { X, Settings, Percent, Wallet, Save, Timer } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useToast } from "../context/ToastContext";
 import { getUserSettings, updateUserSettings } from "../backend/service";
@@ -22,6 +22,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     email: user?.getEmail() || "",
     default_tax_rate: 32,
     default_buffer_amount: 10000,
+    default_hourly_rate: 800,
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -167,24 +168,35 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     </span>
                   </div>
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="50000"
-                  step="500"
-                  value={settings.default_buffer_amount}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      default_buffer_amount: parseFloat(e.target.value),
-                    })
-                  }
-                  className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-slate-900"
-                />
-                <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                  <span>0 SEK</span>
-                  <span>25k</span>
-                  <span>50k SEK</span>
+              </div>
+
+              {/* Default Hourly Rate */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+                      <Timer size={14} />
+                    </div>
+                    <label className="text-sm font-black text-slate-800 uppercase tracking-widest">
+                      Default Hourly Rate
+                    </label>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={settings.default_hourly_rate}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          default_hourly_rate: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                      className="w-32 px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-sm font-black text-slate-900 text-right focus:outline-none focus:border-slate-300 transition-colors"
+                    />
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase">
+                      SEK
+                    </span>
+                  </div>
                 </div>
               </div>
             </>

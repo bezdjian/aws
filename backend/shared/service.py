@@ -422,6 +422,7 @@ def update_user_settings(settings: schemas.UserSettings) -> Dict[str, Any]:
     "email": settings.email,
     "default_tax_rate": float_to_decimal(settings.default_tax_rate),
     "default_buffer_amount": float_to_decimal(settings.default_buffer_amount),
+    "default_hourly_rate": float_to_decimal(settings.default_hourly_rate),
     "updated_at": datetime.now().isoformat(),
   }
 
