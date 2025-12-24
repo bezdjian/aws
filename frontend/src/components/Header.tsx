@@ -8,7 +8,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-[100]">
+    <nav className="border-b border-slate-100 bg-white backdrop-blur-md sticky top-0 z-[100]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div
