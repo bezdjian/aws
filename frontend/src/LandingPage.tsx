@@ -173,7 +173,7 @@ const LandingPage: React.FC = () => {
               </h2>
             </div>
             <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400">
-              <Calendar size={20} />
+              <Calculator size={20} />
             </div>
           </div>
 
