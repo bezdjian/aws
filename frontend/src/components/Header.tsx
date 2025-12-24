@@ -27,18 +27,7 @@ const Header: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-6">
-              <button
-                onClick={() => setIsSettingsOpen(true)}
-                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all cursor-pointer group"
-                title="Settings"
-              >
-                <Settings
-                  size={20}
-                  className="group-hover:rotate-45 transition-transform duration-500"
-                />
-              </button>
-
-              <div className="flex items-center space-x-3 pr-6 border-r border-slate-100 pl-2">
+              <div className="flex items-center space-x-3">
                 <div className="text-right hidden sm:block">
                   <p className="text-xs font-black text-slate-900 leading-none mb-1 uppercase tracking-wider">
                     {user?.getName()}
@@ -58,6 +47,16 @@ const Header: React.FC = () => {
                   }}
                 />
               </div>
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all cursor-pointer group"
+                title="Settings"
+              >
+                <Settings
+                  size={20}
+                  className="group-hover:rotate-45 transition-transform duration-500"
+                />
+              </button>
               <button
                 onClick={handleSignOut}
                 className="text-slate-400 hover:text-red-500 transition-colors flex items-center space-x-2 cursor-pointer"
