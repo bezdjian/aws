@@ -42,8 +42,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </div>
 
         <div className="p-8 md:p-10 flex flex-col items-center text-center">
-          <div className="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner animate-bounce-subtle">
-            <AlertTriangle size={32} />
+          <div className="w-14 h-14 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner animate-bounce-subtle">
+            <AlertTriangle size={24} />
           </div>
 
           <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">

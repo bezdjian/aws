@@ -14,8 +14,13 @@ import CalculationUtils from "../utils/CalculationUtils";
 import { SalaryCalculation } from "../types";
 import { useUser } from "../context/UserContext";
 import { useToast } from "../context/ToastContext";
-import { createCalculation } from "../backend/service";
+import {
+  createCalculation,
+  getCalculationsByEmail,
+  updateCalculation,
+} from "../backend/service";
 import { calculateTax } from "../backend/taxService";
+import ConfirmationModal from "./ConfirmationModal";
 
 import { useNavigate } from "react-router-dom";
 
@@ -29,6 +34,10 @@ const Home: React.FC = () => {
     skatteavdrag: number;
     lonefterskatt: number;
   } | null>(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [existingCalculationId, setExistingCalculationId] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -101,22 +110,71 @@ const Home: React.FC = () => {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    createCalculation({
-      ...formData,
-      email: user?.getEmail() || formData.email,
-    })
-      .then((response) => {
-        showToast("Calculation saved successfully!", "success");
-        return response.data;
-      })
-      .catch((error) => {
-        showToast("Failed to save calculation: " + error.message, "error");
-      })
-      .finally(() => {
-        setIsSaving(false);
+    const userEmail = user?.getEmail() || "";
+    if (!userEmail) {
+      showToast("Email is required to save", "error");
+      setIsSaving(false);
+      return;
+    }
+
+    try {
+      // 1. Check if a calculation exists for this month and client
+      const response = await getCalculationsByEmail(userEmail);
+      const calculations = response.data;
+
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+
+      const existing = calculations.find((calc) => {
+        if (!calc.date) return false;
+        const calcDate = new Date(calc.date);
+        return (
+          calcDate.getMonth() === currentMonth &&
+          calcDate.getFullYear() === currentYear &&
+          calc.client_name === formData.client_name
+        );
       });
+
+      if (existing && existing.id) {
+        setExistingCalculationId(existing.id);
+        setShowUpdateModal(true);
+        setIsSaving(false);
+        return;
+      }
+
+      // 2. If no existing, create new
+      await createCalculation({
+        ...formData,
+        email: userEmail,
+      });
+      showToast("Calculation saved successfully!", "success");
+    } catch (error: any) {
+      showToast("Failed to save calculation: " + error.message, "error");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const confirmUpdate = async () => {
+    if (!existingCalculationId) return;
+
+    setIsSaving(true);
+    setShowUpdateModal(false);
+
+    try {
+      await updateCalculation(existingCalculationId, {
+        ...formData,
+        email: user?.getEmail() || formData.email,
+      });
+      showToast("Calculation updated successfully!", "success");
+    } catch (error: any) {
+      showToast("Failed to update calculation: " + error.message, "error");
+    } finally {
+      setIsSaving(false);
+      setExistingCalculationId(null);
+    }
   };
 
   const handleCalculateTax = () => {
@@ -439,6 +497,19 @@ const Home: React.FC = () => {
           </div>
         </section>
       </main>
+
+      <ConfirmationModal
+        isOpen={showUpdateModal}
+        onClose={() => {
+          setShowUpdateModal(false);
+          setExistingCalculationId(null);
+        }}
+        onConfirm={confirmUpdate}
+        title="Update Existing Calculation?"
+        message="A simulation already exists for this client in the current month. Would you like to overwrite it with these new values?"
+        confirmText="Update"
+        cancelText="Cancel"
+      />
     </div>
   );
 };
