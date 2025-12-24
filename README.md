@@ -134,6 +134,7 @@ The application supports multiple environments managed via `samconfig.toml` and 
 ## 📖 Documentation
 
 - **[backend/README.md](backend/README.md)** - Detailed backend documentation
+- **[frontend/README.md](frontend/README.md)** - Detailed frontend documentation
 
 ## 💰 Cost Estimation (Low Traffic)
 
