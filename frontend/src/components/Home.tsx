@@ -16,7 +16,7 @@ import { useUser } from "../context/UserContext";
 import { useToast } from "../context/ToastContext";
 import {
   createCalculation,
-  getCalculationsByEmail,
+  checkDuplicateCalculation,
   updateCalculation,
 } from "../backend/service";
 import { calculateTax } from "../backend/taxService";
@@ -120,31 +120,21 @@ const Home: React.FC = () => {
     }
 
     try {
-      // 1. Check if a calculation exists for this month and client
-      const response = await getCalculationsByEmail(userEmail);
-      const calculations = response.data;
+      // 1. Check if a calculation exists for this month and client using backend
+      const response = await checkDuplicateCalculation(
+        userEmail,
+        formData.client_name || "General"
+      );
+      const duplicate = response.data;
 
-      const currentMonth = new Date().getMonth();
-      const currentYear = new Date().getFullYear();
-
-      const existing = calculations.find((calc) => {
-        if (!calc.date) return false;
-        const calcDate = new Date(calc.date);
-        return (
-          calcDate.getMonth() === currentMonth &&
-          calcDate.getFullYear() === currentYear &&
-          calc.client_name === formData.client_name
-        );
-      });
-
-      if (existing && existing.id) {
-        setExistingCalculationId(existing.id);
+      if (duplicate && duplicate.id) {
+        setExistingCalculationId(duplicate.id);
         setShowUpdateModal(true);
         setIsSaving(false);
         return;
       }
 
-      // 2. If no existing, create new
+      // 2. If no duplicate, create new
       await createCalculation({
         ...formData,
         email: userEmail,

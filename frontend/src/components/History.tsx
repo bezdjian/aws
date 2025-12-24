@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   ArrowLeft,
   Calendar,
-  User,
   History as HistoryIcon,
   ChevronRight,
   Search,
@@ -10,7 +9,6 @@ import {
   Clock,
   TrendingUp,
   FileDown,
-  Banknote,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";

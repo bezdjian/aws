@@ -44,6 +44,15 @@ export const getCalculationsByEmail = async (email: string) => {
   );
 };
 
+export const checkDuplicateCalculation = async (
+  email: string,
+  clientName: string
+) => {
+  return axios.get(`${BASE_URL}/calculations/check-duplicate`, {
+    params: { email, client_name: clientName },
+  });
+};
+
 export const getCalculationById = async (calculation_id: string) => {
   return axios.get<SalaryCalculation>(
     `${BASE_URL}/calculations/${calculation_id}`
