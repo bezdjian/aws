@@ -13,7 +13,7 @@ from typing import Dict, Any
 # Add parent directory to path to import shared module
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from shared import crud, schemas
+from shared import service, schemas
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -50,7 +50,7 @@ def create_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
         # Validate and create calculation
         calculation = schemas.SalaryCalculationBase(**body)
-        result = crud.create_salary_calculation(calculation)
+        result = service.create_salary_calculation(calculation)
 
         return create_response(201, result)
 
@@ -75,7 +75,7 @@ def get_calculations(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         limit = int(query_params.get('limit', 100))
 
         # Get calculations
-        results = crud.get_salary_calculations(skip=skip, limit=limit)
+        results = service.get_salary_calculations(skip=skip, limit=limit)
 
         return create_response(200, results)
 
@@ -100,7 +100,7 @@ def get_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             return create_response(400, {'error': 'Missing calculation ID'})
 
         # Get calculation
-        result = crud.get_salary_calculation(calculation_id)
+        result = service.get_salary_calculation_by_id(calculation_id)
 
         if result is None:
             return create_response(404, {'error': f'Calculation with id {calculation_id} not found'})
@@ -129,8 +129,9 @@ def update_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         body = json.loads(event.get('body', '{}'))
 
         # Validate and update calculation
-        calculation_update = schemas.SalaryCalculationUpdate(**body)
-        result = crud.update_salary_calculation(calculation_id, calculation_update)
+        calculation_update = schemas.SalaryCalculationBase(**body)
+        result = service.update_salary_calculation(calculation_id=calculation_id,
+                                                   calculation_update=calculation_update)
 
         if result is None:
             return create_response(404, {'error': f'Calculation with id {calculation_id} not found'})
@@ -160,7 +161,7 @@ def delete_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             return create_response(400, {'error': 'Missing calculation ID'})
 
         # Delete calculation
-        success = crud.delete_salary_calculation(calculation_id)
+        success = service.delete_salary_calculation(calculation_id)
 
         if not success:
             return create_response(404, {'error': f'Calculation with id {calculation_id} not found'})
