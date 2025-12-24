@@ -4,8 +4,8 @@ from decimal import Decimal
 from typing import List, Optional, Dict, Any
 
 import requests
-from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Attr
+from botocore.exceptions import ClientError
 
 from . import database
 from . import schemas
@@ -184,15 +184,26 @@ def update_salary_calculation(
         calculation_update: schemas.SalaryCalculationBase
 ) -> Optional[Dict[str, Any]]:
     """Update an existing salary calculation in DynamoDB"""
+    existing_item = None
     table = database.get_table()
 
     # First, get the existing item
-    existing_item = get_salary_calculation_by_id(calculation_id)
+    if "@" not in calculation_id:
+        existing_item = get_salary_calculation_by_id(calculation_id)
+    else:
+        # If it's an email, find the latest calculation for that email
+        calcs = get_salary_calculations_by_email(calculation_id)
+        if calcs:
+            # Find the latest one and convert to dict.
+            existing_item = calcs[0].model_dump()
+
     if not existing_item:
         return None
 
+    existing_id = existing_item.get("id")
     # Prepare update data
     update_data = calculation_update.model_dump(exclude_unset=True)
+    update_data = serialize_item(update_data)
 
     if not update_data:
         return existing_item
@@ -224,14 +235,14 @@ def update_salary_calculation(
 
     try:
         response = table.update_item(
-            Key={'id': calculation_id},
-            UpdateExpression=update_expression_parts,
+            Key={"id": existing_id},
+            UpdateExpression="SET " + ", ".join(update_expression_parts),
             ExpressionAttributeNames=expression_attribute_names,
             ExpressionAttributeValues=expression_attribute_values,
-            ReturnValues="ALL_NEW"
+            ReturnValues="ALL_NEW",
         )
 
-        return item_to_dict(response['Attributes'])
+        return item_to_dict(response["Attributes"])
 
     except ClientError as e:
         print(f"Error updating item: {e.response['Error']['Message']}")
@@ -257,6 +268,8 @@ def delete_salary_calculation(calculation_id: str) -> bool:
 
 def verify_token(token: str) -> Dict[str, Any]:
     """Verify the provided token with Google and return user info"""
+    from fastapi import HTTPException
+
     try:
         # Use Google's tokeninfo endpoint
         response = requests.get(
@@ -264,10 +277,7 @@ def verify_token(token: str) -> Dict[str, Any]:
         )
 
         if response.status_code != 200:
-            print(f"Token verification failed: {response.text}")
-            from fastapi import HTTPException
-
-            raise HTTPException(status_code=401, detail="Invalid Google token")
+            raise HTTPException(status_code=401, detail=response.text)
 
         data = response.json()
 
