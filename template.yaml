@@ -335,7 +335,7 @@ Resources:
 # Outputs for easy reference
 Outputs:
   ApiUrl:
-    Description: API Gateway endpoint URL
+    Description: !Sub "API Gateway endpoint URL. For localstack. https://${EightyTwentyApi}.execute-api.localhost.localstack.cloud:4566/localstack"
     Value: !Sub https://${EightyTwentyApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/
     Export:
       Name: !Sub ${AWS::StackName}-ApiUrl
@@ -343,14 +343,14 @@ Outputs:
   DynamoDBTableName:
     Description: DynamoDB table name
     Value: !Ref SalaryCalculationsTable
-    Export:
-      Name: !Sub ${AWS::StackName}-TableName
+
+  DynamoDBUserSettingsTableName:
+    Description: DynamoDB User Settings table name
+    Value: !Ref UserSettingsTable
 
   DynamoDBTableArn:
     Description: DynamoDB table ARN
     Value: !GetAtt SalaryCalculationsTable.Arn
-    Export:
-      Name: !Sub ${AWS::StackName}-TableArn
 
   CreateCalculationFunctionArn:
     Description: Create Calculation Lambda Function ARN
