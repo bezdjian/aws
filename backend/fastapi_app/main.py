@@ -156,6 +156,32 @@ async def get_calculations_by_email(email: str):
   return service.get_salary_calculations_by_email(email=email)
 
 
+@app.get(
+    "/settings/{email}",
+    response_model=schemas.UserSettings,
+    tags=["Settings"],
+)
+async def get_settings(email: str):
+  """
+  Retrieve user settings.
+
+  - **email**: The email of the consultant
+  """
+  return service.get_user_settings(email=email)
+
+
+@app.post(
+    "/settings",
+    response_model=schemas.UserSettings,
+    tags=["Settings"],
+)
+async def update_settings(settings: schemas.UserSettings):
+  """
+  Update user settings.
+  """
+  return service.update_user_settings(settings=settings)
+
+
 # READ - Get a specific salary calculation by ID
 @app.get(
     "/calculations/{calculation_id}",

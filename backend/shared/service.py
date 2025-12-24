@@ -49,8 +49,9 @@ def serialize_item(item: dict) -> dict:
   return serialized
 
 
-def create_salary_calculation(calculation: schemas.SalaryCalculationBase) -> \
-    Dict[str, Any]:
+def create_salary_calculation(
+    calculation: schemas.SalaryCalculationBase,
+) -> Dict[str, Any]:
   """Create a new salary calculation in DynamoDB"""
   table = database.get_table()
 
@@ -59,23 +60,24 @@ def create_salary_calculation(calculation: schemas.SalaryCalculationBase) -> \
 
   # Prepare item for DynamoDB
   item = {
-    'id': calculation_id,
-    'email': calculation.email,
-    'client_name': calculation.client_name,
-    'hourly_rate': float_to_decimal(calculation.hourly_rate),
-    'hours_worked': calculation.hours_worked,
-    'invoiced_amount': float_to_decimal(calculation.invoiced_amount),
-    'after_deduction': float_to_decimal(calculation.after_deduction),
-    'save_to_buffer': float_to_decimal(calculation.save_to_buffer),
-    'gross_salary': float_to_decimal(calculation.gross_salary),
-    'remaining_salary': float_to_decimal(calculation.remaining_salary),
-    'remaining_for_gross_salary': float_to_decimal(
-        calculation.remaining_for_gross_salary),
-    'employer_fee': float_to_decimal(calculation.employer_fee),
-    'notes': calculation.notes,
-    'date': calculation.date,
-    'created_at': datetime.now(),
-    'updated_at': datetime.now()
+    "id": calculation_id,
+    "email": calculation.email,
+    "client_name": calculation.client_name,
+    "hourly_rate": float_to_decimal(calculation.hourly_rate),
+    "hours_worked": calculation.hours_worked,
+    "invoiced_amount": float_to_decimal(calculation.invoiced_amount),
+    "after_deduction": float_to_decimal(calculation.after_deduction),
+    "save_to_buffer": float_to_decimal(calculation.save_to_buffer),
+    "gross_salary": float_to_decimal(calculation.gross_salary),
+    "remaining_salary": float_to_decimal(calculation.remaining_salary),
+    "remaining_for_gross_salary": float_to_decimal(
+        calculation.remaining_for_gross_salary
+    ),
+    "employer_fee": float_to_decimal(calculation.employer_fee),
+    "notes": calculation.notes,
+    "date": calculation.date,
+    "created_at": datetime.now(),
+    "updated_at": datetime.now(),
   }
 
   item = serialize_item(item)
@@ -90,8 +92,8 @@ def get_salary_calculation_by_email(email: str) -> Optional[Dict[str, Any]]:
   table = database.get_table()
 
   try:
-    response = table.get_item(Key={'email': email})
-    item = response.get('Item')
+    response = table.get_item(Key={"email": email})
+    item = response.get("Item")
 
     if item:
       return item_to_dict(item)
@@ -108,8 +110,8 @@ def get_salary_calculation_by_id(calculation_id: str) -> Optional[
   table = database.get_table()
 
   try:
-    response = table.get_item(Key={'id': calculation_id})
-    item = response.get('Item')
+    response = table.get_item(Key={"id": calculation_id})
+    item = response.get("Item")
 
     if item:
       return item_to_dict(item)
@@ -120,33 +122,33 @@ def get_salary_calculation_by_id(calculation_id: str) -> Optional[
     return None
 
 
-def get_salary_calculations(skip: int = 0, limit: int = 100) -> List[
-  schemas.SalaryCalculationResponse]:
+def get_salary_calculations(
+    skip: int = 0, limit: int = 100
+) -> List[schemas.SalaryCalculationResponse]:
   """Get all salary calculations from DynamoDB with pagination"""
   table = database.get_table()
 
   try:
     # Scan the table (Note: For production with large datasets, consider using Query with GSI)
     response = table.scan(Limit=limit + skip)
-    items = response.get('Items', [])
+    items = response.get("Items", [])
 
     # Handle pagination if there are more items
-    while 'LastEvaluatedKey' in response and len(items) < (limit + skip):
+    while "LastEvaluatedKey" in response and len(items) < (limit + skip):
       response = table.scan(
           Limit=limit + skip - len(items),
-          ExclusiveStartKey=response['LastEvaluatedKey']
+          ExclusiveStartKey=response["LastEvaluatedKey"],
       )
-      items.extend(response.get('Items', []))
+      items.extend(response.get("Items", []))
 
     # Apply skip and limit
-    items = items[skip:skip + limit]
+    items = items[skip: skip + limit]
 
     # Sort by date (most recent first)
-    items.sort(key=lambda x: x.get('date', ''), reverse=True)
+    items.sort(key=lambda x: x.get("date", ""), reverse=True)
 
     return [
-      schemas.SalaryCalculationResponse(**item_to_dict(item))
-      for item in items
+      schemas.SalaryCalculationResponse(**item_to_dict(item)) for item in items
     ]
 
   except ClientError as e:
@@ -212,8 +214,7 @@ def check_duplicate_calculation(
 
 
 def update_salary_calculation(
-    calculation_id: str,
-    calculation_update: schemas.SalaryCalculationBase
+    calculation_id: str, calculation_update: schemas.SalaryCalculationBase
 ) -> Optional[Dict[str, Any]]:
   """Update an existing salary calculation in DynamoDB"""
   existing_item = None
@@ -290,7 +291,7 @@ def delete_salary_calculation(calculation_id: str) -> bool:
     return False
 
   try:
-    table.delete_item(Key={'id': calculation_id})
+    table.delete_item(Key={"id": calculation_id})
     return True
 
   except ClientError as e:
@@ -346,7 +347,9 @@ def validate_token(token_info: TokenInfo):
   if "accounts.google.com" not in token_info.iss():
     raise RuntimeError(f"Invalid issuer: {token_info.iss()}")
 
-  if token_info.aud() != get_client_id():  # TODO: Cache client ID or make a better call
+  if (
+      token_info.aud() != get_client_id()
+  ):  # TODO: Cache client ID or make a better call
     raise RuntimeError(f"Invalid audience: {token_info.aud()}")
 
   if token_info.hd() != "solidbeans.com" and not token_info.email_verified():
@@ -379,4 +382,56 @@ def calculate_tax(tax_request: schemas.TaxCalculationRequest) -> Dict[str, Any]:
     raise HTTPException(
         status_code=500,
         detail=f"Error calculating tax from Skatteverket: {str(e)}"
+    )
+
+
+def get_user_settings(email: str) -> Dict[str, Any]:
+  """Get user settings from DynamoDB"""
+  table = database.get_settings_table()
+
+  try:
+    response = table.get_item(Key={"email": email})
+    item = response.get("Item")
+
+    if item:
+      return item_to_dict(item)
+
+    # Return default settings if not found
+    return {
+      "email": email,
+      "default_tax_rate": 32.0,
+      "default_buffer_amount": 10000.0,
+      "updated_at": datetime.now().isoformat(),
+    }
+
+  except ClientError as e:
+    print(f"Error getting settings: {e.response['Error']['Message']}")
+    return {
+      "email": email,
+      "default_tax_rate": 32.0,
+      "default_buffer_amount": 10000.0,
+      "updated_at": datetime.now().isoformat(),
+    }
+
+
+def update_user_settings(settings: schemas.UserSettings) -> Dict[str, Any]:
+  """Update user settings in DynamoDB"""
+  table = database.get_settings_table()
+
+  item = {
+    "email": settings.email,
+    "default_tax_rate": float_to_decimal(settings.default_tax_rate),
+    "default_buffer_amount": float_to_decimal(settings.default_buffer_amount),
+    "updated_at": datetime.now().isoformat(),
+  }
+
+  try:
+    table.put_item(Item=item)
+    return item_to_dict(item)
+  except ClientError as e:
+    print(f"Error updating settings: {e.response['Error']['Message']}")
+    from fastapi import HTTPException
+
+    raise HTTPException(
+        status_code=500, detail=f"Error updating settings: {str(e)}"
     )

@@ -14,6 +14,7 @@ Globals:
     Environment:
       Variables:
         DYNAMODB_TABLE_NAME: !Ref SalaryCalculationsTable
+        DYNAMODB_SETTINGS_TABLE_NAME: !Ref UserSettingsTable
         REGION: !Ref AWS::Region
   Api:
     Cors:
@@ -47,6 +48,28 @@ Resources:
         StreamViewType: NEW_AND_OLD_IMAGES
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: eighty-twenty
+        - Key: ManagedBy
+          Value: SAM
+
+  # DynamoDB Table for User Settings
+  UserSettingsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub eighty-twenty-settings-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: email
+          AttributeType: S
+      KeySchema:
+        - AttributeName: email
+          KeyType: HASH
       SSESpecification:
         SSEEnabled: true
       Tags:
@@ -152,6 +175,44 @@ Resources:
             Method: DELETE
             RestApiId: !Ref EightyTwentyApi
 
+  # Lambda Function for Get Settings
+  GetSettingsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-get-settings-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.get_settings
+      Description: Get user settings
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref UserSettingsTable
+      Events:
+        GetSettings:
+          Type: Api
+          Properties:
+            Path: /settings/{email}
+            Method: GET
+            RestApiId: !Ref EightyTwentyApi
+
+  # Lambda Function for Update Settings
+  UpdateSettingsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-update-settings-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.update_settings
+      Description: Update user settings
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserSettingsTable
+      Events:
+        UpdateSettings:
+          Type: Api
+          Properties:
+            Path: /settings
+            Method: POST
+            RestApiId: !Ref EightyTwentyApi
+
   # API Gateway REST API
   EightyTwentyApi:
     Type: AWS::Serverless::Api
@@ -235,6 +296,32 @@ Resources:
               responses:
                 "200":
                   description: Calculation deleted
+          /settings:
+            post:
+              summary: Update user settings
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateSettingsFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: Settings updated
+          /settings/{email}:
+            get:
+              summary: Get user settings
+              parameters:
+                - name: email
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetSettingsFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: User settings
 
   GoogleClientIdParameter:
     Type: AWS::SSM::Parameter

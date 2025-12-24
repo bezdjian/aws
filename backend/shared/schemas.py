@@ -104,3 +104,15 @@ class TaxCalculationRequest(BaseModel):
   birth_year: int = 1987
   tax_rate: int = 32
   type: str = "L"
+
+
+class UserSettings(BaseModel):
+  """Schema for user settings"""
+
+  email: str = Field(..., description="Email of the consultant")
+  default_tax_rate: float = Field(default=32.0, ge=0, le=100)
+  default_buffer_amount: float = Field(default=10000.0, ge=0)
+  updated_at: Optional[datetime] = Field(default_factory=datetime.now)
+
+  class Config:
+    from_attributes = True

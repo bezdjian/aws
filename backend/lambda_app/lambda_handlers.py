@@ -81,10 +81,10 @@ def get_calculations(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
   except ValueError as e:
     return create_response(400,
-                           {'error': f'Invalid query parameters: {str(e)}'})
+                           {"error": f"Invalid query parameters: {str(e)}"})
   except Exception as e:
     print(f"Error getting calculations: {str(e)}")
-    return create_response(500, {'error': 'Internal server error'})
+    return create_response(500, {"error": "Internal server error"})
 
 
 def get_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -94,24 +94,25 @@ def get_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   try:
     # Get calculation ID from path parameters
-    path_params = event.get('pathParameters') or {}
-    calculation_id = path_params.get('id')
+    path_params = event.get("pathParameters") or {}
+    calculation_id = path_params.get("id")
 
     if not calculation_id:
-      return create_response(400, {'error': 'Missing calculation ID'})
+      return create_response(400, {"error": "Missing calculation ID"})
 
     # Get calculation
     result = service.get_salary_calculation_by_id(calculation_id)
 
     if result is None:
-      return create_response(404, {
-        'error': f'Calculation with id {calculation_id} not found'})
+      return create_response(
+          404, {"error": f"Calculation with id {calculation_id} not found"}
+      )
 
     return create_response(200, result)
 
   except Exception as e:
     print(f"Error getting calculation: {str(e)}")
-    return create_response(500, {'error': 'Internal server error'})
+    return create_response(500, {"error": "Internal server error"})
 
 
 def update_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -121,14 +122,14 @@ def update_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   try:
     # Get calculation ID from path parameters
-    path_params = event.get('pathParameters') or {}
-    calculation_id = path_params.get('id')
+    path_params = event.get("pathParameters") or {}
+    calculation_id = path_params.get("id")
 
     if not calculation_id:
-      return create_response(400, {'error': 'Missing calculation ID'})
+      return create_response(400, {"error": "Missing calculation ID"})
 
     # Parse request body
-    body = json.loads(event.get('body', '{}'))
+    body = json.loads(event.get("body", "{}"))
 
     # Validate and update calculation
     calculation_update = schemas.SalaryCalculationBase(**body)
@@ -136,18 +137,19 @@ def update_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                                                calculation_update=calculation_update)
 
     if result is None:
-      return create_response(404, {
-        'error': f'Calculation with id {calculation_id} not found'})
+      return create_response(
+          404, {"error": f"Calculation with id {calculation_id} not found"}
+      )
 
     return create_response(200, result)
 
   except json.JSONDecodeError:
-    return create_response(400, {'error': 'Invalid JSON in request body'})
+    return create_response(400, {"error": "Invalid JSON in request body"})
   except ValueError as e:
-    return create_response(400, {'error': str(e)})
+    return create_response(400, {"error": str(e)})
   except Exception as e:
     print(f"Error updating calculation: {str(e)}")
-    return create_response(500, {'error': 'Internal server error'})
+    return create_response(500, {"error": "Internal server error"})
 
 
 def delete_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -157,25 +159,67 @@ def delete_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   try:
     # Get calculation ID from path parameters
-    path_params = event.get('pathParameters') or {}
-    calculation_id = path_params.get('id')
+    path_params = event.get("pathParameters") or {}
+    calculation_id = path_params.get("id")
 
     if not calculation_id:
-      return create_response(400, {'error': 'Missing calculation ID'})
+      return create_response(400, {"error": "Missing calculation ID"})
 
     # Delete calculation
     success = service.delete_salary_calculation(calculation_id)
 
     if not success:
-      return create_response(404, {
-        'error': f'Calculation with id {calculation_id} not found'})
+      return create_response(
+          404, {"error": f"Calculation with id {calculation_id} not found"}
+      )
 
-    return create_response(200, {
-      'message': f'Calculation {calculation_id} deleted successfully'})
+    return create_response(
+        200, {"message": f"Calculation {calculation_id} deleted successfully"}
+    )
 
   except Exception as e:
     print(f"Error deleting calculation: {str(e)}")
-    return create_response(500, {'error': 'Internal server error'})
+    return create_response(500, {"error": "Internal server error"})
+
+
+def get_settings(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for getting user settings
+  GET /settings/{email}
+  """
+  try:
+    path_params = event.get("pathParameters") or {}
+    email = path_params.get("email")
+
+    if not email:
+      return create_response(400, {"error": "Missing email"})
+
+    result = service.get_user_settings(email)
+    return create_response(200, result)
+
+  except Exception as e:
+    print(f"Error getting settings: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
+def update_settings(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for updating user settings
+  POST /settings
+  """
+  try:
+    body = json.loads(event.get("body", "{}"))
+    settings = schemas.UserSettings(**body)
+    result = service.update_user_settings(settings)
+    return create_response(200, result)
+
+  except json.JSONDecodeError:
+    return create_response(400, {"error": "Invalid JSON in request body"})
+  except ValueError as e:
+    return create_response(400, {"error": str(e)})
+  except Exception as e:
+    print(f"Error updating settings: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
 
 
 # Health check handler (optional)

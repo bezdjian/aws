@@ -11,6 +11,9 @@ load_dotenv(env_path)
 # AWS Configuration
 DYNAMODB_TABLE_NAME = os.getenv("DYNAMODB_TABLE_NAME",
                                 "eighty-twenty-calculations")
+DYNAMODB_SETTINGS_TABLE_NAME = os.getenv(
+    "DYNAMODB_SETTINGS_TABLE_NAME", "eighty-twenty-settings"
+)
 DYNAMODB_ENDPOINT_URL = os.getenv(
   "DYNAMODB_ENDPOINT_URL")  # For local development
 
@@ -44,3 +47,11 @@ def get_table():
   """
   dynamodb = get_dynamodb_resource()
   return dynamodb.Table(DYNAMODB_TABLE_NAME)
+
+
+def get_settings_table():
+  """
+  Get DynamoDB table reference for settings.
+  """
+  dynamodb = get_dynamodb_resource()
+  return dynamodb.Table(DYNAMODB_SETTINGS_TABLE_NAME)
