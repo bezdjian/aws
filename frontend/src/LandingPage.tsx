@@ -167,13 +167,11 @@ const LandingPage: React.FC = () => {
       <section className="md:w-[58%] bg-white p-8 md:p-16 flex flex-col">
         <div className="w-full max-w-2xl">
           <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
-            <div>
+            <div className="flex items-center space-x-2">
+              <Calculator size={22} />
               <h2 className="text-2xl font-black text-slate-900">
                 Guest Mode • Figures in SEK
               </h2>
-            </div>
-            <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400">
-              <Calculator size={20} />
             </div>
           </div>
 
