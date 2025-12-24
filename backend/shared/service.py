@@ -83,7 +83,6 @@ def create_salary_calculation(calculation: schemas.SalaryCalculationBase) -> Dic
     return item_to_dict(item)
 
 
-# TODO: By email or consultant's unique ID?
 def get_salary_calculation_by_email(email: str) -> Optional[Dict[str, Any]]:
     """Get a salary calculation by email from DynamoDB"""
     table = database.get_table()
@@ -177,6 +176,35 @@ def get_salary_calculations_by_email(
     except ClientError as e:
         print(f"Error scanning by email: {e.response['Error']['Message']}")
         return []
+
+
+def check_duplicate_calculation(
+    email: str, client_name: str
+) -> Optional[Dict[str, Any]]:
+    """Check if a calculation exists for a specific email and client in the current month"""
+    table = database.get_table()
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+
+    try:
+        # Scan for matching email and client_name
+        response = table.scan(
+            FilterExpression=Attr("email").eq(email)
+            & Attr("client_name").eq(client_name)
+        )
+        items = response.get("Items", [])
+
+        for item in items:
+            if "date" in item:
+                calc_date = datetime.fromisoformat(item["date"])
+                if calc_date.month == current_month and calc_date.year == current_year:
+                    return item_to_dict(item)
+
+        return None
+
+    except ClientError as e:
+        print(f"Error checking for duplicate: {e.response['Error']['Message']}")
+        return None
 
 
 def update_salary_calculation(

@@ -124,6 +124,40 @@ async def get_calculations(
 
 # READ - Get a specific salary calculation by ID
 @app.get(
+    "/calculations/check-duplicate",
+    tags=["Calculations"],
+)
+async def check_duplicate(email: str, client_name: str):
+    """
+    Check if a calculation exists for a specific email and client in the current month.
+
+    - **email**: The email of the consultant
+    - **client_name**: The name of the client
+    """
+    duplicate = service.check_duplicate_calculation(
+        email=email, client_name=client_name
+    )
+    if duplicate:
+        return duplicate
+    return {"message": "No duplicate found"}
+
+
+@app.get(
+    "/calculations/email/{email}",
+    response_model=List[schemas.SalaryCalculationResponse],
+    tags=["Calculations"],
+)
+async def get_calculations_by_email(email: str):
+    """
+    Retrieve all salary calculations for a specific user email.
+
+    - **email**: The email of the consultant to retrieve calculations for
+    """
+    return service.get_salary_calculations_by_email(email=email)
+
+
+# READ - Get a specific salary calculation by ID
+@app.get(
     "/calculations/{calculation_id}",
     response_model=schemas.SalaryCalculationResponse,
     tags=["Calculations"]
@@ -143,20 +177,6 @@ async def get_calculation(
             detail=f"Calculation with id {calculation_id} not found"
         )
     return calculation
-
-
-@app.get(
-    "/calculations/email/{email}",
-    response_model=List[schemas.SalaryCalculationResponse],
-    tags=["Calculations"],
-)
-async def get_calculations_by_email(email: str):
-    """
-    Retrieve all salary calculations for a specific user email.
-
-    - **email**: The email of the consultant to retrieve calculations for
-    """
-    return service.get_salary_calculations_by_email(email=email)
 
 
 # UPDATE - Update an existing salary calculation
