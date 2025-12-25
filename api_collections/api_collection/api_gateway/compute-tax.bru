@@ -1,0 +1,25 @@
+meta {
+  name: compute-tax
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{localstackBaseUrl}}/compute-tax
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "gross_salary": 60000,
+    "birth_year": 1987,
+    "tax_rate": 32,
+    "type": "L"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
