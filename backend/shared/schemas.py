@@ -59,6 +59,9 @@ class SalaryCalculationBase(BaseModel):
                                description="Additional notes")
   date: Optional[datetime] = Field(None, description="Date of the calculation")
 
+  report_url : Optional[str] = Field(
+      None, description="URL of the uploaded report file"
+  )
   created_at: Optional[datetime] = Field(
       default_factory=datetime.now, description="Date and time of creation"
   )

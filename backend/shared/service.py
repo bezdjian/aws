@@ -9,6 +9,7 @@ from botocore.exceptions import ClientError
 
 from . import database
 from . import schemas
+from .S3Service import upload_report_to_s3
 from .SsmService import get_google_client_id
 from .TokenInfo import TokenInfo
 
@@ -57,6 +58,7 @@ def create_salary_calculation(
 
   # Generate unique ID
   calculation_id = str(uuid.uuid4())
+  file_url = upload_report_to_s3(calculation)
 
   # Prepare item for DynamoDB
   item = {
@@ -76,6 +78,7 @@ def create_salary_calculation(
     "employer_fee": float_to_decimal(calculation.employer_fee),
     "notes": calculation.notes,
     "date": calculation.date,
+    "report_url": file_url,
     "created_at": datetime.now(),
     "updated_at": datetime.now(),
   }

@@ -15,6 +15,7 @@ Globals:
       Variables:
         DYNAMODB_TABLE_NAME: !Ref SalaryCalculationsTable
         DYNAMODB_SETTINGS_TABLE_NAME: !Ref UserSettingsTable
+        S3_REPORTS_BUCKET: !Ref ReportsBucket
         REGION: !Ref AWS::Region
   Api:
     Cors:
@@ -323,6 +324,21 @@ Resources:
                 "200":
                   description: User settings
 
+  # S3 Bucket for calculation reports
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub eighty-twenty-reports-${Environment}
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: eighty-twenty
+        - Key: ManagedBy
+          Value: SAM
+
   GoogleClientIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
@@ -371,6 +387,10 @@ Outputs:
   DeleteCalculationFunctionArn:
     Description: Delete Calculation Lambda Function ARN
     Value: !GetAtt DeleteCalculationFunction.Arn
+
+  S3ReportsBucketName:
+    Description: S3 Bucket for Reports
+    Value: !Ref ReportsBucket
 
   Region:
     Description: AWS Region
