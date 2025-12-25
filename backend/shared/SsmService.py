@@ -10,6 +10,7 @@ CLIENT_ID_PARAM_NAME = "/environment/services/eighty-twenty/google.client.id"
 CLIENT_SECRET_PARAM_NAME = "/environment/services/eighty-twenty/google.client.secret"
 
 LOCALSTACK_URL = os.getenv("LOCALSTACK_URL")
+_CACHE = {}
 
 
 def get_ssm_client():
@@ -17,7 +18,7 @@ def get_ssm_client():
   config = {}
   if LOCALSTACK_URL:
     config["endpoint_url"] = LOCALSTACK_URL
-  return boto3.client('ssm', **config)
+  return boto3.client("ssm", **config)
 
 
 def get_google_client_id() -> str:
@@ -40,13 +41,15 @@ def _fallback(name):
 
 
 def _get_parameter(name: str) -> str:
+  if name in _CACHE:
+    return _CACHE[name]
+
   try:
     ssm_client = get_ssm_client()
-    response = ssm_client.get_parameter(
-        Name=name,
-        WithDecryption=True
-    )
-    return response['Parameter']['Value']
+    response = ssm_client.get_parameter(Name=name, WithDecryption=True)
+    val = response["Parameter"]["Value"]
+    _CACHE[name] = val
+    return val
   except ClientError as e:
     print(f"Fallback to .env. Failed to get SSM parameter {name}: {e}")
     return _fallback(name)
