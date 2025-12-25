@@ -13,6 +13,7 @@ export interface SalaryCalculation {
   notes?: string;
   email?: string;
   client_name?: string;
+  report_url?: string;
   id?: string;
 }
 

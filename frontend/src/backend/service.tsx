@@ -65,7 +65,6 @@ export const getCalculationById = async (calculation_id: string) => {
 };
 
 export const createCalculation = async (calculation: SalaryCalculation) => {
-  console.log("Creating calculation:", calculation);
   return axios.post(`${BASE_URL}/calculations`, calculation);
 };
 
@@ -90,4 +89,14 @@ export const updateUserSettings = async (settings: UserSettings) => {
 
 export const getInsightStats = async (stats: InsightStats) => {
   return axios.post<AIResponse>(`${BASE_URL}/insights/analyze`, stats);
+};
+
+export const getPresignedUrl = async (
+  email: string,
+  clientName: string,
+  date: string
+) => {
+  return axios.get(`${BASE_URL}/reports/presigned-url`, {
+    params: { email, client_name: clientName, date },
+  });
 };

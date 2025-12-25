@@ -13,7 +13,11 @@ import {
 } from "lucide-react";
 import ConfirmationModal from "./ConfirmationModal";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCalculationById, deleteCalculation } from "../backend/service";
+import {
+  getCalculationById,
+  deleteCalculation,
+  getPresignedUrl,
+} from "../backend/service";
 import { calculateTax } from "../backend/taxService";
 import { SalaryCalculation } from "../types";
 import CalculationUtils from "../utils/CalculationUtils";
@@ -122,6 +126,24 @@ const CalculationView: React.FC = () => {
     );
   }
 
+  const handleDownloadReport = async () => {
+    await getPresignedUrl(
+      user?.getEmail() || "",
+      calculation?.client_name || "",
+      calculation?.date || ""
+    )
+      .then((res) => {
+        window.open(res.data.url, "_blank");
+      })
+      .catch((e) => {
+        if (e.response.status === 404) {
+          showToast("Report not found", "error");
+        } else {
+          showToast("Failed to download report", "error");
+        }
+      });
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-brand-100 pb-20">
       <Header />
@@ -161,11 +183,11 @@ const CalculationView: React.FC = () => {
               <Trash2 size={20} />
             </button>
             <button
-              onClick={() => window.print()}
-              className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 print:hidden"
+              onClick={handleDownloadReport}
+              className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 print:hidden cursor-pointer"
             >
               <Download size={16} />
-              <span>Export PDF</span>
+              <span>Download Report</span>
             </button>
           </div>
         </div>
