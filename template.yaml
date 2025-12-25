@@ -236,6 +236,22 @@ Resources:
             Method: GET
             RestApiId: !Ref EightyTwentyApi
 
+  # Lambda Function for Auth Verification
+  VerifyAuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-verify-auth-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.verify_auth
+      Description: Verify Google authentication token
+      Events:
+        VerifyAuth:
+          Type: Api
+          Properties:
+            Path: /auth/verify
+            Method: POST
+            RestApiId: !Ref EightyTwentyApi
+
   # Lambda Function for Analyze Insights
   AnalyzeInsightsFunction:
     Type: AWS::Serverless::Function
@@ -274,11 +290,12 @@ Resources:
     Properties:
       Name: !Sub eighty-twenty-api-${Environment}
       StageName: !Ref Environment
+      OpenApiVersion: 3.0.1
       Description: API Gateway for Eighty-Twenty Salary Calculator
       Cors:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-        AllowOrigin: "'*'"
+        AllowOrigin: "'http://localhost:5173'"
       DefinitionBody:
         openapi: 3.0.1
         info:
@@ -387,6 +404,16 @@ Resources:
               responses:
                 "200":
                   description: Google Client ID
+          /auth/verify:
+            post:
+              summary: Verify Auth Token
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${VerifyAuthFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: Auth verification response
           /insights/analyze:
             post:
               summary: Analyze insights with AI

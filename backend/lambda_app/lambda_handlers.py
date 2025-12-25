@@ -14,7 +14,6 @@ from typing import Dict, Any
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from shared import service, schemas
-from shared.ai_agent import AIAgent
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -32,7 +31,7 @@ def create_response(status_code: int, body: Any) -> Dict[str, Any]:
     "statusCode": status_code,
     "headers": {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": "http://localhost:5173",
       "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
       "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
     },
@@ -224,24 +223,24 @@ def update_settings(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     return create_response(500, {"error": "Internal server error"})
 
 
-def ask_ai(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def analyze_insights(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
-  Lambda handler for asking a question to the AI assistant
-  POST /ask-ai
+  Lambda handler for analyzing financial insights with AI
+  POST /insights/analyze
   """
   try:
+    from shared.ai_agent import AIAgent
+
     body = json.loads(event.get("body", "{}"))
-    question_data = schemas.AIQuestion(**body)
+    stats = schemas.InsightStats(**body)
     agent = AIAgent()
-    response = agent.ask(question_data.question)
+    response = agent.get_financial_insights(stats)
     return create_response(200, {"response": response})
 
   except json.JSONDecodeError:
     return create_response(400, {"error": "Invalid JSON in request body"})
-  except ValueError as e:
-    return create_response(400, {"error": str(e)})
   except Exception as e:
-    print(f"Error interacting with AI agent: {str(e)}")
+    print(f"Error analyzing insights: {str(e)}")
     return create_response(500, {"error": "Internal server error"})
 
 
@@ -255,3 +254,58 @@ def health_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
       200,
       {"status": "healthy", "service": "eighty-twenty-api", "version": "1.0.0"}
   )
+
+
+def compute_tax(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for computing tax
+  POST /compute-tax
+  """
+  try:
+    body = json.loads(event.get("body", "{}"))
+    tax_request = schemas.TaxCalculationRequest(**body)
+    result = service.calculate_tax(tax_request)
+    return create_response(200, result)
+
+  except json.JSONDecodeError:
+    return create_response(400, {"error": "Invalid JSON in request body"})
+  except Exception as e:
+    print(f"Error computing tax: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
+def verify_auth(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for verifying Google authentication token
+  POST /auth/verify
+  """
+  try:
+    body = json.loads(event.get("body", "{}"))
+    token_verify = schemas.TokenVerify(**body)
+    result = service.verify_token(token=token_verify.token)
+    return create_response(200, result)
+
+  except json.JSONDecodeError:
+    return create_response(400, {"error": "Invalid JSON in request body"})
+  except Exception as e:
+    print(f"Error verifying token: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
+def get_google_client_id(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for getting the Google Client ID
+  GET /auth/client_id
+  """
+  try:
+    result = service.get_client_id()
+    if result is None:
+      return create_response(500, {"error": "Google Client ID not found"})
+
+    response = create_response(200, result)
+    response["headers"]["Cache-Control"] = "public, max-age=3600"
+    return response
+
+  except Exception as e:
+    print(f"Error getting Google Client ID: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
