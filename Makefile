@@ -35,7 +35,7 @@ validate:
 # Build SAM application
 build:
 	@echo "Building SAM application..."
-	sam build
+	sam build --use-container
 
 # Deploy with saved configuration
 deploy: build
@@ -152,7 +152,14 @@ endpoints:
 ### Localstack ###
 deploy-localstack: build
 	@echo "Deploying to localstack environment..."
-	samlocal deploy --config-env localstack --parameter-overrides Environment=localstack
+	samlocal deploy --config-env localstack
+
+
+# Update Parameter value for Google Client ID
+# Usage: make update-google-client-id GOOGLE_CLIENT_ID=<google-client-id>
+update-google-client-id:
+	@echo "Updating Parameter value for Google Client ID..."
+	awslocal ssm put-parameter --name "/eighty-twenty/google-client-id" --value "$(GOOGLE_CLIENT_ID)" --type SecureString --overwrite
 
 # View all resources in stack
 resources-localstack:

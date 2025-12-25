@@ -50,7 +50,7 @@ region = "eu-north-1"
 parameter_overrides = "Environment=staging"
 stack_name = "eighty-twenty-staging"
 
-# Localstack configuration
+# Localstack configuration. ´--config-env localstack´
 [localstack]
 [localstack.deploy.parameters]
 capabilities = "CAPABILITY_IAM"
