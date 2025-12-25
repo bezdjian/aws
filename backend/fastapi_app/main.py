@@ -272,6 +272,41 @@ async def analyze_insights(insight_stats: schemas.InsightStats):
     )
 
 
+@app.get(
+    "/reports/presigned-url",
+    response_model=schemas.PresignedUrlResponse,
+    tags=["Reports"],
+)
+async def get_report_presigned_url(
+    email: str, client_name: str, date: str, expiration: int = 3600
+):
+  """
+  Generate a presigned URL for an existing report file.
+
+  - **email**: Email of the consultant
+  - **client_name**: Name of the client
+  - **date**: Date in YYYY-MM-DD format
+  - **expiration**: URL expiration time in seconds (default: 3600 = 1 hour, max: 604800 = 7 days)
+  """
+  try:
+    result = service.generate_report_presigned_url(
+        email=email, client_name=client_name, date=date, expiration=expiration
+    )
+    if result is None:
+      raise HTTPException(
+          status_code=status.HTTP_404_NOT_FOUND,
+          detail=f"Report not found for email={email}, client_name={client_name}, date={date}",
+      )
+    return result
+  except HTTPException:
+    raise
+  except Exception as e:
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail=f"Error generating presigned URL: {str(e)}",
+    )
+
+
 if __name__ == "__main__":
   import uvicorn
 

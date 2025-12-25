@@ -92,6 +92,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref SalaryCalculationsTable
+        - S3CrudPolicy:
+            BucketName: !Ref ReportsBucket
       Events:
         CreateCalculation:
           Type: Api

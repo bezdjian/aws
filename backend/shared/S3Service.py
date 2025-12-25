@@ -21,7 +21,7 @@ def get_s3_client():
   return boto3.client('s3', **config)
 
 
-def upload_report_to_s3(calculation: SalaryCalculationBase) -> str | None:
+def upload_report_to_s3(calculation: SalaryCalculationBase) -> None:
   """Upload a report file to S3 and return the file URL.
 
   :param calculation: dict representing the salary calculation
@@ -36,13 +36,8 @@ def upload_report_to_s3(calculation: SalaryCalculationBase) -> str | None:
     s3_client.upload_file(Filename=local_file_path,
                           Bucket=S3_REPORTS_BUCKET,
                           Key=bucket_key)
-    # TODO: return file_url and set it to calculation record and save to DB.
-    # Then the user can access the report later.
-    if LOCALSTACK_URL:
-      file_url = f"https://{S3_REPORTS_BUCKET}.s3.localhost.localstack.cloud:4566/{bucket_key}"
-    else:
-      file_url = f"https://{S3_REPORTS_BUCKET}.s3.amazonaws.com/{bucket_key}"
-    print(f"File uploaded to S3: {file_url}")
+
+    print(f"File uploaded to S3 at {bucket_key}")
 
     # Clean up the local temporary file
     try:
@@ -51,7 +46,6 @@ def upload_report_to_s3(calculation: SalaryCalculationBase) -> str | None:
     except Exception as cleanup_error:
       print(f"Failed to clean up local file {local_file_path}: {cleanup_error}")
 
-    return file_url
   except ClientError as e:
     print(f"Failed to upload file to S3: {e}")
     # Clean up local file even on error
@@ -118,3 +112,45 @@ def create_csv_from_calculations(calculations: List[SalaryCalculationBase],
   except Exception as e:
     print(f"Failed to create CSV file: {e}")
     raise
+
+
+def generate_presigned_url(bucket_key: str,
+    expiration: int = 3600) -> str | None:
+  """Generate a pre-signed URL for an existing S3 object.
+
+  Useful for regenerating URLs when they expire or for sharing existing reports.
+
+  :param bucket_key: S3 object key (e.g., "2025/12/user@example.com_ClientName_20251225.csv")
+  :param expiration: URL expiration time in seconds (default: 1 hour)
+  :return: Pre-signed URL or None if error occurs or object doesn't exist
+  """
+  try:
+    s3_client = get_s3_client()
+
+    check_bucket_key_exists(s3_client, bucket_key)
+
+    file_url = s3_client.generate_presigned_url(
+        'get_object',
+        Params={
+          'Bucket': S3_REPORTS_BUCKET,
+          'Key': bucket_key
+        },
+        ExpiresIn=expiration
+    )
+
+    return file_url
+  except ClientError as e:
+    print(f"Failed to generate pre-signed URL: {e}")
+    return None
+
+
+def check_bucket_key_exists(s3_client, bucket_key: str) -> None:
+  try:
+    s3_client.head_object(Bucket=S3_REPORTS_BUCKET, Key=bucket_key)
+  except ClientError as e:
+    if e.response['Error']['Code'] == '404':
+      print(f"Object not found in S3: {bucket_key}")
+      raise e
+    else:
+      # Re-raise other errors (permission issues, etc.)
+      raise

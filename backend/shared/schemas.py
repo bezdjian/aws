@@ -94,6 +94,14 @@ class MessageResponse(BaseModel):
   message: str
 
 
+class PresignedUrlResponse(BaseModel):
+  """Response model for presigned URL"""
+
+  url: str
+  expires_in: int  # seconds
+  bucket_key: str
+
+
 class TokenVerify(BaseModel):
   """Schema for token verification"""
 

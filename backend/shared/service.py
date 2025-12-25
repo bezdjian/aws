@@ -9,7 +9,7 @@ from botocore.exceptions import ClientError
 
 from . import database
 from . import schemas
-from .S3Service import upload_report_to_s3
+from .S3Service import upload_report_to_s3, generate_presigned_url
 from .SsmService import get_google_client_id
 from .TokenInfo import TokenInfo
 
@@ -58,7 +58,7 @@ def create_salary_calculation(
 
   # Generate unique ID
   calculation_id = str(uuid.uuid4())
-  file_url = upload_report_to_s3(calculation)
+  upload_report_to_s3(calculation)
 
   # Prepare item for DynamoDB
   item = {
@@ -78,7 +78,6 @@ def create_salary_calculation(
     "employer_fee": float_to_decimal(calculation.employer_fee),
     "notes": calculation.notes,
     "date": calculation.date,
-    "report_url": file_url,
     "created_at": datetime.now(),
     "updated_at": datetime.now(),
   }
@@ -439,3 +438,43 @@ def update_user_settings(settings: schemas.UserSettings) -> Dict[str, Any]:
     raise HTTPException(
         status_code=500, detail=f"Error updating settings: {str(e)}"
     )
+
+
+def generate_report_presigned_url(
+    email: str, client_name: str, date: str, expiration: int = 3600
+) -> Optional[Dict[str, Any]]:
+  """Generate a presigned URL for an existing report file.
+
+  :param email: Email of the consultant
+  :param client_name: Name of the client
+  :param date: Date in YYYY-MM-DD format
+  :param expiration: URL expiration time in seconds (default: 1 hour)
+  :return: Dict with url, expires_in, and bucket_key
+  """
+  try:
+    # Parse the date to extract year and month
+    date_obj = datetime.fromisoformat(date)
+    year = date_obj.year
+    month = date_obj.month
+
+    # Construct the object name and bucket key (matching upload format)
+    object_name = f"{email}_{client_name}_{date_obj.strftime('%Y%m%d')}.csv"
+    bucket_key = f"{year}/{month}/{object_name}"
+
+    # Generate presigned URL
+    url = generate_presigned_url(bucket_key=bucket_key, expiration=expiration)
+
+    if url:
+      return {
+        "url": url,
+        "expires_in": expiration,
+        "bucket_key": bucket_key,
+      }
+    return None
+  except ValueError as e:
+    print(f"Invalid date format: {e}")
+    return None
+  except Exception as e:
+    print(f"Error generating presigned URL: {e}")
+    return None
+
