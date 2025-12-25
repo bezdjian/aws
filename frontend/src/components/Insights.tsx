@@ -44,7 +44,9 @@ const Insights: React.FC = () => {
   const [calculations, setCalculations] = useState<SalaryCalculation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
-  const [statsResult, setStatsResult] = useState<string>("");
+  const [statsResult, setStatsResult] = useState<string>(
+    () => localStorage.getItem("ai_insights_cache") || ""
+  );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
@@ -191,8 +193,9 @@ const Insights: React.FC = () => {
         count: stats.count,
       };
       const aiResponse = await getInsightStats(insightStats);
-      console.log("response ", aiResponse.data.response);
-      setStatsResult(aiResponse.data.response);
+      const result = aiResponse.data.response;
+      setStatsResult(result);
+      localStorage.setItem("ai_insights_cache", result);
     } catch (error) {
       showToast("Failed to analyze stats. Please try again.", "error");
     } finally {
@@ -325,7 +328,10 @@ const Insights: React.FC = () => {
                       </div>
                       {statsResult && !isAnalyzing && (
                         <button
-                          onClick={() => setStatsResult("")}
+                          onClick={() => {
+                            setStatsResult("");
+                            localStorage.removeItem("ai_insights_cache");
+                          }}
                           className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
                         >
                           <X size={16} />
