@@ -35,7 +35,7 @@ validate:
 # Build SAM application
 build:
 	@echo "Building SAM application..."
-	sam build --use-container
+	sam build
 
 # Deploy with saved configuration
 deploy: build
@@ -150,8 +150,9 @@ endpoints:
 
 
 ### Localstack ###
-deploy-localstack: build
+deploy-localstack:
 	@echo "Deploying to localstack environment..."
+	samlocal build
 	samlocal deploy --config-env localstack
 
 
