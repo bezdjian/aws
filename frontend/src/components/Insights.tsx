@@ -102,7 +102,9 @@ const Insights: React.FC = () => {
           calculations.length
         : 0;
 
-    const clientNames = calculations.map((calc) => calc.client_name);
+    const clientNames = calculations.map(
+      (calc) => calc.client_name || "Unknown Client"
+    );
     const uniqueClientNames = [...new Set(clientNames)];
     const clientCount = uniqueClientNames.length;
 
@@ -114,8 +116,48 @@ const Insights: React.FC = () => {
       totalHourlyRate,
       count: calculations.length,
       clientCount,
-      clientNames,
+      clientNames: uniqueClientNames,
     };
+  }, [calculations]);
+
+  // 1.5 Client-specific Stats
+  const clientStats = useMemo(() => {
+    const groups: Record<
+      string,
+      {
+        count: number;
+        totalInvoiced: number;
+        totalBuffer: number;
+        avgRate: number;
+        totalGross: number;
+      }
+    > = {};
+
+    calculations.forEach((calc) => {
+      const name = calc.client_name || "Unknown Client";
+      if (!groups[name]) {
+        groups[name] = {
+          count: 0,
+          totalInvoiced: 0,
+          totalBuffer: 0,
+          avgRate: 0,
+          totalGross: 0,
+        };
+      }
+      groups[name].count += 1;
+      groups[name].totalInvoiced += calc.invoiced_amount || 0;
+      groups[name].totalBuffer += calc.save_to_buffer || 0;
+      groups[name].totalGross += calc.remaining_for_gross_salary || 0;
+      groups[name].avgRate += calc.hourly_rate || 0;
+    });
+
+    return Object.entries(groups)
+      .map(([name, data]) => ({
+        name,
+        ...data,
+        avgRate: data.avgRate / data.count,
+      }))
+      .sort((a, b) => b.totalInvoiced - a.totalInvoiced);
   }, [calculations]);
 
   // 2. Chart Data: Monthly Revenue
@@ -223,7 +265,7 @@ const Insights: React.FC = () => {
           <div className="flex items-center space-x-6">
             <button
               onClick={() => navigate("/home")}
-              className="p-2.5 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-900 group"
+              className="p-2.5 hover:bg-slate-100 rounded-xl transition-all text-slate-500 hover:text-slate-900 group cursor-pointer"
             >
               <ArrowLeft
                 size={20}
@@ -250,7 +292,7 @@ const Insights: React.FC = () => {
             <button
               onClick={analyzeStats}
               disabled={isAnalyzing}
-              className="flex items-center space-x-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 group active:scale-95 disabled:opacity-50"
+              className="flex items-center space-x-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 group active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               {isAnalyzing ? (
                 <Loader2 className="animate-spin" size={18} />
@@ -267,7 +309,7 @@ const Insights: React.FC = () => {
 
             <button
               onClick={handleExportCSV}
-              className="flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20"
+              className="flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 cursor-pointer"
             >
               <FileDown size={18} />
               <span className="hidden sm:block">Export Data</span>
@@ -291,7 +333,7 @@ const Insights: React.FC = () => {
             </p>
             <button
               onClick={() => navigate("/home")}
-              className="px-8 py-4 bg-brand-600 text-white rounded-2xl font-black hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 active:scale-95"
+              className="px-8 py-4 bg-brand-600 text-white rounded-2xl font-black hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 active:scale-95 cursor-pointer"
             >
               Start Calculating
             </button>
@@ -332,7 +374,7 @@ const Insights: React.FC = () => {
                             setStatsResult("");
                             localStorage.removeItem("ai_insights_cache");
                           }}
-                          className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+                          className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                         >
                           <X size={16} />
                         </button>
@@ -387,7 +429,7 @@ const Insights: React.FC = () => {
                     <ShieldCheck size={20} />
                   </div>
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest block mb-1">
-                    Safety Buffer
+                    Total Safety Buffer
                   </span>
                   <p className="text-2xl font-black text-slate-900 font-mono tracking-tight">
                     {CalculationUtils.formatCurrency(stats.totalBuffer)}
@@ -612,22 +654,118 @@ const Insights: React.FC = () => {
               </div>
             </div>
 
+            {/* CLIENT BREAKDOWN SECTION */}
+            <div className="bg-white rounded-[3rem] border border-slate-100 p-8 md:p-10 shadow-sm">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center">
+                    <Briefcase size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900">
+                      Client Performance Breakdown
+                    </h3>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                      Revenue and metrics grouped by client
+                    </p>
+                  </div>
+                </div>
+                <div className="px-4 py-1.5 bg-slate-50 rounded-full border border-slate-100 flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse"></span>
+                  <span className="text-[10px] font-black text-slate-600 uppercase tracking-tight">
+                    {stats.clientCount} Active Clients
+                  </span>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-separate border-spacing-y-2">
+                  <thead>
+                    <tr className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                      <th className="px-6 py-4">Client Name</th>
+                      <th className="px-6 py-4">Simulations</th>
+                      <th className="px-6 py-4">Total Invoiced</th>
+                      <th className="px-6 py-4">Avg Rate</th>
+                      <th className="px-6 py-4">Contribution</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {clientStats.map((client, idx) => (
+                      <tr
+                        key={idx}
+                        className="group hover:bg-slate-50 transition-all rounded-2xl"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-500 font-bold text-xs group-hover:bg-brand-100 group-hover:text-brand-600 transition-colors">
+                              {client.name.charAt(0)}
+                            </div>
+                            <span className="text-sm font-black text-slate-900">
+                              {client.name}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm font-bold text-slate-500">
+                          {client.count}
+                        </td>
+                        <td className="px-6 py-4 text-sm font-black text-slate-900 font-mono">
+                          {CalculationUtils.formatCurrency(
+                            client.totalInvoiced
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-sm font-bold text-slate-500 font-mono">
+                          {CalculationUtils.formatCurrency(
+                            Math.round(client.avgRate)
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-grow bg-slate-100 h-1.5 rounded-full overflow-hidden max-w-[100px]">
+                              <div
+                                className="bg-brand-500 h-full rounded-full"
+                                style={{
+                                  width: `${
+                                    (client.totalInvoiced /
+                                      stats.totalInvoiced) *
+                                    100
+                                  }%`,
+                                }}
+                              ></div>
+                            </div>
+                            <span className="text-[10px] font-black text-slate-400">
+                              {Math.round(
+                                (client.totalInvoiced / stats.totalInvoiced) *
+                                  100
+                              )}
+                              %
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             {/* BOTTOM GRID - ADDITIONAL CONTEXT */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="p-8 bg-brand-50 rounded-[2.5rem] border border-brand-100/50 flex items-start space-x-6">
                 <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-600 shadow-sm shrink-0">
-                  <Briefcase size={24} />
+                  <ShieldCheck size={24} />
                 </div>
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-1">
-                    Clients
+                    Buffer Reliability
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                    You have {stats.clientCount} clients across your
-                    simulations.
-                  </p>
-                  <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                    Your clients are: {stats.clientNames.join(", ")}
+                    Across all clients, your average safety buffer is{" "}
+                    <span className="text-brand-600 font-bold">
+                      {CalculationUtils.formatCurrency(
+                        Math.round(stats.totalBuffer / (stats.count || 1))
+                      )}
+                    </span>{" "}
+                    per simulation.
                   </p>
                 </div>
               </div>
