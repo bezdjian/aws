@@ -10,11 +10,15 @@ import {
   Briefcase,
   FileDown,
   HelpCircle,
+  Sparkles,
+  BrainCircuit,
+  X,
+  Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import { useUser } from "../context/UserContext";
-import { getCalculationsByEmail } from "../backend/service";
+import { getCalculationsByEmail, getInsightStats } from "../backend/service";
 import { SalaryCalculation } from "../types";
 import CalculationUtils from "../utils/CalculationUtils";
 import { useToast } from "../context/ToastContext";
@@ -31,6 +35,7 @@ import {
   Cell,
 } from "recharts";
 import { format, parseISO } from "date-fns";
+import { exportInsightsSummary } from "../utils/ExportUtils";
 
 const Insights: React.FC = () => {
   const { user, isLoading: userLoading } = useUser();
@@ -39,6 +44,8 @@ const Insights: React.FC = () => {
   const [calculations, setCalculations] = useState<SalaryCalculation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
+  const [statsResult, setStatsResult] = useState<string>("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -73,7 +80,7 @@ const Insights: React.FC = () => {
       (acc, curr) => acc + (curr.invoiced_amount || 0),
       0
     );
-    const totalNet = calculations.reduce(
+    const totalGrossSalary = calculations.reduce(
       (acc, curr) => acc + (curr.remaining_for_gross_salary || 0),
       0
     );
@@ -81,6 +88,12 @@ const Insights: React.FC = () => {
       (acc, curr) => acc + (curr.save_to_buffer || 0),
       0
     );
+
+    const totalHourlyRate = calculations.reduce(
+      (acc, curr) => acc + (curr.hourly_rate || 0),
+      0
+    );
+
     const avgRate =
       calculations.length > 0
         ? calculations.reduce((acc, curr) => acc + (curr.hourly_rate || 0), 0) /
@@ -89,9 +102,10 @@ const Insights: React.FC = () => {
 
     return {
       totalInvoiced,
-      totalNet,
+      totalGrossSalary,
       totalBuffer,
       avgRate,
+      totalHourlyRate,
       count: calculations.length,
     };
   }, [calculations]);
@@ -137,14 +151,13 @@ const Insights: React.FC = () => {
       0
     );
 
-    // 20% Model Fee is consistent across all
-    const avgModelFee = (totalInvoiced * 0.2) / count;
+    const avgTotalInvoiced = totalInvoiced / count;
     const avgBuffer = totalBuffer / count;
     const avgGross = totalGross / count;
     const avgSocialPension = totalSocialPension / count;
 
     return [
-      { name: "Model Fee (20%)", value: avgModelFee, color: "#6366f1" }, // brand-500
+      { name: "Invoiced", value: avgTotalInvoiced, color: "#6366f1" }, // brand-500
       { name: "Safety Buffer", value: avgBuffer, color: "#f59e0b" }, // amber-500
       { name: "Gross Salary Basis", value: avgGross, color: "#10b981" }, // emerald-500
       { name: "Social & Pension", value: avgSocialPension, color: "#ef4444" }, // red-500
@@ -157,53 +170,28 @@ const Insights: React.FC = () => {
       return;
     }
 
-    const rows = [];
-
-    // Section 1: Core Statistics
-    rows.push(["FINANCIAL SUMMARY REPORT"]);
-    rows.push(["Generated on", new Date().toLocaleString()]);
-    rows.push([]);
-    rows.push(["Metric", "Value"]);
-    rows.push(["Total Accumulated Billing", stats.totalInvoiced]);
-    rows.push(["Total Projected Net (Gross)", stats.totalNet]);
-    rows.push(["Total Accumulated Safety Buffer", stats.totalBuffer]);
-    rows.push(["Average Hourly Rate", Math.round(stats.avgRate)]);
-    rows.push(["Total Saved Scenarios", stats.count]);
-    rows.push([]);
-
-    // Section 2: Monthly Performance
-    rows.push(["MONTHLY REVENUE PERFORMANCE"]);
-    rows.push(["Month", "Revenue"]);
-    monthlyData.forEach((item) => {
-      rows.push([item.name, item.value]);
-    });
-    rows.push([]);
-
-    // Section 3: Latest Distribution Profile
-    rows.push(["80/20 DISTRIBUTION (LATEST PROFILE)"]);
-    rows.push(["Category", "Amount"]);
-    distributionData.forEach((item) => {
-      rows.push([item.name, item.value]);
-    });
-
-    const csvContent = rows.map((row) => row.join(",")).join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `eighty_twenty_insights_summary_${
-        new Date().toISOString().split("T")[0]
-      }.csv`
-    );
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
+    exportInsightsSummary(stats, monthlyData, distributionData);
     showToast("Insights Summary exported successfully", "success");
+  };
+
+  const analyzeStats = async () => {
+    try {
+      setIsAnalyzing(true);
+      const insightStats = {
+        total_gross_salary: stats.totalGrossSalary,
+        total_invoiced: stats.totalInvoiced,
+        hourly_rate: stats.totalHourlyRate,
+        total_buffer: stats.totalBuffer,
+        count: stats.count,
+      };
+      const aiResponse = await getInsightStats(insightStats);
+      console.log("response ", aiResponse.data.response);
+      setStatsResult(aiResponse.data.response);
+    } catch (error) {
+      showToast("Failed to analyze stats. Please try again.", "error");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   if (isLoading) {
@@ -249,13 +237,33 @@ const Insights: React.FC = () => {
             </div>
           </div>
 
-          <button
-            onClick={handleExportCSV}
-            className="flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20"
-          >
-            <FileDown size={18} />
-            <span className="hidden sm:block">Export Data</span>
-          </button>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={analyzeStats}
+              disabled={isAnalyzing}
+              className="flex items-center space-x-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 group active:scale-95 disabled:opacity-50"
+            >
+              {isAnalyzing ? (
+                <Loader2 className="animate-spin" size={18} />
+              ) : (
+                <Sparkles
+                  className="text-brand-400 group-hover:text-brand-300 transition-colors"
+                  size={18}
+                />
+              )}
+              <span className="hidden sm:block">
+                {isAnalyzing ? "Analyzing..." : "AI Financial Review"}
+              </span>
+            </button>
+
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center space-x-2 px-5 py-2.5 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20"
+            >
+              <FileDown size={18} />
+              <span className="hidden sm:block">Export Data</span>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -282,6 +290,68 @@ const Insights: React.FC = () => {
         ) : (
           <>
             {/* HERO STATS - BENTO GRID */}
+            {/* AI ANALYSIS SECTION */}
+            {(isAnalyzing || statsResult) && (
+              <div className="relative overflow-hidden bg-white/40 backdrop-blur-xl border border-brand-100 rounded-[2.5rem] p-8 mb-8 animate-in fade-in slide-in-from-top-4 duration-700 shadow-xl shadow-brand-500/5 group">
+                {/* Background Sparkle Decoration */}
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-brand-500/15 transition-colors duration-700"></div>
+
+                <div className="flex flex-col md:flex-row gap-6 relative z-10">
+                  <div className="flex-shrink-0">
+                    <div className="w-14 h-14 bg-brand-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-brand-600/30">
+                      {isAnalyzing ? (
+                        <Loader2 className="animate-spin" size={24} />
+                      ) : (
+                        <BrainCircuit size={24} />
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex-grow">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-xl font-black text-slate-900 tracking-tight">
+                          AI Financial Analyst
+                        </h3>
+                        <div className="px-2 py-0.5 bg-brand-50 text-brand-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-brand-100 italic">
+                          80/20 Expert
+                        </div>
+                      </div>
+                      {statsResult && !isAnalyzing && (
+                        <button
+                          onClick={() => setStatsResult("")}
+                          className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+
+                    {isAnalyzing ? (
+                      <div className="space-y-3">
+                        <div className="h-4 bg-slate-100 rounded-full w-[90%] animate-pulse"></div>
+                        <div className="h-4 bg-slate-100 rounded-full w-[70%] animate-pulse"></div>
+                        <div className="h-4 bg-slate-100 rounded-full w-[80%] animate-pulse"></div>
+                      </div>
+                    ) : (
+                      <div className="prose prose-slate max-w-none prose-p:mb-4 prose-p:last:mb-0 prose-strong:text-slate-900 prose-strong:font-black prose-ul:list-disc prose-ul:pl-5 prose-li:mb-1">
+                        <div
+                          className="text-slate-600 font-medium text-sm leading-relaxed ai-html-content"
+                          dangerouslySetInnerHTML={{ __html: statsResult }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="absolute bottom-4 right-8 flex items-center gap-1.5 pointer-events-none opacity-40">
+                  <Sparkles size={12} className="text-brand-600" />
+                  <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400 italic">
+                    Powered by eighty-twenty AI
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="md:col-span-2 bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-xl shadow-slate-900/10 group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
@@ -562,12 +632,11 @@ const Insights: React.FC = () => {
                     Financial Freedom
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                    You have projected a total net take-home of{" "}
+                    You have projected a total gross salary of{" "}
                     <span className="text-emerald-600 font-bold">
-                      {CalculationUtils.formatCurrency(stats.totalNet)}
+                      {CalculationUtils.formatCurrency(stats.totalGrossSalary)}
                     </span>{" "}
-                    across your simulations. Great job optimizing your
-                    distribution!
+                    across your simulations.
                   </p>
                 </div>
               </div>

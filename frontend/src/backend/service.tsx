@@ -1,5 +1,10 @@
 import axios from "axios";
-import { SalaryCalculation, UserSettings } from "../types";
+import {
+  AIResponse,
+  InsightStats,
+  SalaryCalculation,
+  UserSettings,
+} from "../types";
 
 const BASE_URL =
   import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
@@ -81,4 +86,8 @@ export const getUserSettings = async (email: string) => {
 
 export const updateUserSettings = async (settings: UserSettings) => {
   return axios.post<UserSettings>(`${BASE_URL}/settings`, settings);
+};
+
+export const getInsightStats = async (stats: InsightStats) => {
+  return axios.post<AIResponse>(`${BASE_URL}/insights/analyze`, stats);
 };

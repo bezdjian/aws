@@ -30,3 +30,16 @@ export interface UserSettings {
   default_hourly_rate: number;
   updated_at?: string;
 }
+
+
+export interface InsightStats {
+  total_gross_salary: number;
+  total_invoiced: number;
+  hourly_rate: number;
+  total_buffer: number;
+  count: number;
+}
+
+export interface AIResponse {
+  response: string;
+}
