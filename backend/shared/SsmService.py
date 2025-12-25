@@ -32,9 +32,10 @@ def get_google_client_secret() -> str:
 
 
 def _fallback(name):
-  if "google.client.id" in name:
+  # Fallback to .env variables for local development
+  if "google-client-id" in name:
     return os.getenv("GOOGLE_CLIENT_ID")
-  elif "google.client.secret" in name:
+  elif "google-client-secret" in name:
     return os.getenv("GOOGLE_CLIENT_SECRET")
   else:
     raise RuntimeError(f"SSM parameter {name} not found in .env fallback")
