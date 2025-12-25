@@ -30,26 +30,26 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300"
         onClick={() => !isProcessing && onClose()}
       ></div>
-      <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="relative bg-white dark:bg-slate-900 w-full max-w-md rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-300 transition-colors">
         <div className="absolute top-0 right-0 p-6">
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all cursor-pointer"
+            className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
           >
             <X size={20} />
           </button>
         </div>
 
-        <div className="p-8 md:p-10 flex flex-col items-center text-center">
-          <div className="w-14 h-14 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner animate-bounce-subtle">
+        <div className="p-6 md:p-10 flex flex-col items-center text-center">
+          <div className="w-14 h-14 bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 rounded-3xl flex items-center justify-center mb-6 shadow-inner animate-bounce-subtle">
             <AlertTriangle size={24} />
           </div>
 
-          <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">
             {title}
           </h3>
-          <div className="text-slate-500 font-medium leading-relaxed mb-8">
+          <div className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">
             {message}
           </div>
 
@@ -57,7 +57,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <button
               onClick={onClose}
               disabled={isProcessing}
-              className="px-6 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black hover:bg-slate-100 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+              className="px-6 py-4 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl font-black hover:bg-slate-100 dark:hover:bg-slate-700 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               {cancelText}
             </button>

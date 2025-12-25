@@ -148,10 +148,10 @@ const History: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-brand-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans selection:bg-brand-100 transition-colors duration-300">
       <Header />
       {/* PAGE HEADER */}
-      <header className="bg-white border-b border-slate-100 sticky top-16 z-40">
+      <header className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 sticky top-16 z-40 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <button
@@ -168,7 +168,7 @@ const History: React.FC = () => {
                 <HistoryIcon size={20} />
               </div>
               <div>
-                <h1 className="text-xl font-black text-slate-900 leading-none">
+                <h1 className="text-xl font-black text-slate-900 leading-none dark:text-white">
                   Simulation History
                 </h1>
                 <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">
@@ -219,14 +219,14 @@ const History: React.FC = () => {
             </p>
           </div>
         ) : filteredCalculations.length === 0 ? (
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 p-20 flex flex-col items-center justify-center text-center">
-            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-200 mb-8 border border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-slate-950/50 p-20 flex flex-col items-center justify-center text-center">
+            <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-200 dark:text-slate-700 mb-8 border border-slate-100 dark:border-slate-800">
               <HistoryIcon size={48} />
             </div>
-            <h2 className="text-2xl font-black text-slate-900 mb-3">
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-3">
               No simulations found
             </h2>
-            <p className="text-slate-500 max-w-sm font-medium leading-relaxed">
+            <p className="text-slate-500 dark:text-slate-400 max-w-sm font-medium leading-relaxed">
               {searchTerm
                 ? "Try searching for a different client or note."
                 : "You haven't saved any salary simulations yet. Head back home to create your first one!"}
@@ -247,17 +247,17 @@ const History: React.FC = () => {
               <div
                 key={calc.id}
                 onClick={() => navigate(`/calculation/${calc.id}`)}
-                className="group relative bg-white rounded-[2rem] border border-slate-100 hover:border-brand-200 p-6 md:p-8 shadow-sm hover:shadow-xl hover:shadow-brand-500/5 transition-all duration-500 cursor-pointer overflow-hidden"
+                className="group relative bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-brand-200 dark:hover:border-brand-500/50 p-6 md:p-8 shadow-sm hover:shadow-xl hover:shadow-brand-500/5 dark:hover:shadow-brand-500/10 transition-all duration-500 cursor-pointer overflow-hidden"
               >
                 <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                   {/* Info Column */}
                   <div className="md:col-span-4 space-y-4">
                     <div className="flex items-center space-x-3">
                       <div>
-                        <h3 className="text-lg font-black text-slate-900 decoration-brand-500/30 group-hover:decoration-brand-500 group-hover:underline underline-offset-4 transition-all tracking-tight">
+                        <h3 className="text-lg font-black text-slate-900 dark:text-white decoration-brand-500/30 group-hover:decoration-brand-500 group-hover:underline underline-offset-4 transition-all tracking-tight">
                           {calc.client_name || "General Calculation"}
                         </h3>
-                        <div className="flex items-center space-x-2 text-slate-400 mt-1">
+                        <div className="flex items-center space-x-2 text-slate-400 dark:text-slate-500 mt-1">
                           <Calendar size={12} />
                           <span className="text-[10px] font-black uppercase tracking-widest leading-none">
                             {calc.date?.split("T")[0] || "No date"}
@@ -266,7 +266,7 @@ const History: React.FC = () => {
                       </div>
                     </div>
                     {calc.notes && (
-                      <p className="text-sm text-slate-500 font-medium line-clamp-2 italic leading-relaxed pl-15">
+                      <p className="text-sm text-slate-500 dark:text-slate-400 font-medium line-clamp-2 italic leading-relaxed pl-15">
                         "{calc.notes}"
                       </p>
                     )}
@@ -275,40 +275,40 @@ const History: React.FC = () => {
                   {/* Metrics Row */}
                   <div className="md:col-span-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider block">
+                      <span className="text-[9px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider block">
                         Invoiced
                       </span>
-                      <p className="text-sm font-black text-slate-900 font-mono italic">
+                      <p className="text-sm font-black text-slate-900 dark:text-white font-mono italic">
                         {CalculationUtils.formatCurrency(
                           calc.invoiced_amount || 0
                         )}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider block">
+                      <span className="text-[9px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider block">
                         Gross
                       </span>
-                      <p className="text-sm font-black text-slate-900 font-mono italic">
+                      <p className="text-sm font-black text-slate-900 dark:text-white font-mono italic">
                         {CalculationUtils.formatCurrency(
                           calc.gross_salary || 0
                         )}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black uppercase text-emerald-500/70 tracking-wider block font-black">
+                      <span className="text-[9px] font-black uppercase text-emerald-500/70 dark:text-emerald-400/70 tracking-wider block font-black">
                         Net Salary
                       </span>
-                      <p className="text-base font-black text-emerald-600 font-mono">
+                      <p className="text-base font-black text-emerald-600 dark:text-emerald-400 font-mono">
                         {CalculationUtils.formatCurrency(
                           calc.remaining_for_gross_salary || 0
                         )}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black uppercase text-brand-400 tracking-wider block">
+                      <span className="text-[9px] font-black uppercase text-brand-400 dark:text-brand-500/70 tracking-wider block">
                         Rate/h
                       </span>
-                      <p className="text-sm font-black text-slate-700 font-mono italic">
+                      <p className="text-sm font-black text-slate-700 dark:text-slate-300 font-mono italic">
                         {CalculationUtils.formatCurrency(calc.hourly_rate || 0)}
                       </p>
                     </div>
@@ -324,12 +324,12 @@ const History: React.FC = () => {
                           e
                         )
                       }
-                      className="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all cursor-pointer"
+                      className="p-3 text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all cursor-pointer"
                       title="Delete record"
                     >
                       <Trash2 size={20} />
                     </button>
-                    <div className="w-10 h-10 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-brand-500 group-hover:text-white transition-all transform group-hover:scale-110 shadow-sm">
+                    <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-300 dark:text-slate-600 group-hover:bg-brand-500 dark:group-hover:bg-brand-600 group-hover:text-white transition-all transform group-hover:scale-110 shadow-sm">
                       <ChevronRight size={20} />
                     </div>
                   </div>
@@ -359,7 +359,7 @@ const History: React.FC = () => {
           <>
             This action is permanent and cannot be undone. Are you sure you want
             to remove{" "}
-            <span className="text-slate-900 font-bold">
+            <span className="text-slate-900 font-bold dark:text-white">
               "{calculationToDelete?.name}"
             </span>
             ?

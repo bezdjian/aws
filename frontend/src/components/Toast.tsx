@@ -31,10 +31,10 @@ const Toast: React.FC<ToastProps> = ({
   }, [duration, onClose]);
 
   const typeStyles = {
-    success: "bg-emerald-500 text-white shadow-emerald-200",
-    error: "bg-red-500 text-white shadow-red-200",
-    info: "bg-brand-500 text-white shadow-brand-200",
-    warning: "bg-amber-500 text-white shadow-amber-200",
+    success: "bg-emerald-500 text-white shadow-emerald-500/20",
+    error: "bg-red-500 text-white shadow-red-500/20",
+    info: "bg-brand-500 text-white shadow-brand-500/20",
+    warning: "bg-amber-500 text-white shadow-amber-500/20",
   };
 
   const Icon = {

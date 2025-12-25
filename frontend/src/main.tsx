@@ -10,20 +10,24 @@ import History from "./components/History";
 import CalculationView from "./components/Calculation";
 import Insights from "./components/Insights";
 
+import { ThemeProvider } from "./context/ThemeContext";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <UserProvider>
-      <ToastProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/calculation/:id" element={<CalculationView />} />
-            <Route path="/insights" element={<Insights />} />
-          </Routes>
-        </BrowserRouter>
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/calculation/:id" element={<CalculationView />} />
+              <Route path="/insights" element={<Insights />} />
+            </Routes>
+          </BrowserRouter>
+        </ToastProvider>
+      </ThemeProvider>
     </UserProvider>
   </React.StrictMode>
 );

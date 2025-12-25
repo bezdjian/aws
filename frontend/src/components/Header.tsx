@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Calculator, LogOut, Settings } from "lucide-react";
+import { Calculator, LogOut, Settings, Sun, Moon } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import SettingsModal from "./SettingsModal";
+import { useTheme } from "../context/ThemeContext";
 
 interface HeaderProps {
   onSettingsUpdate?: () => void;
@@ -12,28 +13,47 @@ const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
   const { user, handleSignOut } = useUser();
   const navigate = useNavigate();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <>
-      <nav className="border-b border-slate-100 bg-white backdrop-blur-md sticky top-0 z-[100]">
+      <nav className="border-b border-slate-100 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-[100]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div
               className="flex items-center space-x-3 cursor-pointer group"
               onClick={() => navigate("/home")}
             >
-              <div className="w-8 h-8 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-300">
+              <div className="w-8 h-8 bg-slate-900 dark:bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-300">
                 <Calculator size={18} strokeWidth={2.5} />
               </div>
-              <span className="font-extrabold text-xl tracking-tighter text-slate-800">
+              <span className="font-extrabold text-xl tracking-tighter text-slate-800 dark:text-white">
                 EightyTwenty.
               </span>
             </div>
 
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-4 sm:space-x-6">
+              <button
+                onClick={toggleTheme}
+                className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer group"
+                title={theme === "light" ? "Switch to Dark" : "Switch to Light"}
+              >
+                {theme === "light" ? (
+                  <Moon
+                    size={20}
+                    className="group-hover:-rotate-12 transition-transform shadow-sm"
+                  />
+                ) : (
+                  <Sun
+                    size={20}
+                    className="group-hover:rotate-90 transition-transform shadow-sm text-amber-400"
+                  />
+                )}
+              </button>
+
               <div className="flex items-center space-x-3">
                 <div className="text-right hidden sm:block">
-                  <p className="text-xs font-black text-slate-900 leading-none mb-1 uppercase tracking-wider">
+                  <p className="text-xs font-black text-slate-900 dark:text-white leading-none mb-1 uppercase tracking-wider">
                     {user?.getName()}
                   </p>
                   <p className="text-[10px] text-slate-400 font-medium leading-none">
@@ -43,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
                 <img
                   src={user?.getImageUrl()}
                   alt="Avatar"
-                  className="w-8 h-8 rounded-full border border-slate-200 ring-4 ring-slate-50"
+                  className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 ring-4 ring-slate-50 dark:ring-slate-800/50"
                   onError={(e) => {
                     (
                       e.target as HTMLImageElement
@@ -53,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
               </div>
               <button
                 onClick={() => setIsSettingsOpen(true)}
-                className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-all cursor-pointer group"
+                className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer group"
                 title="Settings"
               >
                 <Settings

@@ -17,9 +17,21 @@
   --font-mono: "JetBrains Mono", monospace;
 }
 
+@variant dark (&:where(.dark, .dark *));
+
+html.dark,
+body.dark {
+  color-scheme: dark;
+}
+
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 antialiased font-sans transition-colors duration-300;
+  }
+
+  .dark body,
+  body.dark {
+    @apply bg-slate-950 text-slate-100;
   }
 }
 
@@ -28,20 +40,40 @@
     @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl;
   }
 
+  .dark .glass-card {
+    @apply bg-slate-900/70 border-slate-800/40 shadow-slate-950/50;
+  }
+
   .input-label {
     @apply block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1 transition-all;
+  }
+
+  .dark .input-label {
+    @apply text-slate-400;
   }
 
   .input-field {
     @apply w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-300 outline-none transition-all duration-200 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 focus:shadow-lg;
   }
 
+  .dark .input-field {
+    @apply bg-slate-900 border-slate-800 text-slate-100 placeholder:text-slate-600 focus:bg-slate-800 focus:border-brand-400 focus:ring-brand-400/10;
+  }
+
   .btn-primary {
     @apply w-full bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-brand-600 hover:shadow-brand-500/20 active:scale-[0.98] transition-all duration-300 flex items-center justify-center space-x-2;
   }
 
+  .dark .btn-primary {
+    @apply bg-brand-600 hover:bg-brand-500;
+  }
+
   .btn-outline {
     @apply w-full bg-white text-slate-900 border border-slate-200 font-bold py-4 rounded-xl hover:bg-slate-50 hover:border-slate-300 active:scale-[0.98] transition-all duration-300 flex items-center justify-center space-x-3;
+  }
+
+  .dark .btn-outline {
+    @apply bg-transparent text-slate-100 border-slate-800 hover:bg-slate-900;
   }
 }
 

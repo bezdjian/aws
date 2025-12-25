@@ -109,26 +109,27 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-white">
+    <div className="min-h-screen flex flex-col md:flex-row bg-white dark:bg-slate-950 transition-colors duration-300">
       {/* LEFT SECTION: Branding & Auth */}
-      <section className="md:w-[42%] bg-white p-8 md:p-16 flex flex-col justify-between relative overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-brand-50 rounded-full blur-3xl opacity-60"></div>
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-brand-100 rounded-full blur-3xl opacity-40"></div>
+      <section className="md:w-[42%] bg-white dark:bg-slate-950 p-8 md:p-16 flex flex-col justify-between relative overflow-hidden transition-colors">
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-brand-50 dark:bg-brand-900/10 rounded-full blur-3xl opacity-60"></div>
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-brand-100 dark:bg-brand-800/10 rounded-full blur-3xl opacity-40"></div>
 
         <header className="relative z-10 flex items-center space-x-3 mb-16">
-          <div className="w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl rotate-3">
+          <div className="w-10 h-10 bg-slate-900 dark:bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-xl rotate-3 transition-colors">
             <Calculator size={22} strokeWidth={2.5} />
           </div>
-          <span className="font-extrabold text-2xl tracking-tighter text-slate-800">
+          <span className="font-extrabold text-2xl tracking-tighter text-slate-800 dark:text-white">
             EightyTwenty.
           </span>
         </header>
 
         <div className="relative z-10 max-w-md">
-          <h1 className="text-5xl md:text-6xl font-black text-slate-900 mb-8 leading-[1.1] tracking-tight">
-            Finance for the <span className="text-brand-600">Free.</span>
+          <h1 className="text-5xl md:text-6xl font-black text-slate-900 dark:text-white mb-8 leading-[1.1] tracking-tight">
+            Finance for the{" "}
+            <span className="text-brand-600 dark:text-brand-400">Free.</span>
           </h1>
-          <p className="text-xl text-slate-500 mb-12 leading-relaxed font-medium">
+          <p className="text-xl text-slate-500 dark:text-slate-400 mb-12 leading-relaxed font-medium">
             The all-in-one terminal for consultants. Automate your tax buffers,
             calculate your real take-home pay with the 80/20 model.
           </p>
@@ -153,9 +154,9 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
 
-        <footer className="relative z-10 mt-10 pt-2 border-t border-slate-100 hidden md:block">
+        <footer className="relative z-10 mt-10 pt-2 border-t border-slate-100 dark:border-slate-800 hidden md:block transition-colors">
           <div className="flex space-x-6 grayscale opacity-40">
-            <span className="font-medium text-sm text-slate-700">
+            <span className="font-medium text-sm text-slate-700 dark:text-slate-300 font-bold">
               By EightyTwenty AB.
             </span>
           </div>
@@ -163,25 +164,25 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* RIGHT SECTION: Calculation Form */}
-      <section className="md:w-[58%] bg-white p-8 md:p-16 flex flex-col">
+      <section className="md:w-[58%] bg-white dark:bg-slate-900/50 p-8 md:p-16 flex flex-col transition-colors">
         <div className="w-full max-w-2xl">
-          <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
+          <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50 dark:border-slate-800">
             <div className="flex items-center space-x-2">
-              <Calculator size={22} />
-              <h2 className="text-2xl font-black text-slate-900">
+              <Calculator size={22} className="dark:text-white" />
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white">
                 Guest Mode • Figures in SEK
               </h2>
             </div>
           </div>
 
-          <div className="flex bg-slate-100/50 p-1.5 rounded-[1.25rem] mb-10 w-full sm:w-fit border border-slate-100">
+          <div className="flex bg-slate-100/50 dark:bg-slate-800/50 p-1.5 rounded-[1.25rem] mb-10 w-full sm:w-fit border border-slate-100 dark:border-slate-800 transition-colors">
             <button
               type="button"
               onClick={() => setCalculationMode("DIRECT")}
               className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
                 calculationMode === "DIRECT"
-                  ? "bg-white text-slate-900 shadow-sm border border-slate-100"
-                  : "text-slate-400 hover:text-slate-600"
+                  ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm border border-slate-100 dark:border-slate-600"
+                  : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
               }`}
             >
               Direct Simulation
@@ -191,13 +192,17 @@ const LandingPage: React.FC = () => {
               onClick={() => setCalculationMode("GOAL")}
               className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center space-x-2 ${
                 calculationMode === "GOAL"
-                  ? "bg-white text-slate-900 shadow-sm border border-slate-100"
-                  : "text-slate-400 hover:text-slate-600"
+                  ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm border border-slate-100 dark:border-slate-600"
+                  : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
               }`}
             >
               <Target
                 size={12}
-                className={calculationMode === "GOAL" ? "text-brand-500" : ""}
+                className={
+                  calculationMode === "GOAL"
+                    ? "text-brand-500 dark:text-brand-400"
+                    : ""
+                }
               />
               <span>Goal-Oriented</span>
             </button>
@@ -238,9 +243,9 @@ const LandingPage: React.FC = () => {
                         setTargetGross(parseFloat(e.target.value) || 0)
                       }
                       placeholder="e.g. 50000"
-                      className="input-field font-mono border-brand-200 bg-brand-50/20 text-brand-900"
+                      className="input-field font-mono border-brand-200 dark:border-brand-900/50 bg-brand-50/20 dark:bg-brand-900/10 text-brand-900 dark:text-brand-400 focus:border-brand-500"
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white px-2 py-1 rounded-lg border border-brand-100 text-[12px] font-black text-brand-600 uppercase tracking-tighter">
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-brand-100 dark:border-brand-900/50 text-[12px] font-black text-brand-600 dark:text-brand-400 uppercase tracking-tighter transition-colors">
                       Required: {formData.hourly_rate} kr/h
                     </div>
                   </div>
@@ -290,25 +295,25 @@ const LandingPage: React.FC = () => {
               </div>
 
               {/* Dynamic Stats Row */}
-              <div className="col-span-full grid grid-cols-3 gap-4 pt-4">
-                <div className="p-5 rounded-2xl bg-brand-50 text-brand-700 border border-brand-100">
-                  <span className="text-[10px] font-black uppercase text-brand-400 block mb-1">
+              <div className="col-span-full grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                <div className="p-5 rounded-2xl bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-100 dark:border-brand-800/50 transition-colors">
+                  <span className="text-[10px] font-black uppercase text-brand-400 dark:text-brand-500 block mb-1">
                     Invoiced Amount
                   </span>
                   <div className="text-xl font-bold font-mono leading-none">
                     {CalculationUtils.formatCurrency(formData.invoiced_amount)}
                   </div>
                 </div>
-                <div className="p-5 rounded-2xl bg-slate-100 text-slate-900 border border-slate-200">
-                  <span className="text-[10px] font-black uppercase text-slate-500 block mb-1">
+                <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800 transition-colors text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700">
+                  <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 block mb-1">
                     After Deduction (80%)
                   </span>
-                  <div className="text-xl font-bold font-mono text-slate-400 leading-none">
+                  <div className="text-xl font-bold font-mono text-slate-400 dark:text-slate-500 leading-none">
                     {CalculationUtils.formatCurrency(formData.after_deduction)}
                   </div>
                 </div>
-                <div className="p-5 rounded-2xl bg-brand-50 text-brand-700 border border-brand-100">
-                  <span className="text-[10px] font-black uppercase text-brand-400 block mb-1">
+                <div className="p-5 rounded-2xl bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-100 dark:border-brand-800/50 transition-colors">
+                  <span className="text-[10px] font-black uppercase text-brand-400 dark:text-brand-500 block mb-1">
                     Gross Salary Basis
                   </span>
                   <div className="text-xl font-bold font-mono leading-none">
@@ -318,8 +323,8 @@ const LandingPage: React.FC = () => {
               </div>
 
               {/* Total Costs Results */}
-              <div className="p-5 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-100">
-                <span className="text-[10px] font-black uppercase text-emerald-500 block mb-1">
+              <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50 transition-colors">
+                <span className="text-[10px] font-black uppercase text-emerald-500 dark:text-emerald-500/60 block mb-1">
                   Remaining Salary after fixed costs
                 </span>
                 <div className="text-xl font-bold font-mono leading-none">
@@ -327,18 +332,18 @@ const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-100 text-slate-900 border border-slate-200">
-                <span className="text-[10px] font-black uppercase text-slate-500 block mb-1">
+              <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 transition-colors">
+                <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-500/60 block mb-1">
                   Employer Fee
                 </span>
-                <div className="text-xl font-bold font-mono text-slate-400 leading-none">
+                <div className="text-xl font-bold font-mono text-slate-400 dark:text-slate-500 leading-none">
                   {CalculationUtils.formatCurrency(formData.employer_fee)}
                 </div>
               </div>
 
               <div className="col-span-full grid grid-cols-1 gap-4 pt-4">
-                <div className="p-5 rounded-2xl text-center bg-emerald-50 text-emerald-700 border border-emerald-100 w-full">
-                  <span className="text-[10px] font-black uppercase text-emerald-500 block mb-1">
+                <div className="p-5 rounded-2xl text-center bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50 w-full transition-colors">
+                  <span className="text-[10px] font-black uppercase text-emerald-500 dark:text-emerald-500/60 block mb-1">
                     Remaining Salary for Gross Salary
                   </span>
                   <div className="text-xl font-bold font-mono leading-none">
