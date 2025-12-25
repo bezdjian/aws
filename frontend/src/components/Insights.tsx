@@ -100,6 +100,10 @@ const Insights: React.FC = () => {
           calculations.length
         : 0;
 
+    const clientNames = calculations.map((calc) => calc.client_name);
+    const uniqueClientNames = [...new Set(clientNames)];
+    const clientCount = uniqueClientNames.length;
+
     return {
       totalInvoiced,
       totalGrossSalary,
@@ -107,6 +111,8 @@ const Insights: React.FC = () => {
       avgRate,
       totalHourlyRate,
       count: calculations.length,
+      clientCount,
+      clientNames,
     };
   }, [calculations]);
 
@@ -608,17 +614,14 @@ const Insights: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-1">
-                    Consulting Health
+                    Clients
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                    Your average hourly rate of{" "}
-                    <span className="text-brand-600 font-bold">
-                      {CalculationUtils.formatCurrency(
-                        Math.round(stats.avgRate)
-                      )}
-                    </span>{" "}
-                    is strong. Consistency in your billing is the key to
-                    maintaining a long-term safety buffer.
+                    You have {stats.clientCount} clients across your
+                    simulations.
+                  </p>
+                  <p className="text-slate-500 text-sm font-medium leading-relaxed">
+                    Your clients are: {stats.clientNames.join(", ")}
                   </p>
                 </div>
               </div>
