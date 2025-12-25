@@ -404,6 +404,7 @@ def get_user_settings(email: str) -> Dict[str, Any]:
       "email": email,
       "default_tax_rate": 32.0,
       "default_buffer_amount": 10000.0,
+      "default_hourly_rate": 800.0,
       "updated_at": datetime.now().isoformat(),
     }
 
@@ -478,4 +479,3 @@ def generate_report_presigned_url(
   except Exception as e:
     print(f"Error generating presigned URL: {e}")
     return None
-

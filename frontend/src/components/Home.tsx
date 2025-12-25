@@ -50,16 +50,23 @@ const Home: React.FC = () => {
 
   const fetchDefaults = async () => {
     try {
-      const response = await getUserSettings(user?.getEmail() || "");
+      const email = user?.getEmail() || "";
+      const response = await getUserSettings(email);
       const settings = response.data;
 
       setFormData((prev) => ({
         ...prev,
-        save_to_buffer: settings.default_buffer_amount,
-        hourly_rate: settings.default_hourly_rate,
+        email: email,
+        save_to_buffer: settings.default_buffer_amount ?? prev.save_to_buffer,
+        hourly_rate: settings.default_hourly_rate ?? prev.hourly_rate,
       }));
     } catch (error) {
       console.error("Failed to fetch defaults:", error);
+      // Even if settings fetch fails, ensure the email is set
+      setFormData((prev) => ({
+        ...prev,
+        email: user?.getEmail() || prev.email,
+      }));
     }
   };
 
@@ -73,9 +80,9 @@ const Home: React.FC = () => {
     save_to_buffer: 10000,
     pension_saving: 3000,
     gross_salary: 92400,
-    remaining_salary: 0,
-    remaining_for_gross_salary: 0,
-    employer_fee: 0,
+    remaining_salary: 88050,
+    remaining_for_gross_salary: 66999,
+    employer_fee: 21051,
     notes: "",
     date: new Date().toISOString(),
   });
@@ -216,7 +223,7 @@ const Home: React.FC = () => {
               Welcome back,
               <br />
               <span className="text-medium text-brand-600 dark:text-brand-400">
-                {user?.getName().split(" ")[0]}
+                {user?.getName()?.split(" ")[0]}
               </span>
               .
             </h1>
