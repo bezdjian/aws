@@ -21,7 +21,7 @@ Globals:
     Cors:
       AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
       AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-      AllowOrigin: "'*'"
+      AllowOrigin: "'http://localhost:5173'"
 
 Parameters:
   Environment:
@@ -30,6 +30,7 @@ Parameters:
     AllowedValues:
       - dev
       - prod
+      - localstack
     Description: Environment name for the deployment
 
 Resources:
@@ -216,6 +217,57 @@ Resources:
             Method: POST
             RestApiId: !Ref EightyTwentyApi
 
+  # Lambda Function for Get Google Client ID
+  GetGoogleClientIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-get-google-client-id-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.get_google_client_id
+      Description: Get Google Client ID for authentication
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: /eighty-twenty/google-client-id
+      Events:
+        GetGoogleClientId:
+          Type: Api
+          Properties:
+            Path: /auth/client_id
+            Method: GET
+            RestApiId: !Ref EightyTwentyApi
+
+  # Lambda Function for Analyze Insights
+  AnalyzeInsightsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-analyze-insights-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.analyze_insights
+      Description: Analyze salary calculations with AI
+      Events:
+        AnalyzeInsights:
+          Type: Api
+          Properties:
+            Path: /insights/analyze
+            Method: POST
+            RestApiId: !Ref EightyTwentyApi
+
+  # Lambda Function for Compute Tax
+  ComputeTaxFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-compute-tax-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.compute_tax
+      Description: Compute tax using Skatteverket API
+      Events:
+        ComputeTax:
+          Type: Api
+          Properties:
+            Path: /compute-tax
+            Method: POST
+            RestApiId: !Ref EightyTwentyApi
+
   # API Gateway REST API
   EightyTwentyApi:
     Type: AWS::Serverless::Api
@@ -325,6 +377,36 @@ Resources:
               responses:
                 "200":
                   description: User settings
+          /auth/client_id:
+            get:
+              summary: Get Google Client ID
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetGoogleClientIdFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: Google Client ID
+          /insights/analyze:
+            post:
+              summary: Analyze insights with AI
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AnalyzeInsightsFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: AI Analysis response
+          /compute-tax:
+            post:
+              summary: Compute tax
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ComputeTaxFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: Tax response
 
   # S3 Bucket for calculation reports
   ReportsBucket:
@@ -345,8 +427,17 @@ Resources:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
-      Name: !Sub '/environment/services/eighty-twenty/google.client.id'
+      Name: '/eighty-twenty/google-client-id'
       Value: 'your-google-client-id.apps.googleusercontent.com'
+      Tags:
+        eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
+
+  GoogleClientSecretParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: '/eighty-twenty/google-client-secret'
+      Value: 'your-google-client-secret'
       Tags:
         eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
 
@@ -355,8 +446,10 @@ Outputs:
   ApiUrl:
     Description: !Sub "API Gateway endpoint URL. For localstack. https://${EightyTwentyApi}.execute-api.localhost.localstack.cloud:4566/localstack"
     Value: !Sub https://${EightyTwentyApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/
-    Export:
-      Name: !Sub ${AWS::StackName}-ApiUrl
+
+  ApiId:
+    Description: API Gateway ID
+    Value: !Ref EightyTwentyApi
 
   DynamoDBTableName:
     Description: DynamoDB table name

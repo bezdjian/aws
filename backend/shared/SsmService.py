@@ -6,8 +6,8 @@ from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
 
-CLIENT_ID_PARAM_NAME = "/environment/services/eighty-twenty/google.client.id"
-CLIENT_SECRET_PARAM_NAME = "/environment/services/eighty-twenty/google.client.secret"
+CLIENT_ID_PARAM_NAME = "/eighty-twenty/google-client-id"
+CLIENT_SECRET_PARAM_NAME = "/eighty-twenty/google-client-secret"
 
 LOCALSTACK_URL = os.getenv("LOCALSTACK_URL")
 _CACHE = {}
