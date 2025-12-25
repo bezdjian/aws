@@ -14,8 +14,7 @@ DYNAMODB_TABLE_NAME = os.getenv("DYNAMODB_TABLE_NAME",
 DYNAMODB_SETTINGS_TABLE_NAME = os.getenv(
     "DYNAMODB_SETTINGS_TABLE_NAME", "eighty-twenty-settings"
 )
-DYNAMODB_ENDPOINT_URL = os.getenv(
-  "DYNAMODB_ENDPOINT_URL")  # For local development
+LOCALSTACK_URL = os.getenv("LOCALSTACK_URL")  # For local development
 
 
 def get_dynamodb_resource():
@@ -23,8 +22,8 @@ def get_dynamodb_resource():
   config = {}
 
   # Add endpoint URL for local development
-  if DYNAMODB_ENDPOINT_URL:
-    config["endpoint_url"] = DYNAMODB_ENDPOINT_URL
+  if LOCALSTACK_URL:
+    config["endpoint_url"] = LOCALSTACK_URL
 
   return boto3.resource("dynamodb", **config)
 
@@ -34,8 +33,8 @@ def get_dynamodb_client():
   config = {}
 
   # Add endpoint URL for local development
-  if DYNAMODB_ENDPOINT_URL:
-    config["endpoint_url"] = DYNAMODB_ENDPOINT_URL
+  if LOCALSTACK_URL:
+    config["endpoint_url"] = LOCALSTACK_URL
 
   return boto3.client("dynamodb", **config)
 

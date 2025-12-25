@@ -9,7 +9,15 @@ logger = logging.getLogger(__name__)
 CLIENT_ID_PARAM_NAME = "/environment/services/eighty-twenty/google.client.id"
 CLIENT_SECRET_PARAM_NAME = "/environment/services/eighty-twenty/google.client.secret"
 
-ssm_client = boto3.client('ssm')
+LOCALSTACK_URL = os.getenv("LOCALSTACK_URL")
+
+
+def get_ssm_client():
+  # Add endpoint URL for local development
+  config = {}
+  if LOCALSTACK_URL:
+    config["endpoint_url"] = LOCALSTACK_URL
+  return boto3.client('ssm', **config)
 
 
 def get_google_client_id() -> str:
@@ -33,6 +41,7 @@ def _fallback(name):
 
 def _get_parameter(name: str) -> str:
   try:
+    ssm_client = get_ssm_client()
     response = ssm_client.get_parameter(
         Name=name,
         WithDecryption=True
