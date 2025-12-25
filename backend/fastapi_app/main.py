@@ -12,6 +12,7 @@ backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
 from shared import service, schemas  # noqa: E402
+from shared.ai_agent import AIAgent
 
 # Load environment variables from the backend directory
 load_dotenv(backend_dir / ".env")
@@ -22,7 +23,7 @@ app = FastAPI(
     description="API for calculating salary distribution based on the 80/20 principle",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # Configure CORS
@@ -50,7 +51,7 @@ async def root():
   return {
     "message": "Welcome to Eighty-Twenty Salary Calculator API",
     "version": "1.0.0",
-    "docs": "/docs"
+    "docs": "/docs",
   }
 
 
@@ -77,11 +78,9 @@ async def get_client_id():
     "/calculations",
     response_model=schemas.SalaryCalculationResponse,
     status_code=status.HTTP_201_CREATED,
-    tags=["Calculations"]
+    tags=["Calculations"],
 )
-async def create_calculation(
-    calculation: schemas.SalaryCalculationBase
-):
+async def create_calculation(calculation: schemas.SalaryCalculationBase):
   """
   Create a new salary calculation.
 
@@ -98,7 +97,7 @@ async def create_calculation(
   except Exception as e:
     raise HTTPException(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        detail=f"Error creating calculation: {str(e)}"
+        detail=f"Error creating calculation: {str(e)}",
     )
 
 
@@ -106,12 +105,9 @@ async def create_calculation(
 @app.get(
     "/calculations",
     response_model=List[schemas.SalaryCalculationResponse],
-    tags=["Calculations"]
+    tags=["Calculations"],
 )
-async def get_calculations(
-    skip: int = 0,
-    limit: int = 100
-):
+async def get_calculations(skip: int = 0, limit: int = 100):
   """
   Retrieve all salary calculations with pagination.
 
@@ -186,22 +182,20 @@ async def update_settings(settings: schemas.UserSettings):
 @app.get(
     "/calculations/{calculation_id}",
     response_model=schemas.SalaryCalculationResponse,
-    tags=["Calculations"]
+    tags=["Calculations"],
 )
-async def get_calculation(
-    calculation_id: str
-):
+async def get_calculation(calculation_id: str):
   """
   Retrieve a specific salary calculation by ID.
 
   - **calculation_id**: The ID of the calculation to retrieve
   """
   calculation = service.get_salary_calculation_by_id(
-      calculation_id=calculation_id)
+    calculation_id=calculation_id)
   if calculation is None:
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Calculation with id {calculation_id} not found"
+        detail=f"Calculation with id {calculation_id} not found",
     )
   return calculation
 
@@ -210,11 +204,10 @@ async def get_calculation(
 @app.put(
     "/calculations/{calculation_id}",
     response_model=schemas.SalaryCalculationResponse,
-    tags=["Calculations"]
+    tags=["Calculations"],
 )
 async def update_calculation(
-    calculation_id: str,
-    calculation_update: schemas.SalaryCalculationBase
+    calculation_id: str, calculation_update: schemas.SalaryCalculationBase
 ):
   """
   Update an existing salary calculation.
@@ -223,13 +216,12 @@ async def update_calculation(
   - All fields are optional; only provided fields will be updated
   """
   updated_calculation = service.update_salary_calculation(
-      calculation_id=calculation_id,
-      calculation_update=calculation_update
+      calculation_id=calculation_id, calculation_update=calculation_update
   )
   if updated_calculation is None:
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Calculation with id {calculation_id} not found"
+        detail=f"Calculation with id {calculation_id} not found",
     )
   return updated_calculation
 
@@ -238,11 +230,9 @@ async def update_calculation(
 @app.delete(
     "/calculations/{calculation_id}",
     response_model=schemas.MessageResponse,
-    tags=["Calculations"]
+    tags=["Calculations"],
 )
-async def delete_calculation(
-    calculation_id: str
-):
+async def delete_calculation(calculation_id: str):
   """
   Delete a salary calculation.
 
@@ -252,10 +242,11 @@ async def delete_calculation(
   if not success:
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Calculation with id {calculation_id} not found"
+        detail=f"Calculation with id {calculation_id} not found",
     )
   return schemas.MessageResponse(
-      message=f"Calculation {calculation_id} deleted successfully")
+      message=f"Calculation {calculation_id} deleted successfully"
+  )
 
 
 @app.post("/compute-tax", tags=["Calculations"])
@@ -266,6 +257,21 @@ async def compute_tax(tax_request: schemas.TaxCalculationRequest):
   return service.calculate_tax(tax_request=tax_request)
 
 
+@app.post("/insights/analyze", response_model=schemas.AIResponse, tags=["AI"])
+async def analyze_insights(insight_stats: schemas.InsightStats):
+  """
+  Analyze insights with AI assistant.
+  """
+  try:
+    agent = AIAgent()
+    response = agent.get_financial_insights(insight_stats)
+    return schemas.AIResponse(response=response)
+  except Exception as e:
+    raise HTTPException(
+        status_code=500, detail=f"Error interacting with AI agent: {str(e)}"
+    )
+
+
 if __name__ == "__main__":
   import uvicorn
 
@@ -273,9 +279,4 @@ if __name__ == "__main__":
   port = int(os.getenv("API_PORT", 8000))
   debug = os.getenv("DEBUG", "True").lower() == "true"
 
-  uvicorn.run(
-      "main:app",
-      host=host,
-      port=port,
-      reload=debug
-  )
+  uvicorn.run("main:app", host=host, port=port, reload=debug)

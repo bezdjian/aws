@@ -1,0 +1,26 @@
+meta {
+  name: insight-analyze
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8000/insights/analyze
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "total_gross_salary": 159991,
+    "total_invoiced": 361200,
+    "hourly_rate": 2100,
+    "total_buffer": 70000,
+    "count": 2
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

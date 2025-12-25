@@ -14,6 +14,7 @@ from typing import Dict, Any
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from shared import service, schemas
+from shared.ai_agent import AIAgent
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -28,14 +29,14 @@ class DecimalEncoder(json.JSONEncoder):
 def create_response(status_code: int, body: Any) -> Dict[str, Any]:
   """Create a standardized API Gateway response"""
   return {
-    'statusCode': status_code,
-    'headers': {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS'
+    "statusCode": status_code,
+    "headers": {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+      "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
     },
-    'body': json.dumps(body, cls=DecimalEncoder)
+    "body": json.dumps(body, cls=DecimalEncoder),
   }
 
 
@@ -46,7 +47,7 @@ def create_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   try:
     # Parse request body
-    body = json.loads(event.get('body', '{}'))
+    body = json.loads(event.get("body", "{}"))
 
     # Validate and create calculation
     calculation = schemas.SalaryCalculationBase(**body)
@@ -55,12 +56,12 @@ def create_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     return create_response(201, result)
 
   except json.JSONDecodeError:
-    return create_response(400, {'error': 'Invalid JSON in request body'})
+    return create_response(400, {"error": "Invalid JSON in request body"})
   except ValueError as e:
-    return create_response(400, {'error': str(e)})
+    return create_response(400, {"error": str(e)})
   except Exception as e:
     print(f"Error creating calculation: {str(e)}")
-    return create_response(500, {'error': 'Internal server error'})
+    return create_response(500, {"error": "Internal server error"})
 
 
 def get_calculations(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -70,9 +71,9 @@ def get_calculations(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   try:
     # Parse query parameters
-    query_params = event.get('queryStringParameters') or {}
-    skip = int(query_params.get('skip', 0))
-    limit = int(query_params.get('limit', 100))
+    query_params = event.get("queryStringParameters") or {}
+    skip = int(query_params.get("skip", 0))
+    limit = int(query_params.get("limit", 100))
 
     # Get calculations
     results = service.get_salary_calculations(skip=skip, limit=limit)
@@ -133,8 +134,9 @@ def update_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
     # Validate and update calculation
     calculation_update = schemas.SalaryCalculationBase(**body)
-    result = service.update_salary_calculation(calculation_id=calculation_id,
-                                               calculation_update=calculation_update)
+    result = service.update_salary_calculation(
+        calculation_id=calculation_id, calculation_update=calculation_update
+    )
 
     if result is None:
       return create_response(
@@ -222,14 +224,34 @@ def update_settings(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     return create_response(500, {"error": "Internal server error"})
 
 
+def ask_ai(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for asking a question to the AI assistant
+  POST /ask-ai
+  """
+  try:
+    body = json.loads(event.get("body", "{}"))
+    question_data = schemas.AIQuestion(**body)
+    agent = AIAgent()
+    response = agent.ask(question_data.question)
+    return create_response(200, {"response": response})
+
+  except json.JSONDecodeError:
+    return create_response(400, {"error": "Invalid JSON in request body"})
+  except ValueError as e:
+    return create_response(400, {"error": str(e)})
+  except Exception as e:
+    print(f"Error interacting with AI agent: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
 # Health check handler (optional)
 def health_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   Lambda handler for health check
   GET /health
   """
-  return create_response(200, {
-    'status': 'healthy',
-    'service': 'eighty-twenty-api',
-    'version': '1.0.0'
-  })
+  return create_response(
+      200,
+      {"status": "healthy", "service": "eighty-twenty-api", "version": "1.0.0"}
+  )

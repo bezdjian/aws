@@ -117,3 +117,23 @@ class UserSettings(BaseModel):
 
   class Config:
     from_attributes = True
+
+class InsightStats(BaseModel):
+  """Schema for insight statistics"""
+  total_gross_salary: int
+  total_invoiced: int
+  hourly_rate: int
+  total_buffer: int
+  count: int
+
+
+class AIQuestion(BaseModel):
+  """Schema for AI question request"""
+
+  question: str
+
+
+class AIResponse(BaseModel):
+  """Schema for AI response"""
+
+  response: str
