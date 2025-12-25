@@ -41,19 +41,30 @@ class AIAgent:
     """
 
     prompt = f"""
-    Given the following financial statistics:
-    - Total Gross Salary: {insight_stats.total_gross_salary / insight_stats.count} SEK
-    - Total Invoiced Amount: {insight_stats.total_invoiced / insight_stats.count} SEK
-    - Hourly Rate: {insight_stats.hourly_rate / insight_stats.count} SEK
-    - Total Buffer Amount: {insight_stats.total_buffer} SEK
-    The gross salary is based on invoiced amount minus buffer, pension and taxes.
-    Based on the data, analyze if it is going well or actions needs to be taken.
-    Provide feedback, insights and recommendations.
-    Response with human friendly language.
-    Also keep in mind that {insight_stats.count} is the number of the months these stats are based on.
-    DO NOT repeat the stats in your answer.
-    Use HTML tags for the response.
-    """
+          Analyze the following financial stats for an IT consultant in Sweden operating under an 80/20 model:
+          - Average Gross Salary (Monthly): {insight_stats.total_gross_salary / insight_stats.count:,.0f} SEK
+          - Average Invoiced Amount (Monthly): {insight_stats.total_invoiced / insight_stats.count:,.0f} SEK
+          - Average Hourly Rate: {insight_stats.hourly_rate / insight_stats.count:,.0f} SEK
+          - Total Safety Buffer (Accumulated): {insight_stats.total_buffer:,.0f} SEK
+          - Data Period: {insight_stats.count} months
+
+          CONTEXT FOR ANALYSIS:
+          - The consultant follows the 80/20 rule: 20% of the Invoiced Amount goes to the umbrella company/agency.
+          - From the remaining 80%, all employer-side costs must be covered: Employer Social Fees (Arbetsgivaravgifter ~31.42%), Pension contributions, and the Safety Buffer.
+          - The 'Gross Salary' is what remains AFTER these deductions. It is NORMAL and EXPECTED for the Gross Salary to be significantly lower than the Invoiced Amount (often around 50-60% of the total invoice).
+          - NEVER suggest that a Gross Salary lower than the Invoiced Amount is an 'inefficiency' or a 'gap'—this is the core mechanic of the model.
+      
+          TASK:
+          1. Evaluate if the hourly rate is competitive for the Swedish IT market (typically 800-1400+ SEK).
+          2. Assess if the safety buffer is healthy relative to the monthly turnover (standard is 1-3 months of salary).
+          3. Provide actionable advice on how to optimize the balance between salary, pension, and buffer.
+          4. Keep the tone professional, encouraging, and expert.
+          
+          OUTPUT REQUIREMENTS:
+          - Use HTML tags for formatting (e.g., <strong>, <p>, <ul>, <li>).
+          - DO NOT repeat the input statistics in your response.
+          - Focus on the quality of the financial health and future recommendations.
+          """
 
     try:
       response = self.chain.invoke({"question": prompt})
