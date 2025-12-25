@@ -268,6 +268,7 @@ def update_salary_calculation(
 
     update_expression_parts.append(f"{attr_name} = {attr_value}")
 
+  upload_report_to_s3(calculation_update)
   try:
     response = table.update_item(
         Key={"id": existing_id},
