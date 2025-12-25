@@ -183,6 +183,13 @@ const CalculationView: React.FC = () => {
               <Trash2 size={20} />
             </button>
             <button
+              onClick={() => navigate("/history")}
+              className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 print:hidden cursor-pointer"
+            >
+              <Clock size={16} />
+              <span>View History</span>
+            </button>
+            <button
               onClick={handleDownloadReport}
               className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 print:hidden cursor-pointer"
             >
