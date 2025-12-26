@@ -115,6 +115,53 @@ def get_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     return create_response(500, {"error": "Internal server error"})
 
 
+def get_calculations_by_email(event: Dict[str, Any], context: Any) -> Dict[
+  str, Any]:
+  """
+  Lambda handler for getting salary calculations by user email
+  GET /calculations/email/{email}
+  """
+  try:
+    path_params = event.get("pathParameters") or {}
+    email = path_params.get("email")
+
+    if not email:
+      return create_response(400, {"error": "Missing email"})
+
+    results = service.get_salary_calculations_by_email(email)
+    return create_response(200, results)
+  except Exception as e:
+    print(f"Error getting calculations by email: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
+def check_duplicate(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for checking duplicate calculations
+  GET /calculations/check-duplicate?email=...&client_name=...
+  """
+  try:
+    # Parse query parameters
+    query_params = event.get("queryStringParameters") or {}
+    email = query_params.get("email")
+    client_name = query_params.get("client_name")
+
+    if not email or not client_name:
+      return create_response(400, {"error": "Missing email or client_name"})
+
+    # Check for duplicate
+    result = service.check_duplicate_calculation(email, client_name)
+
+    if result:
+      return create_response(200, result)
+
+    return create_response(200, {"message": "No duplicate found"})
+
+  except Exception as e:
+    print(f"Error checking duplicate: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
 def update_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   Lambda handler for updating a salary calculation
@@ -271,6 +318,39 @@ def compute_tax(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     return create_response(400, {"error": "Invalid JSON in request body"})
   except Exception as e:
     print(f"Error computing tax: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
+def get_presigned_url(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for getting a presigned URL for a report
+  GET /reports/presigned-url?email=...&client_name=...&date=...&expiration=...
+  """
+  try:
+    query_params = event.get("queryStringParameters") or {}
+    email = query_params.get("email")
+    client_name = query_params.get("client_name")
+    date = query_params.get("date")
+    expiration = int(query_params.get("expiration", 3600))
+
+    if not all([email, client_name, date]):
+      return create_response(
+          400,
+          {
+            "error": "Missing required parameters: email, client_name, or date"
+          },
+      )
+
+    result = service.generate_report_presigned_url(
+        email=email, client_name=client_name, date=date, expiration=expiration
+    )
+
+    if result is None:
+      return create_response(404, {"error": "Report not found"})
+
+    return create_response(200, result)
+  except Exception as e:
+    print(f"Error getting presigned URL: {str(e)}")
     return create_response(500, {"error": "Internal server error"})
 
 

@@ -140,6 +140,44 @@ Resources:
             Path: /calculations/{id}
             Method: GET
             RestApiId: !Ref EightyTwentyApi
+ 
+  # Lambda Function for Get Calculations By Email
+  GetCalculationsByEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-get-calculations-by-email-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.get_calculations_by_email
+      Description: Get all salary calculations for a specific user email
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref SalaryCalculationsTable
+      Events:
+        GetCalculationsByEmail:
+          Type: Api
+          Properties:
+            Path: /calculations/email/{email}
+            Method: GET
+            RestApiId: !Ref EightyTwentyApi
+ 
+  # Lambda Function for Check Duplicate Calculation
+  CheckDuplicateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-check-duplicate-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.check_duplicate
+      Description: Check if a calculation exists for a specific email and client
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref SalaryCalculationsTable
+      Events:
+        CheckDuplicate:
+          Type: Api
+          Properties:
+            Path: /calculations/check-duplicate
+            Method: GET
+            RestApiId: !Ref EightyTwentyApi
 
   # Lambda Function for Update Calculation
   UpdateCalculationFunction:
@@ -283,6 +321,25 @@ Resources:
             Path: /compute-tax
             Method: POST
             RestApiId: !Ref EightyTwentyApi
+ 
+  # Lambda Function for Get Presigned URL
+  GetPresignedUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-get-presigned-url-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.get_presigned_url
+      Description: Generate a presigned URL for an existing report file
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref ReportsBucket
+      Events:
+        GetPresignedUrl:
+          Type: Api
+          Properties:
+            Path: /reports/presigned-url
+            Method: GET
+            RestApiId: !Ref EightyTwentyApi
 
   # API Gateway REST API
   EightyTwentyApi:
@@ -322,6 +379,69 @@ Resources:
               responses:
                 "200":
                   description: List of calculations
+          /calculations/check-duplicate:
+            get:
+              summary: Check if a calculation exists for a specific email and client
+              parameters:
+                - name: email
+                  in: query
+                  required: true
+                  schema:
+                    type: string
+                - name: client_name
+                  in: query
+                  required: true
+                  schema:
+                    type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CheckDuplicateFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: Duplicate check result
+          /calculations/email/{email}:
+            get:
+              summary: Get all calculations for a specific user email
+              parameters:
+                - name: email
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCalculationsByEmailFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: List of user calculations
+          /reports/presigned-url:
+            get:
+              summary: Generate a presigned URL for an existing report file
+              parameters:
+                - name: email
+                  in: query
+                  required: true
+                  schema:
+                    type: string
+                - name: client_name
+                  in: query
+                  required: true
+                  schema:
+                    type: string
+                - name: date
+                  in: query
+                  required: true
+                  schema:
+                    type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetPresignedUrlFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: Presigned URL response
           /calculations/{id}:
             get:
               summary: Get a specific calculation
