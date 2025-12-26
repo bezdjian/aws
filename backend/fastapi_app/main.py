@@ -12,7 +12,6 @@ backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
 from shared import service, schemas  # noqa: E402
-from shared.ai_agent import AIAgent
 
 # Load environment variables from the backend directory
 load_dotenv(backend_dir / ".env")
@@ -263,6 +262,8 @@ async def analyze_insights(insight_stats: schemas.InsightStats):
   Analyze insights with AI assistant.
   """
   try:
+    from shared.ai_agent import AIAgent
+
     agent = AIAgent()
     response = agent.get_financial_insights(insight_stats)
     return schemas.AIResponse(response=response)
