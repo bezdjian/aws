@@ -1,7 +1,7 @@
 meta {
-  name: create_calculation
+  name: Create calculation
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
@@ -15,7 +15,7 @@ body:json {
     "email": "string",
     "client_name": "string",
     "hourly_rate": 1,
-    "hours_worked": 0,
+    "hours_worked": 160,
     "invoiced_amount": 1,
     "after_deduction": 1,
     "save_to_buffer": 1,
@@ -26,6 +26,13 @@ body:json {
     "created_at": "2025-12-20T22:51:53.161Z",
     "updated_at": "2025-12-20T22:51:53.161Z"
   }
+}
+
+script:post-response {
+  let id = res.getBody().id
+  let client_name = res.getBody().client_name
+  bru.setEnvVar("id", id)
+  bru.setEnvVar("client_name", client_name)
 }
 
 settings {

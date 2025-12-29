@@ -1,11 +1,11 @@
 meta {
-  name: Get by email
+  name: auth-client_id
   type: http
-  seq: 5
+  seq: 1
 }
 
 get {
-  url: http://localhost:8000/calculations/email/harout@solidbeans.com
+  url: {{base_url}}/auth/client_id
   body: none
   auth: inherit
 }
