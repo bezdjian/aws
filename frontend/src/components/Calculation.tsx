@@ -40,6 +40,7 @@ const CalculationView: React.FC = () => {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
@@ -127,21 +128,23 @@ const CalculationView: React.FC = () => {
   }
 
   const handleDownloadReport = async () => {
-    await getPresignedUrl(
-      user?.getEmail() || "",
-      calculation?.client_name || "",
-      calculation?.date || ""
-    )
-      .then((res) => {
-        window.open(res.data.url, "_blank");
-      })
-      .catch((e) => {
-        if (e.response.status === 404) {
-          showToast("Report not found", "error");
-        } else {
-          showToast("Failed to download report", "error");
-        }
-      });
+    try {
+      setIsDownloading(true);
+      const res = await getPresignedUrl(
+        user?.getEmail() || "",
+        calculation?.client_name || "",
+        calculation?.date || ""
+      );
+      window.open(res.data.url, "_blank");
+    } catch (e: any) {
+      if (e.response?.status === 404) {
+        showToast("Report not found", "error");
+      } else {
+        showToast("Failed to download report", "error");
+      }
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -191,10 +194,15 @@ const CalculationView: React.FC = () => {
             </button>
             <button
               onClick={handleDownloadReport}
-              className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 print:hidden cursor-pointer"
+              disabled={isDownloading}
+              className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-600/20 print:hidden cursor-pointer disabled:opacity-50"
             >
-              <Download size={16} />
-              <span>Download Report</span>
+              {isDownloading ? (
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Download size={16} />
+              )}
+              <span>{isDownloading ? "Preparing..." : "Download Report"}</span>
             </button>
           </div>
         </div>
