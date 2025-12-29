@@ -14,6 +14,7 @@ import {
   BrainCircuit,
   X,
   Loader2,
+  Clock,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
@@ -292,6 +293,13 @@ const Insights: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-3">
+            <button
+              onClick={() => navigate("/history")}
+              className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-slate-900 dark:bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-slate-800 dark:hover:bg-brand-500 transition-all shadow-lg shadow-slate-900/10 print:hidden cursor-pointer"
+            >
+              <Clock size={16} />
+              <span>View History</span>
+            </button>
             <button
               onClick={analyzeStats}
               disabled={isAnalyzing || calculations.length === 0}
