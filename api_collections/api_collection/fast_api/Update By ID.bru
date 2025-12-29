@@ -1,11 +1,11 @@
 meta {
-  name: Update
+  name: Update By ID
   type: http
-  seq: 6
+  seq: 7
 }
 
 put {
-  url: {{base_url}}/calculations/{{email}}
+  url: {{base_url}}/calculations/{{id}}
   body: json
   auth: inherit
 }
@@ -13,7 +13,7 @@ put {
 body:json {
   {
     "email": "harout@solidbeans.com",
-    "client_name": "Updating",
+    "client_name": "FDA",
     "hourly_rate": 800,
     "hours_worked": 160,
     "invoiced_amount": 128000,
