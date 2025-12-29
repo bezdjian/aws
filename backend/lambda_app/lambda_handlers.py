@@ -6,6 +6,7 @@ Note: DynamoDB table is created by CloudFormation/SAM template
 
 import json
 import sys
+from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 from typing import Dict, Any
@@ -17,11 +18,15 @@ from shared import service, schemas
 
 
 class DecimalEncoder(json.JSONEncoder):
-  """Helper class to convert Decimal to float for JSON serialization"""
+  """Helper class to convert Decimal, datetime, and Pydantic models to JSON serializable formats"""
 
   def default(self, obj):
     if isinstance(obj, Decimal):
       return float(obj)
+    if isinstance(obj, datetime):
+      return obj.isoformat()
+    if hasattr(obj, "dict") and callable(obj.dict):
+      return obj.dict()
     return super(DecimalEncoder, self).default(obj)
 
 
@@ -336,9 +341,7 @@ def get_presigned_url(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     if not all([email, client_name, date]):
       return create_response(
           400,
-          {
-            "error": "Missing required parameters: email, client_name, or date"
-          },
+          {"error": "Missing required parameters: email, client_name, or date"},
       )
 
     result = service.generate_report_presigned_url(
