@@ -171,9 +171,7 @@ def get_salary_calculations_by_email(
 
     # Sort by date (most recent first)
     items.sort(
-        key=lambda x: (
-          x.get("date", "") if x.get("date") else x.get("created_at", "")
-        ),
+        key=lambda x: (x.get("created_at", "")),
         reverse=True,
     )
 
