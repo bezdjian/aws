@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 CLIENT_ID_PARAM_NAME = "/eighty-twenty/google-client-id"
 CLIENT_SECRET_PARAM_NAME = "/eighty-twenty/google-client-secret"
+OPENAI_API_KEY_NAME = "/eighty-twenty/openai-api-key"
 
 LOCALSTACK_URL = os.getenv("LOCALSTACK_URL")
 _CACHE = {}
@@ -31,14 +32,22 @@ def get_google_client_secret() -> str:
   return _get_parameter(CLIENT_SECRET_PARAM_NAME)
 
 
+def get_openai_api_key() -> str:
+  logger.info("Getting OpenAI API key")
+  return _get_parameter(OPENAI_API_KEY_NAME)
+
+
 def _fallback(name):
   # Fallback to .env variables for local development
   if "google-client-id" in name:
-    return os.getenv("GOOGLE_CLIENT_ID")
+    env_value = os.getenv("GOOGLE_CLIENT_ID")
   elif "google-client-secret" in name:
-    return os.getenv("GOOGLE_CLIENT_SECRET")
+    env_value = os.getenv("GOOGLE_CLIENT_SECRET")
+  elif "openai-api-key" in name:
+    env_value = os.getenv("OPENAI_API_KEY")
   else:
     raise RuntimeError(f"SSM parameter {name} not found in .env fallback")
+  return env_value if env_value else None
 
 
 def _get_parameter(name: str) -> str:

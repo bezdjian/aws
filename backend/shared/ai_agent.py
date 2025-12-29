@@ -1,8 +1,7 @@
-import os
-
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
 
 from .schemas import InsightStats
 
@@ -16,11 +15,16 @@ class AIAgent:
     """
     Initialize the AI Agent with OpenAI model.
     """
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-      raise ValueError("OPENAI_API_KEY not found in environment variables.")
 
-    self.llm = ChatOpenAI(model=model_name, temperature=temperature)
+    from .SsmService import get_openai_api_key
+    api_key = get_openai_api_key()
+    if not api_key:
+      raise ValueError(
+          "OPENAI_API_KEY must be provided via environment variable or SSM.")
+
+    self.llm = ChatOpenAI(model=model_name,
+                          temperature=temperature,
+                          api_key=SecretStr(api_key))
 
     self.prompt = ChatPromptTemplate.from_messages(
         [

@@ -298,6 +298,9 @@ Resources:
       CodeUri: backend/
       Handler: lambda_app.lambda_handlers.analyze_insights
       Description: Analyze salary calculations with AI
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: /eighty-twenty/openai-api-key
       Events:
         AnalyzeInsights:
           Type: Api
@@ -585,6 +588,15 @@ Resources:
       Type: String
       Name: '/eighty-twenty/google-client-secret'
       Value: 'your-google-client-secret'
+      Tags:
+        eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
+
+  OpenAIApiKeyParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: SecureString
+      Name: '/eighty-twenty/openai-api-key'
+      Value: 'your-openai-api-key'
       Tags:
         eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
 
