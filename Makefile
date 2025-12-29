@@ -158,9 +158,10 @@ deploy-localstack:
 
 # Update Parameter value for Google Client ID
 # Usage: make update-google-client-id GOOGLE_CLIENT_ID=<google-client-id>
-update-google-client-id:
+update-ssm-parameters:
 	@echo "Updating Parameter value for Google Client ID..."
-	awslocal ssm put-parameter --name "/eighty-twenty/google-client-id" --value "$(GOOGLE_CLIENT_ID)" --type SecureString --overwrite
+	aws ssm put-parameter --name "/eighty-twenty/google-client-id" --value "$(GOOGLE_CLIENT_ID)" --type SecureString --overwrite --endpoint-url $(LOCALSTACK_URL)
+	aws ssm put-parameter --name "/eighty-twenty/openai-api-key" --value "$(OPENAI_API_KEY)" --type SecureString --overwrite --endpoint-url $(LOCALSTACK_URL)
 
 # View all resources in stack
 resources-localstack:
