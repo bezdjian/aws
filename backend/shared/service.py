@@ -12,6 +12,7 @@ from . import schemas
 from .S3Service import upload_report_to_s3, generate_presigned_url
 from .SsmService import get_google_client_id
 from .TokenInfo import TokenInfo
+from .modal import Kommun
 
 google_auth_url = "https://oauth2.googleapis.com"
 
@@ -362,6 +363,7 @@ def validate_token(token_info: TokenInfo):
   if 0 < token_info.exp() < (datetime.now().timestamp()):
     raise RuntimeError("Token has expired.")
 
+
 def get_municipalities() -> Optional[List[Dict[str, Any]]]:
   """Get list of municipalities from Skatteverket API"""
   url = "https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattesats/2025/kommuner"
@@ -378,13 +380,19 @@ def get_municipalities() -> Optional[List[Dict[str, Any]]]:
         detail=f"Error fetching municipalities from Skatteverket: {str(e)}"
     )
 
-def get_municipality_fees(municipality_code: str) -> Optional[Dict[str, Any]]:
-  """Get municipality fees from Skatteverket API"""
+
+def get_municipality_tax_rate(municipality_code: str) -> Optional[int]:
+  """Get municipality fees from Skatteverket API and calculate tax rate"""
   url = f"https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattesats/2025/kommuner/{municipality_code}"
   try:
+    from decimal import Decimal, ROUND_HALF_UP
     response = requests.get(url)
     response.raise_for_status()
-    return response.json()
+
+    fees = Kommun(**response.json())
+    tax_rate = fees.kommunalskatt + fees.begravningsavgift + fees.lan.regionskatt
+
+    return int(Decimal(tax_rate).quantize(0, ROUND_HALF_UP))
   except Exception as e:
     print(f"Error fetching municipality fees: {e}")
     from fastapi import HTTPException
@@ -398,8 +406,10 @@ def get_municipality_fees(municipality_code: str) -> Optional[Dict[str, Any]]:
 def calculate_tax(tax_request: schemas.TaxCalculationRequest) -> Dict[str, Any]:
   """Calculate tax by proxying to Skatteverket API"""
   url = "https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattetabell/2025/beraknaSkatteavdrag"
+  tax_rate = get_municipality_tax_rate(
+      municipality_code=tax_request.municipality_code)
   data = {
-    "skattesats": tax_request.tax_rate,
+    "skattesats": tax_rate,
     "inkomst": tax_request.gross_salary,
     "fodelsear": tax_request.birth_year,
     "typ": tax_request.type,

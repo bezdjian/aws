@@ -6,10 +6,16 @@ import React, {
   ReactNode,
 } from "react";
 import { LoggedInUserProfile, createUserProfile } from "../model/UserProfile";
-import { deleteUserToken, getClientId } from "../backend/service";
+import {
+  deleteUserToken,
+  getClientId,
+  getUserSettings,
+} from "../backend/service";
+import { UserSettings } from "../types";
 
 interface UserContextType {
   user: LoggedInUserProfile | null;
+  userSettings: UserSettings | null;
   handleLoginSuccess: (profile: LoggedInUserProfile) => void;
   handleSignOut: () => void;
   isLoading: boolean;
@@ -26,6 +32,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<LoggedInUserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [clientId, setClientId] = useState<string | null>(null);
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
 
   // Fetch client ID on mount
   useEffect(() => {
@@ -45,6 +52,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       });
     }
   }, [clientId]);
+
+  // Initialize user settings on mount
+  useEffect(() => {
+    if (user) {
+      getUserSettings(user.getEmail())
+        .then((response) => {
+          setUserSettings(response.data);
+        })
+        .catch((err) =>
+          console.error("Failed to fetch user settings in Provider:", err)
+        );
+    }
+  }, [user]);
 
   // Initialize user from localStorage on mount
   useEffect(() => {
@@ -121,6 +141,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     handleSignOut,
     isLoading,
     clientId,
+    userSettings,
   };
 
   // Provide the context value to children

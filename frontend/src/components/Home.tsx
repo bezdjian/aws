@@ -18,15 +18,13 @@ import {
   createCalculation,
   checkDuplicateCalculation,
   updateCalculation,
-  getUserSettings,
 } from "../backend/service";
 import { calculateTax } from "../backend/taxService";
 import ConfirmationModal from "./ConfirmationModal";
-
 import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, userSettings } = useUser();
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
@@ -51,14 +49,13 @@ const Home: React.FC = () => {
   const fetchDefaults = async () => {
     try {
       const email = user?.getEmail() || "";
-      const response = await getUserSettings(email);
-      const settings = response.data;
 
       setFormData((prev) => ({
         ...prev,
         email: email,
-        save_to_buffer: settings.default_buffer_amount ?? prev.save_to_buffer,
-        hourly_rate: settings.default_hourly_rate ?? prev.hourly_rate,
+        save_to_buffer:
+          userSettings?.default_buffer_amount ?? prev.save_to_buffer,
+        hourly_rate: userSettings?.default_hourly_rate ?? prev.hourly_rate,
       }));
     } catch (error) {
       console.error("Failed to fetch defaults:", error);
@@ -194,7 +191,11 @@ const Home: React.FC = () => {
 
   const handleCalculateTax = () => {
     setIsCalculatingTax(true);
-    calculateTax(formData.remaining_for_gross_salary)
+    calculateTax(
+      formData.remaining_for_gross_salary,
+      1987,
+      userSettings?.municipality_code || "180"
+    )
       .then((response) => {
         setTaxResult(response.data);
       })

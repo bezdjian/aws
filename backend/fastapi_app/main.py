@@ -272,19 +272,12 @@ async def get_municipalities():
 
 @app.get("/municipality/fees/{municipality_code}",
          tags=["Data"])
-async def get_municipality_fees(municipality_code: str):
+async def get_municipality_tax_rate(municipality_code: str):
   """
   Retrieve the municipality's tax rate.
   """
   try:
-    municipality_fees = service.get_municipality_fees(municipality_code)
-
-    fees = Kommun(**municipality_fees)
-    tax_rate = fees.kommunalskatt + fees.begravningsavgift + fees.lan.regionskatt
-
-    from decimal import Decimal, ROUND_HALF_UP
-
-    return int(Decimal(tax_rate).quantize(0, ROUND_HALF_UP))
+    return service.get_municipality_tax_rate(municipality_code)
   except Exception as e:
     raise HTTPException(
         status_code=500, detail=f"Error retrieving municipalities: {str(e)}"

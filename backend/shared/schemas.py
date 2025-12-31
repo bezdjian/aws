@@ -113,7 +113,7 @@ class TaxCalculationRequest(BaseModel):
 
   gross_salary: int
   birth_year: int = 1987
-  tax_rate: int = 32
+  municipality_code: str = "180"
   type: str = "L"
 
 

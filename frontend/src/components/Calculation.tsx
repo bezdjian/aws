@@ -28,7 +28,7 @@ import Header from "./Header";
 const CalculationView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, isLoading: userLoading } = useUser();
+  const { user, isLoading: userLoading, userSettings } = useUser();
   const { showToast } = useToast();
 
   const [calculation, setCalculation] = useState<SalaryCalculation | null>(
@@ -63,7 +63,9 @@ const CalculationView: React.FC = () => {
       // Attempt to fetch tax data automatically for the saved gross salary
       if (response.data.remaining_for_gross_salary) {
         const taxRes = await calculateTax(
-          response.data.remaining_for_gross_salary
+          response.data.remaining_for_gross_salary,
+          1987,
+          userSettings?.municipality_code || "180"
         );
         setTaxData(taxRes.data);
       }

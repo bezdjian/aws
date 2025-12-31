@@ -5,10 +5,10 @@ const API_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
 export const calculateTax = async (
   grossSalary: number | undefined,
   birthYear: number = 1987,
-  skattesats: number = 32
+  municipalityCode: string = "180"
 ) => {
   const data = {
-    tax_rate: skattesats,
+    municipality_code: municipalityCode,
     gross_salary: grossSalary,
     birth_year: birthYear,
     type: "L",
