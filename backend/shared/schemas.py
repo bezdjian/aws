@@ -59,7 +59,7 @@ class SalaryCalculationBase(BaseModel):
                                description="Additional notes")
   date: Optional[datetime] = Field(None, description="Date of the calculation")
 
-  report_url : Optional[str] = Field(
+  report_url: Optional[str] = Field(
       None, description="URL of the uploaded report file"
   )
   created_at: Optional[datetime] = Field(
@@ -124,13 +124,18 @@ class UserSettings(BaseModel):
   default_tax_rate: float = Field(default=32.0, ge=0, le=100)
   default_buffer_amount: float = Field(default=10000.0, ge=0)
   default_hourly_rate: float = Field(default=800.0, ge=0)
+  municipality: str = Field(
+      default="Stockholm", description="Default tax municipality"
+  )
   updated_at: Optional[datetime] = Field(default_factory=datetime.now)
 
   class Config:
     from_attributes = True
 
+
 class InsightStats(BaseModel):
   """Schema for insight statistics"""
+
   total_gross_salary: int
   total_invoiced: int
   hourly_rate: int

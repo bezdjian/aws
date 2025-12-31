@@ -63,12 +63,13 @@ const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
                 <img
                   src={user?.getImageUrl()}
                   alt="Avatar"
-                  className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 ring-4 ring-slate-50 dark:ring-slate-800/50"
+                  className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-700 ring-4 ring-slate-50 dark:ring-slate-800/50 cursor-pointer"
                   onError={(e) => {
                     (
                       e.target as HTMLImageElement
                     ).src = `https://ui-avatars.com/api/?name=${user?.getName()}&background=0f172a&color=fff`;
                   }}
+                  onClick={() => navigate("/profile")}
                 />
               </div>
               <button

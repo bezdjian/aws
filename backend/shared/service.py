@@ -403,6 +403,7 @@ def get_user_settings(email: str) -> Dict[str, Any]:
       "default_tax_rate": 32.0,
       "default_buffer_amount": 10000.0,
       "default_hourly_rate": 800.0,
+      "municipality": "Stockholm",
       "updated_at": datetime.now().isoformat(),
     }
 
@@ -412,6 +413,8 @@ def get_user_settings(email: str) -> Dict[str, Any]:
       "email": email,
       "default_tax_rate": 32.0,
       "default_buffer_amount": 10000.0,
+      "default_hourly_rate": 800.0,
+      "municipality": "Stockholm",
       "updated_at": datetime.now().isoformat(),
     }
 
@@ -425,6 +428,7 @@ def update_user_settings(settings: schemas.UserSettings) -> Dict[str, Any]:
     "default_tax_rate": float_to_decimal(settings.default_tax_rate),
     "default_buffer_amount": float_to_decimal(settings.default_buffer_amount),
     "default_hourly_rate": float_to_decimal(settings.default_hourly_rate),
+    "municipality": settings.municipality,
     "updated_at": datetime.now().isoformat(),
   }
 

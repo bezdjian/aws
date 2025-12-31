@@ -9,6 +9,7 @@ import Home from "./components/Home";
 import History from "./components/History";
 import CalculationView from "./components/Calculation";
 import Insights from "./components/Insights";
+import UserProfileView from "./components/UserProfileView";
 
 import { ThemeProvider } from "./context/ThemeContext";
 
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <Route path="/history" element={<History />} />
               <Route path="/calculation/:id" element={<CalculationView />} />
               <Route path="/insights" element={<Insights />} />
+              <Route path="/profile" element={<UserProfileView />} />
             </Routes>
           </BrowserRouter>
         </ToastProvider>

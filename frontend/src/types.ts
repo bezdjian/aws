@@ -29,6 +29,7 @@ export interface UserSettings {
   default_tax_rate: number;
   default_buffer_amount: number;
   default_hourly_rate: number;
+  municipality: string;
   updated_at?: string;
 }
 
