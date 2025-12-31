@@ -121,6 +121,7 @@ class UserSettings(BaseModel):
   """Schema for user settings"""
 
   email: str = Field(..., description="Email of the consultant")
+  birth_year: int = Field(1987, description="Birth Year for tax calculation")
   default_buffer_amount: float = Field(default=10000.0, ge=0)
   default_hourly_rate: float = Field(default=800.0, ge=0)
   municipality: str = Field(

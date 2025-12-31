@@ -26,6 +26,7 @@ export interface UserProfile {
 
 export interface UserSettings {
   email: string;
+  birth_year: number;
   default_buffer_amount: number;
   default_hourly_rate: number;
   municipality: string;

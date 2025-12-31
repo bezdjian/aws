@@ -442,6 +442,7 @@ def get_user_settings(email: str) -> Dict[str, Any]:
     # Return default settings if not found
     return {
       "email": email,
+      "birth_year": 1987,
       "default_buffer_amount": 10000.0,
       "default_hourly_rate": 800.0,
       "municipality": "Stockholm",
@@ -453,6 +454,7 @@ def get_user_settings(email: str) -> Dict[str, Any]:
     print(f"Error getting settings: {e.response['Error']['Message']}")
     return {
       "email": email,
+      "birth_year": 1987,
       "default_buffer_amount": 10000.0,
       "default_hourly_rate": 800.0,
       "municipality": "Stockholm",
@@ -467,6 +469,7 @@ def update_user_settings(settings: schemas.UserSettings) -> Dict[str, Any]:
 
   item = {
     "email": settings.email,
+    "birth_year": settings.birth_year,
     "default_buffer_amount": float_to_decimal(settings.default_buffer_amount),
     "default_hourly_rate": float_to_decimal(settings.default_hourly_rate),
     "municipality": settings.municipality,

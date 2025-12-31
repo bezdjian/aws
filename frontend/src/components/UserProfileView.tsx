@@ -251,7 +251,7 @@ const UserProfileView: React.FC = () => {
               <DollarSign size={24} />
             </div>
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-2">
-              Avg. Take-home
+              Avg. Take-home (Gross)
             </span>
             <p className="text-2xl font-black text-slate-900 dark:text-white font-mono">
               {CalculationUtils.formatCurrency(stats.avgTakeHome)}
@@ -402,6 +402,32 @@ const UserProfileView: React.FC = () => {
                           ))}
                         </div>
                       )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
+                    Birth Year
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
+                      <Shield size={18} />
+                    </div>
+                    <input
+                      type="number"
+                      value={settings?.birth_year || 0}
+                      onChange={(e) =>
+                        setSettings((s) =>
+                          s
+                            ? {
+                                ...s,
+                                birth_year: Number(e.target.value),
+                              }
+                            : null
+                        )
+                      }
+                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand-500/20 focus:bg-white dark:focus:bg-slate-800 rounded-2xl font-black text-slate-900 dark:text-white transition-all outline-none"
+                    />
                   </div>
                 </div>
               </form>
