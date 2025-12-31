@@ -64,7 +64,7 @@ const CalculationView: React.FC = () => {
       if (response.data.remaining_for_gross_salary) {
         const taxRes = await calculateTax(
           response.data.remaining_for_gross_salary,
-          1987,
+          userSettings?.birth_year || 1987,
           userSettings?.municipality_code || "180"
         );
         setTaxData(taxRes.data);

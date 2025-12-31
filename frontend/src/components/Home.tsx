@@ -193,7 +193,7 @@ const Home: React.FC = () => {
     setIsCalculatingTax(true);
     calculateTax(
       formData.remaining_for_gross_salary,
-      1987,
+      userSettings?.birth_year || 1987,
       userSettings?.municipality_code || "180"
     )
       .then((response) => {
