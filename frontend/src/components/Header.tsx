@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Calculator, LogOut, Settings, Sun, Moon } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import SettingsModal from "./SettingsModal";
 import { useTheme } from "../context/ThemeContext";
 
 interface HeaderProps {
@@ -12,7 +11,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
   const { user, handleSignOut } = useUser();
   const navigate = useNavigate();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -73,9 +71,9 @@ const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
                 />
               </div>
               <button
-                onClick={() => setIsSettingsOpen(true)}
+                onClick={() => navigate("/profile")}
                 className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer group"
-                title="Settings"
+                title="Profile & Settings"
               >
                 <Settings
                   size={20}
@@ -96,12 +94,6 @@ const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
           </div>
         </div>
       </nav>
-
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        onSaveSuccess={onSettingsUpdate}
-      />
     </>
   );
 };
