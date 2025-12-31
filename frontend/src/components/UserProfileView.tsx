@@ -29,7 +29,7 @@ import {
 import { SalaryCalculation, UserSettings } from "../types";
 import CalculationUtils from "../utils/CalculationUtils";
 import Header from "./Header";
-import { MUNICIPALITIES } from "./Constants";
+import { municipalities, Municipality } from "../backend/municipalities";
 
 const UserProfileView: React.FC = () => {
   const { user, handleSignOut, isLoading: isAuthLoading } = useUser();
@@ -42,7 +42,11 @@ const UserProfileView: React.FC = () => {
   const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [municipalityQuery, setMunicipalityQuery] = useState("");
+  const [municipalityCode, setMunicipalityCode] = useState("");
   const [showMunicipalityList, setShowMunicipalityList] = useState(false);
+  const [allMunicipalities, setAllMunicipalities] = useState<Municipality[]>(
+    []
+  );
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -56,14 +60,18 @@ const UserProfileView: React.FC = () => {
     try {
       setIsProfileLoading(true);
       const email = user?.getEmail() || "";
-      const [settingsRes, calculationsRes] = await Promise.all([
-        getUserSettings(email),
-        getCalculationsByEmail(email),
-      ]);
+      const [settingsRes, calculationsRes, municipalitiesRes] =
+        await Promise.all([
+          getUserSettings(email),
+          getCalculationsByEmail(email),
+          municipalities(),
+        ]);
 
       setSettings(settingsRes.data);
       setCalculations(calculationsRes.data);
       setMunicipalityQuery(settingsRes.data.municipality || "");
+      setAllMunicipalities(municipalitiesRes);
+      setMunicipalityCode(settingsRes.data.municipality_code || "");
     } catch (error) {
       console.error("Error fetching profile data:", error);
       showToast("Failed to load profile data", "error");
@@ -104,10 +112,12 @@ const UserProfileView: React.FC = () => {
 
   const filteredMunicipalities = useMemo(() => {
     if (!municipalityQuery) return [];
-    return MUNICIPALITIES.filter((m) =>
-      m.toLowerCase().includes(municipalityQuery.toLowerCase())
-    ).slice(0, 5);
-  }, [municipalityQuery]);
+    return allMunicipalities
+      .filter((m) =>
+        m.namn.toLowerCase().includes(municipalityQuery.toLowerCase())
+      )
+      .slice(0, 5);
+  }, [municipalityQuery, allMunicipalities]);
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,6 +128,7 @@ const UserProfileView: React.FC = () => {
       await updateUserSettings({
         ...settings,
         municipality: municipalityQuery,
+        municipality_code: String(municipalityCode),
       });
       showToast("Settings updated successfully", "success");
     } catch (error) {
@@ -393,7 +404,7 @@ const UserProfileView: React.FC = () => {
                     </div>
                     <input
                       type="text"
-                      placeholder="Search Stockholm or Gothenburg municipalities..."
+                      placeholder="Search municipalities..."
                       value={municipalityQuery}
                       onFocus={() => setShowMunicipalityList(true)}
                       onBlur={() =>
@@ -408,15 +419,16 @@ const UserProfileView: React.FC = () => {
                         <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl shadow-2xl z-50 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                           {filteredMunicipalities.map((m) => (
                             <button
-                              key={m}
+                              key={m.kod}
                               type="button"
                               onClick={() => {
-                                setMunicipalityQuery(m);
+                                setMunicipalityQuery(m.namn);
+                                setMunicipalityCode(m.kod);
                                 setShowMunicipalityList(false);
                               }}
                               className="w-full px-6 py-3 text-left font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-brand-600 transition-colors flex items-center justify-between group"
                             >
-                              <span>{m}</span>
+                              <span>{m.namn}</span>
                               <ChevronRight
                                 size={14}
                                 className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"

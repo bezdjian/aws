@@ -378,9 +378,9 @@ def get_municipalities() -> Optional[List[Dict[str, Any]]]:
         detail=f"Error fetching municipalities from Skatteverket: {str(e)}"
     )
 
-def get_municipality_fees(municipality_id: str) -> Optional[Dict[str, Any]]:
+def get_municipality_fees(municipality_code: str) -> Optional[Dict[str, Any]]:
   """Get municipality fees from Skatteverket API"""
-  url = f"https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattesats/2025/kommuner/{municipality_id}"
+  url = f"https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattesats/2025/kommuner/{municipality_code}"
   try:
     response = requests.get(url)
     response.raise_for_status()
@@ -432,10 +432,10 @@ def get_user_settings(email: str) -> Dict[str, Any]:
     # Return default settings if not found
     return {
       "email": email,
-      "default_tax_rate": 32.0,
       "default_buffer_amount": 10000.0,
       "default_hourly_rate": 800.0,
       "municipality": "Stockholm",
+      "municipality_code": "180",
       "updated_at": datetime.now().isoformat(),
     }
 
@@ -443,10 +443,10 @@ def get_user_settings(email: str) -> Dict[str, Any]:
     print(f"Error getting settings: {e.response['Error']['Message']}")
     return {
       "email": email,
-      "default_tax_rate": 32.0,
       "default_buffer_amount": 10000.0,
       "default_hourly_rate": 800.0,
       "municipality": "Stockholm",
+      "municipality_code": "180",
       "updated_at": datetime.now().isoformat(),
     }
 
@@ -457,10 +457,10 @@ def update_user_settings(settings: schemas.UserSettings) -> Dict[str, Any]:
 
   item = {
     "email": settings.email,
-    "default_tax_rate": float_to_decimal(settings.default_tax_rate),
     "default_buffer_amount": float_to_decimal(settings.default_buffer_amount),
     "default_hourly_rate": float_to_decimal(settings.default_hourly_rate),
     "municipality": settings.municipality,
+    "municipality_code": settings.municipality_code,
     "updated_at": datetime.now().isoformat(),
   }
 

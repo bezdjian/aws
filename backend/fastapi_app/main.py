@@ -270,14 +270,14 @@ async def get_municipalities():
     )
 
 
-@app.get("/municipality/fees/{municipality_id}",
+@app.get("/municipality/fees/{municipality_code}",
          tags=["Data"])
-async def get_municipality_fees(municipality_id: str):
+async def get_municipality_fees(municipality_code: str):
   """
   Retrieve the municipality's tax rate.
   """
   try:
-    municipality_fees = service.get_municipality_fees(municipality_id)
+    municipality_fees = service.get_municipality_fees(municipality_code)
 
     fees = Kommun(**municipality_fees)
     tax_rate = fees.kommunalskatt + fees.begravningsavgift + fees.lan.regionskatt
