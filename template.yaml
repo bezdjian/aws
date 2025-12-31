@@ -325,6 +325,22 @@ Resources:
             Method: POST
             RestApiId: !Ref EightyTwentyApi
  
+  # Lambda Function for Get Municipalities
+  GetMunicipalitiesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-get-municipalities-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.get_municipalities
+      Description: Get list of municipalities from Skatteverket API
+      Events:
+        GetMunicipalities:
+          Type: Api
+          Properties:
+            Path: /municipalities
+            Method: GET
+            RestApiId: !Ref EightyTwentyApi
+
   # Lambda Function for Get Presigned URL
   GetPresignedUrlFunction:
     Type: AWS::Serverless::Function
@@ -557,6 +573,16 @@ Resources:
               responses:
                 "200":
                   description: Tax response
+          /municipalities:
+            get:
+              summary: Get list of municipalities
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetMunicipalitiesFunction.Arn}/invocations
+              responses:
+                "200":
+                   description: List of municipalities response
 
   # S3 Bucket for calculation reports
   ReportsBucket:

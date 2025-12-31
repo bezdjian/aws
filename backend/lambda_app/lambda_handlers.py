@@ -326,6 +326,19 @@ def compute_tax(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     return create_response(500, {"error": "Internal server error"})
 
 
+def get_municipalities(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+  """
+  Lambda handler for getting the list of municipalities
+  GET /municipalities
+  """
+  try:
+    result = service.get_municipalities()
+    return create_response(200, result)
+  except Exception as e:
+    print(f"Error getting municipalities: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
 def get_presigned_url(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   Lambda handler for getting a presigned URL for a report
