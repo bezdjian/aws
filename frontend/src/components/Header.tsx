@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Calculator, LogOut, Settings, Sun, Moon } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ interface HeaderProps {
   onSettingsUpdate?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onSettingsUpdate }) => {
+const Header: React.FC<HeaderProps> = () => {
   const { user, handleSignOut } = useUser();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();

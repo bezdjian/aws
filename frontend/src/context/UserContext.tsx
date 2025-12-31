@@ -84,11 +84,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const handleSignOut = () => {
     const performLocalSignOut = () => {
       // Clear cached data from localStorage except for the selected theme
-      for (const key in localStorage) {
-        if (key !== "theme") {
-          localStorage.removeItem(key);
-        }
-      }
+      const theme = localStorage.getItem("theme");
+      localStorage.clear();
+      if (theme) localStorage.setItem("theme", theme);
+
       // Clear sessionStorage to remove cached OAuth tokens
       sessionStorage.clear();
       if (user) {
@@ -98,15 +97,18 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     };
 
     if (window.google?.accounts?.id && user && clientId) {
-      // Re-initialize just in case (though the effect should have handled it)
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: () => {},
-      });
-
-      window.google.accounts.id.revoke(user.getEmail(), () => {
+      try {
+        // We call local sign out immediately for better UX,
+        // while attempting to revoke in the background
+        const email = user.getEmail();
         performLocalSignOut();
-      });
+        window.google.accounts.id.revoke(email, (done: any) => {
+          console.log("Google session revoked:", done.successful);
+        });
+      } catch (e) {
+        console.error("Error during Google revoke:", e);
+        performLocalSignOut();
+      }
     } else {
       performLocalSignOut();
     }

@@ -32,27 +32,29 @@ import Header from "./Header";
 import { MUNICIPALITIES } from "./Constants";
 
 const UserProfileView: React.FC = () => {
-  const { user, handleSignOut } = useUser();
+  const { user, handleSignOut, isLoading: isAuthLoading } = useUser();
   const { theme, toggleTheme } = useTheme();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [calculations, setCalculations] = useState<SalaryCalculation[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [municipalityQuery, setMunicipalityQuery] = useState("");
   const [showMunicipalityList, setShowMunicipalityList] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (!isAuthLoading && !user) {
+      navigate("/", { replace: true });
+    } else if (user) {
       fetchData();
     }
-  }, [user]);
+  }, [user, isAuthLoading, navigate]);
 
   const fetchData = async () => {
     try {
-      setIsLoading(true);
+      setIsProfileLoading(true);
       const email = user?.getEmail() || "";
       const [settingsRes, calculationsRes] = await Promise.all([
         getUserSettings(email),
@@ -66,7 +68,7 @@ const UserProfileView: React.FC = () => {
       console.error("Error fetching profile data:", error);
       showToast("Failed to load profile data", "error");
     } finally {
-      setIsLoading(false);
+      setIsProfileLoading(false);
     }
   };
 
@@ -177,12 +179,12 @@ const UserProfileView: React.FC = () => {
     showToast("Exporting History as CSV...", "success");
   };
 
-  if (isLoading) {
+  if (isAuthLoading || isProfileLoading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center transition-colors">
         <Loader2 className="w-10 h-10 text-brand-600 animate-spin mb-4" />
         <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
-          Synchronizing profile...
+          {isAuthLoading ? "Authenticating..." : "Synchronizing profile..."}
         </p>
       </div>
     );
