@@ -403,9 +403,6 @@ const UserProfileView: React.FC = () => {
                         </div>
                       )}
                   </div>
-                  <p className="text-[10px] text-slate-400 font-medium ml-1 mt-2">
-                    Currently available: Greater Stockholm & Greater Gothenburg
-                  </p>
                 </div>
               </form>
             </div>
