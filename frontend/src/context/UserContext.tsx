@@ -20,6 +20,7 @@ interface UserContextType {
   handleSignOut: () => void;
   isLoading: boolean;
   clientId: string | null;
+  refreshUserSettings: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -53,17 +54,20 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   }, [clientId]);
 
+  const refreshUserSettings = async () => {
+    if (user) {
+      try {
+        const response = await getUserSettings(user.getEmail());
+        setUserSettings(response.data);
+      } catch (err) {
+        console.error("Failed to refresh user settings:", err);
+      }
+    }
+  };
+
   // Initialize user settings on mount
   useEffect(() => {
-    if (user) {
-      getUserSettings(user.getEmail())
-        .then((response) => {
-          setUserSettings(response.data);
-        })
-        .catch((err) =>
-          console.error("Failed to fetch user settings in Provider:", err)
-        );
-    }
+    refreshUserSettings();
   }, [user]);
 
   // Initialize user from localStorage on mount
@@ -142,6 +146,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     isLoading,
     clientId,
     userSettings,
+    refreshUserSettings,
   };
 
   // Provide the context value to children

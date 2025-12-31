@@ -44,7 +44,7 @@ const Home: React.FC = () => {
     } else if (user) {
       fetchDefaults();
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isLoading, navigate, userSettings]);
 
   const fetchDefaults = async () => {
     try {

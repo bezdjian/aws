@@ -32,7 +32,12 @@ import Header from "./Header";
 import { municipalities, Municipality } from "../backend/municipalities";
 
 const UserProfileView: React.FC = () => {
-  const { user, handleSignOut, isLoading: isAuthLoading } = useUser();
+  const {
+    user,
+    handleSignOut,
+    isLoading: isAuthLoading,
+    refreshUserSettings,
+  } = useUser();
   const { theme, toggleTheme } = useTheme();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -130,6 +135,7 @@ const UserProfileView: React.FC = () => {
         municipality: municipalityQuery,
         municipality_code: String(municipalityCode),
       });
+      await refreshUserSettings();
       showToast("Settings updated successfully", "success");
     } catch (error) {
       showToast("Failed to update settings", "error");
