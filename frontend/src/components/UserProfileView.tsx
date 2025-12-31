@@ -30,6 +30,7 @@ import { SalaryCalculation, UserSettings } from "../types";
 import CalculationUtils from "../utils/CalculationUtils";
 import Header from "./Header";
 import { municipalities, Municipality } from "../backend/municipalities";
+import { exportHistory } from "../utils/ExportUtils";
 
 const UserProfileView: React.FC = () => {
   const {
@@ -150,49 +151,7 @@ const UserProfileView: React.FC = () => {
       return;
     }
 
-    const headers = [
-      "ID",
-      "Date",
-      "Client",
-      "Hourly Rate",
-      "Hours Worked",
-      "Invoiced Amount",
-      "After Deduction",
-      "Buffer Saving",
-      "Gross Salary",
-      "Employer Fee",
-      "Take Home",
-      "Notes",
-    ];
-
-    const rows = calculations.map((c) => [
-      c.id,
-      c.date?.split("T")[0],
-      `"${c.client_name}"`,
-      c.hourly_rate,
-      c.hours_worked,
-      c.invoiced_amount,
-      c.after_deduction,
-      c.save_to_buffer,
-      c.gross_salary,
-      c.employer_fee,
-      c.remaining_for_gross_salary,
-      `"${c.notes || ""}"`,
-    ]);
-
-    const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `eighty-twenty-history-${new Date().toISOString().split("T")[0]}.csv`
-    );
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportHistory(calculations);
     showToast("Exporting History as CSV...", "success");
   };
 
