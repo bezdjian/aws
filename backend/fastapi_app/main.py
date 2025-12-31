@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 backend_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(backend_dir))
 
+from shared.modal import Kommun
 from shared import service, schemas  # noqa: E402
 
 # Load environment variables from the backend directory
@@ -190,7 +191,7 @@ async def get_calculation(calculation_id: str):
   - **calculation_id**: The ID of the calculation to retrieve
   """
   calculation = service.get_salary_calculation_by_id(
-    calculation_id=calculation_id)
+      calculation_id=calculation_id)
   if calculation is None:
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
@@ -254,6 +255,40 @@ async def compute_tax(tax_request: schemas.TaxCalculationRequest):
   Calculate tax by proxying to Skatteverket API.
   """
   return service.calculate_tax(tax_request=tax_request)
+
+
+@app.get("/municipalities", tags=["Data"])
+async def get_municipalities():
+  """
+  Retrieve the list of municipalities with tax information.
+  """
+  try:
+    return service.get_municipalities()
+  except Exception as e:
+    raise HTTPException(
+        status_code=500, detail=f"Error retrieving municipalities: {str(e)}"
+    )
+
+
+@app.get("/municipality/fees/{municipality_id}",
+         tags=["Data"])
+async def get_municipality_fees(municipality_id: str):
+  """
+  Retrieve the municipality's tax rate.
+  """
+  try:
+    municipality_fees = service.get_municipality_fees(municipality_id)
+
+    fees = Kommun(**municipality_fees)
+    tax_rate = fees.kommunalskatt + fees.begravningsavgift + fees.lan.regionskatt
+
+    from decimal import Decimal, ROUND_HALF_UP
+
+    return int(Decimal(tax_rate).quantize(0, ROUND_HALF_UP))
+  except Exception as e:
+    raise HTTPException(
+        status_code=500, detail=f"Error retrieving municipalities: {str(e)}"
+    )
 
 
 @app.post("/insights/analyze", response_model=schemas.AIResponse, tags=["AI"])

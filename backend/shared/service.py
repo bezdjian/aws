@@ -362,6 +362,38 @@ def validate_token(token_info: TokenInfo):
   if 0 < token_info.exp() < (datetime.now().timestamp()):
     raise RuntimeError("Token has expired.")
 
+def get_municipalities() -> Optional[List[Dict[str, Any]]]:
+  """Get list of municipalities from Skatteverket API"""
+  url = "https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattesats/2025/kommuner"
+  try:
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+  except Exception as e:
+    print(f"Error fetching municipalities: {e}")
+    from fastapi import HTTPException
+
+    raise HTTPException(
+        status_code=500,
+        detail=f"Error fetching municipalities from Skatteverket: {str(e)}"
+    )
+
+def get_municipality_fees(municipality_id: str) -> Optional[Dict[str, Any]]:
+  """Get municipality fees from Skatteverket API"""
+  url = f"https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattesats/2025/kommuner/{municipality_id}"
+  try:
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+  except Exception as e:
+    print(f"Error fetching municipality fees: {e}")
+    from fastapi import HTTPException
+
+    raise HTTPException(
+        status_code=500,
+        detail=f"Error fetching municipality fees from Skatteverket: {str(e)}"
+    )
+
 
 def calculate_tax(tax_request: schemas.TaxCalculationRequest) -> Dict[str, Any]:
   """Calculate tax by proxying to Skatteverket API"""

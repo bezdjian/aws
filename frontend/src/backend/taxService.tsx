@@ -15,3 +15,7 @@ export const calculateTax = async (
   };
   return await axios.post(`${API_URL}/compute-tax`, data);
 };
+
+export const getMunicipalities = async () => {
+  return await axios.get(`${API_URL}/municipalities`);
+};
