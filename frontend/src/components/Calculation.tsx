@@ -7,7 +7,6 @@ import {
   Clock,
   Trash2,
   Download,
-  Share2,
   User,
   Info,
 } from "lucide-react";
@@ -467,15 +466,6 @@ const CalculationView: React.FC = () => {
                     />
                     {calculation.notes ||
                       "No additional comments were provided for this simulation."}
-                  </div>
-                </div>
-
-                <div className="pt-10">
-                  <div className="p-4 bg-brand-50 dark:bg-brand-900/30 rounded-2xl border border-brand-100 dark:border-brand-800/50 flex items-center space-x-3 text-brand-700 dark:text-brand-400 transition-colors">
-                    <Share2 size={18} />
-                    <span className="text-xs font-black uppercase tracking-widest">
-                      Shared simulation
-                    </span>
                   </div>
                 </div>
               </div>

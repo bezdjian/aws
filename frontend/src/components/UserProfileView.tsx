@@ -409,6 +409,9 @@ const UserProfileView: React.FC = () => {
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
                     Birth Year
                   </label>
+                  <label className="font-black uppercase tracking-widest text-slate-500 ml-1">
+                    <span className="text-[8px]">(for tax calculation)</span>
+                  </label>
                   <div className="relative group">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
                       <Shield size={18} />
