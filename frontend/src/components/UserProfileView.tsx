@@ -1,21 +1,12 @@
 import React, { useEffect, useState, useMemo } from "react";
 import {
-  Settings as SettingsIcon,
   TrendingUp,
-  Download,
   Shield,
-  Palette,
   LogOut,
-  ChevronRight,
   Database,
-  Building2,
   DollarSign,
   Briefcase,
-  AlertCircle,
-  CheckCircle2,
   Loader2,
-  Sun,
-  Moon,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useTheme } from "../context/ThemeContext";
@@ -31,6 +22,9 @@ import CalculationUtils from "../utils/CalculationUtils";
 import Header from "./Header";
 import { municipalities, Municipality } from "../backend/municipalities";
 import { exportHistory } from "../utils/ExportUtils";
+import ResilienceDashboard from "./userProfile/ResilienceDashboard";
+import UserSettingsForm from "./userProfile/UserSettingsForm";
+import UserPreferences from "./userProfile/UserPreferences";
 
 const UserProfileView: React.FC = () => {
   const {
@@ -108,10 +102,16 @@ const UserProfileView: React.FC = () => {
       0
     );
 
+    const totalPension = calculations.reduce(
+      (sum, c) => sum + (c.pension_saving || 0),
+      0
+    );
+
     return {
       totalRevenue,
       totalBuffer,
       avgTakeHome: totalTakeHome / calculations.length,
+      avgPension: totalPension / calculations.length,
       count: calculations.length,
     };
   }, [calculations]);
@@ -271,259 +271,36 @@ const UserProfileView: React.FC = () => {
           </div>
         </section>
 
+        {/* FINANCIAL RESILIENCE DASHBOARD */}
+        <ResilienceDashboard
+          totalBuffer={stats.totalBuffer}
+          desiredGrossSalary={settings?.desired_gross_salary || 50000}
+          avgPension={stats.avgPension || 3000}
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* CONFIGURATION COLUMN */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 p-8 md:p-10 shadow-sm transition-colors">
-              <div className="flex items-center justify-between mb-10">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center text-brand-600 dark:text-brand-400">
-                    <SettingsIcon size={24} />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-black text-slate-900 dark:text-white">
-                      Global Defaults
-                    </h2>
-                    <p className="text-sm font-medium text-slate-400">
-                      Values for new simulations
-                    </p>
-                  </div>
-                </div>
-                <button
-                  form="settings-form"
-                  disabled={isSaving}
-                  className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-slate-900/10 active:scale-95 disabled:opacity-50"
-                >
-                  {isSaving ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Save Changes"
-                  )}
-                </button>
-              </div>
-
-              <form
-                id="settings-form"
-                onSubmit={handleSaveSettings}
-                className="grid grid-cols-1 md:grid-cols-2 gap-8"
-              >
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    Default Hourly Rate (SEK)
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
-                      <DollarSign size={18} />
-                    </div>
-                    <input
-                      type="number"
-                      value={settings?.default_hourly_rate || 0}
-                      onChange={(e) =>
-                        setSettings((s) =>
-                          s
-                            ? {
-                                ...s,
-                                default_hourly_rate: Number(e.target.value),
-                              }
-                            : null
-                        )
-                      }
-                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand-500/20 focus:bg-white dark:focus:bg-slate-800 rounded-2xl font-black text-slate-900 dark:text-white transition-all outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    Monthly Buffer Target (SEK)
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
-                      <Shield size={18} />
-                    </div>
-                    <input
-                      type="number"
-                      value={settings?.default_buffer_amount || 0}
-                      onChange={(e) =>
-                        setSettings((s) =>
-                          s
-                            ? {
-                                ...s,
-                                default_buffer_amount: Number(e.target.value),
-                              }
-                            : null
-                        )
-                      }
-                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand-500/20 focus:bg-white dark:focus:bg-slate-800 rounded-2xl font-black text-slate-900 dark:text-white transition-all outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2 relative md:col-span-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    Tax Municipality
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
-                      <Building2 size={18} />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Search municipalities..."
-                      value={municipalityQuery}
-                      onFocus={() => setShowMunicipalityList(true)}
-                      onBlur={() =>
-                        setTimeout(() => setShowMunicipalityList(false), 200)
-                      }
-                      onChange={(e) => setMunicipalityQuery(e.target.value)}
-                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand-500/20 focus:bg-white dark:focus:bg-slate-800 rounded-2xl font-black text-slate-900 dark:text-white transition-all outline-none"
-                    />
-
-                    {showMunicipalityList &&
-                      filteredMunicipalities.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl shadow-2xl z-50 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                          {filteredMunicipalities.map((m) => (
-                            <button
-                              key={m.kod}
-                              type="button"
-                              onClick={() => {
-                                setMunicipalityQuery(m.namn);
-                                setMunicipalityCode(m.kod);
-                                setShowMunicipalityList(false);
-                              }}
-                              className="w-full px-6 py-3 text-left font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-brand-600 transition-colors flex items-center justify-between group"
-                            >
-                              <span>{m.namn}</span>
-                              <ChevronRight
-                                size={14}
-                                className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"
-                              />
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    Birth Year
-                  </label>
-                  <label className="font-black uppercase tracking-widest text-slate-500 ml-1">
-                    <span className="text-[8px]">(for tax calculation)</span>
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
-                      <Shield size={18} />
-                    </div>
-                    <input
-                      type="number"
-                      value={settings?.birth_year || 0}
-                      onChange={(e) =>
-                        setSettings((s) =>
-                          s
-                            ? {
-                                ...s,
-                                birth_year: Number(e.target.value),
-                              }
-                            : null
-                        )
-                      }
-                      className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand-500/20 focus:bg-white dark:focus:bg-slate-800 rounded-2xl font-black text-slate-900 dark:text-white transition-all outline-none"
-                    />
-                  </div>
-                </div>
-              </form>
-            </div>
+            <UserSettingsForm
+              settings={settings}
+              setSettings={setSettings}
+              isSaving={isSaving}
+              handleSaveSettings={handleSaveSettings}
+              municipalityQuery={municipalityQuery}
+              setMunicipalityQuery={setMunicipalityQuery}
+              setMunicipalityCode={setMunicipalityCode}
+              showMunicipalityList={showMunicipalityList}
+              setShowMunicipalityList={setShowMunicipalityList}
+              filteredMunicipalities={filteredMunicipalities}
+            />
           </div>
 
           {/* PREFERENCES & UTILS */}
-          <div className="space-y-8">
-            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 p-8 shadow-sm space-y-8 transition-colors">
-              <div className="flex items-center space-x-3 text-slate-400 dark:text-slate-600">
-                <Palette size={20} />
-                <h3 className="text-xs font-black uppercase tracking-widest">
-                  Preferences
-                </h3>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
-                  <div className="flex items-center space-x-3">
-                    {theme === "light" ? (
-                      <Sun size={18} className="text-amber-500" />
-                    ) : (
-                      <Moon size={18} className="text-brand-400" />
-                    )}
-                    <span className="font-bold text-slate-700 dark:text-slate-300">
-                      Dark Mode
-                    </span>
-                  </div>
-                  <button
-                    onClick={toggleTheme}
-                    className={`w-12 h-6 rounded-full transition-all duration-300 relative ${
-                      theme === "dark" ? "bg-brand-600" : "bg-slate-300"
-                    }`}
-                  >
-                    <div
-                      className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${
-                        theme === "dark" ? "left-7" : "left-1"
-                      }`}
-                    ></div>
-                  </button>
-                </div>
-
-                <div className="p-4 bg-brand-50 dark:bg-brand-900/20 rounded-2xl border border-brand-100 dark:border-brand-900/50">
-                  <div className="flex items-start space-x-3">
-                    <AlertCircle
-                      size={18}
-                      className="text-brand-600 shrink-0 mt-0.5"
-                    />
-                    <p className="text-xs font-medium text-brand-800 dark:text-brand-400 leading-relaxed">
-                      Theme preferences are synced with your browser's local
-                      storage for a consistent experience.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-slate-50 dark:border-slate-800">
-                <div className="flex items-center space-x-3 text-slate-400 dark:text-slate-600 mb-6">
-                  <Database size={20} />
-                  <h3 className="text-xs font-black uppercase tracking-widest">
-                    Data Management
-                  </h3>
-                </div>
-
-                <button
-                  onClick={handleExportCSV}
-                  className="w-full flex items-center justify-between px-6 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-sm group hover:scale-[1.02] transition-all active:scale-95 shadow-lg shadow-slate-900/10"
-                >
-                  <div className="flex items-center space-x-3">
-                    <Download size={18} />
-                    <span>Export History</span>
-                  </div>
-                  <span className="text-[10px] bg-white/10 dark:bg-slate-900/10 px-2 py-1 rounded-md uppercase">
-                    CSV
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-[2rem] p-8 border border-emerald-100 dark:border-emerald-900/50">
-              <div className="flex items-center space-x-3 text-emerald-600 dark:text-emerald-400 mb-4">
-                <CheckCircle2 size={20} />
-                <h3 className="text-sm font-black uppercase tracking-widest">
-                  System Health
-                </h3>
-              </div>
-              <p className="text-xs font-medium text-emerald-800 dark:text-emerald-400 leading-relaxed">
-                Your data is currently being replicated across multiple
-                availability zones in the AWS Stockholm Region (eu-north-1) for
-                maximum durability.
-              </p>
-            </div>
-          </div>
+          <UserPreferences
+            theme={theme}
+            toggleTheme={toggleTheme}
+            handleExportCSV={handleExportCSV}
+          />
         </div>
       </main>
     </div>

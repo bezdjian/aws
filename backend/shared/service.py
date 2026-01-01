@@ -377,7 +377,7 @@ def get_municipalities() -> Optional[List[Dict[str, Any]]]:
 
     raise HTTPException(
         status_code=500,
-        detail=f"Error fetching municipalities from Skatteverket: {str(e)}"
+        detail=f"Error fetching municipalities from Skatteverket: {str(e)}",
     )
 
 
@@ -386,6 +386,7 @@ def get_municipality_tax_rate(municipality_code: str) -> Optional[int]:
   url = f"https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattesats/2025/kommuner/{municipality_code}"
   try:
     from decimal import Decimal, ROUND_HALF_UP
+
     response = requests.get(url)
     response.raise_for_status()
 
@@ -399,7 +400,7 @@ def get_municipality_tax_rate(municipality_code: str) -> Optional[int]:
 
     raise HTTPException(
         status_code=500,
-        detail=f"Error fetching municipality fees from Skatteverket: {str(e)}"
+        detail=f"Error fetching municipality fees from Skatteverket: {str(e)}",
     )
 
 
@@ -407,7 +408,8 @@ def calculate_tax(tax_request: schemas.TaxCalculationRequest) -> Dict[str, Any]:
   """Calculate tax by proxying to Skatteverket API"""
   url = "https://www7.skatteverket.se/portal-wapi/open/skatteberakning/v1/api/skattetabell/2025/beraknaSkatteavdrag"
   tax_rate = get_municipality_tax_rate(
-      municipality_code=tax_request.municipality_code)
+      municipality_code=tax_request.municipality_code
+  )
   data = {
     "skattesats": tax_rate,
     "inkomst": tax_request.gross_salary,
@@ -445,6 +447,7 @@ def get_user_settings(email: str) -> Dict[str, Any]:
       "birth_year": 1987,
       "default_buffer_amount": 10000.0,
       "default_hourly_rate": 800.0,
+      "desired_gross_salary": 50000.0,
       "municipality": "Stockholm",
       "municipality_code": "180",
       "updated_at": datetime.now().isoformat(),
@@ -457,6 +460,7 @@ def get_user_settings(email: str) -> Dict[str, Any]:
       "birth_year": 1987,
       "default_buffer_amount": 10000.0,
       "default_hourly_rate": 800.0,
+      "desired_gross_salary": 50000.0,
       "municipality": "Stockholm",
       "municipality_code": "180",
       "updated_at": datetime.now().isoformat(),
@@ -472,6 +476,7 @@ def update_user_settings(settings: schemas.UserSettings) -> Dict[str, Any]:
     "birth_year": settings.birth_year,
     "default_buffer_amount": float_to_decimal(settings.default_buffer_amount),
     "default_hourly_rate": float_to_decimal(settings.default_hourly_rate),
+    "desired_gross_salary": float_to_decimal(settings.desired_gross_salary),
     "municipality": settings.municipality,
     "municipality_code": settings.municipality_code,
     "updated_at": datetime.now().isoformat(),
