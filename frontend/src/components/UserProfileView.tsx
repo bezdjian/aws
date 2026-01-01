@@ -25,6 +25,7 @@ import { exportHistory } from "../utils/ExportUtils";
 import ResilienceDashboard from "./userProfile/ResilienceDashboard";
 import UserSettingsForm from "./userProfile/UserSettingsForm";
 import UserPreferences from "./userProfile/UserPreferences";
+import VacationFundCard from "./userProfile/VacationFundCard";
 
 const UserProfileView: React.FC = () => {
   const {
@@ -271,12 +272,25 @@ const UserProfileView: React.FC = () => {
           </div>
         </section>
 
-        {/* FINANCIAL RESILIENCE DASHBOARD */}
-        <ResilienceDashboard
-          totalBuffer={stats.totalBuffer}
-          desiredGrossSalary={settings?.desired_gross_salary || 50000}
-          avgPension={stats.avgPension || 3000}
-        />
+        {/* STRATEGIC PLANNING */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 h-full">
+            <ResilienceDashboard
+              totalBuffer={stats.totalBuffer}
+              desiredGrossSalary={settings?.desired_gross_salary || 50000}
+              avgPension={stats.avgPension || 3000}
+            />
+          </div>
+          <div className="lg:col-span-1 h-full">
+            <VacationFundCard
+              totalBuffer={stats.totalBuffer}
+              desiredGrossSalary={settings?.desired_gross_salary || 50000}
+              avgPension={stats.avgPension || 3000}
+              targetVacationWeeks={settings?.target_vacation_weeks || 5}
+              publicHolidays={settings?.public_holidays || 12}
+            />
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* CONFIGURATION COLUMN */}

@@ -125,6 +125,8 @@ class UserSettings(BaseModel):
   default_buffer_amount: float = Field(default=10000.0, ge=0)
   default_hourly_rate: float = Field(default=800.0, ge=0)
   desired_gross_salary: float = Field(default=50000.0, ge=0)
+  target_vacation_weeks: float = Field(default=5.0, ge=0)
+  public_holidays: int = Field(default=12, ge=0)
   municipality: str = Field(
       default="Stockholm", description="Default tax municipality"
   )

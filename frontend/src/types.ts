@@ -30,6 +30,8 @@ export interface UserSettings {
   default_buffer_amount: number;
   default_hourly_rate: number;
   desired_gross_salary: number;
+  target_vacation_weeks: number;
+  public_holidays: number;
   municipality: string;
   municipality_code: string;
   updated_at?: string;

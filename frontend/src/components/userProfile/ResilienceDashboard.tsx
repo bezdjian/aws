@@ -78,7 +78,7 @@ const ResilienceDashboard: React.FC<ResilienceDashboardProps> = ({
 
   return (
     <section
-      className={`relative overflow-hidden p-8 md:p-10 rounded-[2.5rem] border ${resilience.borderColor} ${resilience.bgColor} transition-all duration-500`}
+      className={`relative overflow-hidden p-8 md:p-10 rounded-[2.5rem] border ${resilience.borderColor} ${resilience.bgColor} transition-all duration-500 h-full`}
     >
       <div className="absolute top-0 right-0 p-10 opacity-10 dark:opacity-5">
         <HeartPulse size={120} className={resilience.iconColor} />

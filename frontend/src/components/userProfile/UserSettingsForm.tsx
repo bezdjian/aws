@@ -7,6 +7,8 @@ import {
   Building2,
   ChevronRight,
   Loader2,
+  Calendar,
+  Sun,
 } from "lucide-react";
 import { UserSettings } from "../../types";
 import { Municipality } from "../../backend/municipalities";
@@ -190,6 +192,58 @@ const UserSettingsForm: React.FC<UserSettingsFormProps> = ({
                 ))}
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
+            Target Vacation (Weeks/Year)
+          </label>
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
+              <Calendar size={18} />
+            </div>
+            <input
+              type="number"
+              value={settings?.target_vacation_weeks || 0}
+              onChange={(e) =>
+                setSettings((s: any) =>
+                  s
+                    ? {
+                        ...s,
+                        target_vacation_weeks: Number(e.target.value),
+                      }
+                    : null
+                )
+              }
+              className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand-500/20 focus:bg-white dark:focus:bg-slate-800 rounded-2xl font-black text-slate-900 dark:text-white transition-all outline-none"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
+            Public Holidays (Days/Year)
+          </label>
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-500 transition-colors">
+              <Sun size={18} />
+            </div>
+            <input
+              type="number"
+              value={settings?.public_holidays || 0}
+              onChange={(e) =>
+                setSettings((s: any) =>
+                  s
+                    ? {
+                        ...s,
+                        public_holidays: Number(e.target.value),
+                      }
+                    : null
+                )
+              }
+              className="w-full pl-12 pr-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-brand-500/20 focus:bg-white dark:focus:bg-slate-800 rounded-2xl font-black text-slate-900 dark:text-white transition-all outline-none"
+            />
           </div>
         </div>
 
