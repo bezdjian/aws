@@ -3,6 +3,7 @@ version = 0.1
 [default]
 [default.global.parameters]
 stack_name = "eighty-twenty"
+prefix = "eighty-twenty-"
 
 [default.build.parameters]
 cached = true
@@ -41,14 +42,14 @@ parameter_overrides = "Environment=prod"
 stack_name = "eighty-twenty-prod"
 
 # Staging configuration
-[staging]
-[staging.deploy.parameters]
+[dev]
+[dev.deploy.parameters]
 capabilities = "CAPABILITY_IAM"
-confirm_changeset = true
+confirm_changeset = false
 resolve_s3 = true
 region = "eu-north-1"
-parameter_overrides = "Environment=staging"
-stack_name = "eighty-twenty-staging"
+parameter_overrides = "Environment=dev"
+stack_name = "eighty-twenty-dev"
 
 # Localstack configuration. ´--config-env localstack´
 [localstack]

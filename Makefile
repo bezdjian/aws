@@ -50,7 +50,7 @@ deploy-guided: build
 # Deploy to specific environments
 deploy-dev: build
 	@echo "Deploying to dev environment..."
-	sam deploy --config-env default --parameter-overrides Environment=dev
+	sam deploy --config-env dev
 
 deploy-prod: build
 	@echo "Deploying to production environment..."
@@ -161,7 +161,12 @@ deploy-localstack:
 update-ssm-parameters:
 	@echo "Updating Parameter value for Google Client ID..."
 	aws ssm put-parameter --name "/eighty-twenty/google-client-id" --value "$(GOOGLE_CLIENT_ID)" --type SecureString --overwrite --endpoint-url $(LOCALSTACK_URL)
-	aws ssm put-parameter --name "/eighty-twenty/openai-api-key" --value "$(OPENAI_API_KEY)" --type SecureString --overwrite --endpoint-url $(LOCALSTACK_URL)
+
+# Update SecretsManager value for OpenAI API Key
+# Usage: make update-openai-api-key OPENAI_API_KEY=<openai-api-key>
+update-openai-api-key:
+	@echo "Updating SecretsManager value for OpenAI API Key..."
+	aws secretsmanager put-secret-value --secret-id "/eighty-twenty/openai-api-key" --secret-string "$(OPENAI_API_KEY)" --endpoint-url $(LOCALSTACK_URL)
 
 # View all resources in stack
 resources-localstack:
