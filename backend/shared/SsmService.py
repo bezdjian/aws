@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 
 CLIENT_ID_PARAM_NAME = "/eighty-twenty/google-client-id"
 CLIENT_SECRET_PARAM_NAME = "/eighty-twenty/google-client-secret"
-OPENAI_API_KEY_NAME = "/eighty-twenty/openai-api-key"
 
 LOCALSTACK_URL = os.getenv("LOCALSTACK_URL")
 _CACHE = {}
@@ -30,11 +29,6 @@ def get_google_client_id() -> str:
 def get_google_client_secret() -> str:
   logger.info("Getting client secret for Google authentication")
   return _get_parameter(CLIENT_SECRET_PARAM_NAME)
-
-
-def get_openai_api_key() -> str:
-  logger.info("Getting OpenAI API key")
-  return _get_parameter(OPENAI_API_KEY_NAME)
 
 
 def _fallback(name):

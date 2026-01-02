@@ -3,7 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 
-from .SsmService import get_openai_api_key
+from .SecretManagerService import get_openai_api_key
 from .schemas import InsightStats
 
 # Load environment variables

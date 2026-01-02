@@ -1,9 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  eighty-twenty
-
-  SAM Template for Eighty-Twenty Salary Calculator application with DynamoDB, API Gateway and Lambda.
+Description: Eighty-Twenty Salary Calculator application
 
 # Global configuration for all functions
 Globals:
@@ -159,7 +156,7 @@ Resources:
             Path: /calculations/email/{email}
             Method: GET
             RestApiId: !Ref EightyTwentyApi
- 
+
   # Lambda Function for Check Duplicate Calculation
   CheckDuplicateFunction:
     Type: AWS::Serverless::Function
@@ -265,7 +262,7 @@ Resources:
       Description: Get Google Client ID for authentication
       Policies:
         - SSMParameterReadPolicy:
-            ParameterName: /eighty-twenty/google-client-id
+            ParameterName: !Ref GoogleClientIdParameter
       Events:
         GetGoogleClientId:
           Type: Api
@@ -299,8 +296,8 @@ Resources:
       Handler: lambda_app.lambda_handlers.analyze_insights
       Description: Analyze salary calculations with AI
       Policies:
-        - SSMParameterReadPolicy:
-            ParameterName: /eighty-twenty/openai-api-key
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref OpenAIApiKeySecret
       Events:
         AnalyzeInsights:
           Type: Api
@@ -324,7 +321,7 @@ Resources:
             Path: /compute-tax
             Method: POST
             RestApiId: !Ref EightyTwentyApi
- 
+
   # Lambda Function for Get Municipalities
   GetMunicipalitiesFunction:
     Type: AWS::Serverless::Function
@@ -582,7 +579,7 @@ Resources:
                 uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetMunicipalitiesFunction.Arn}/invocations
               responses:
                 "200":
-                   description: List of municipalities response
+                  description: List of municipalities response
 
   # S3 Bucket for calculation reports
   ReportsBucket:
@@ -617,61 +614,21 @@ Resources:
       Tags:
         eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
 
-  OpenAIApiKeyParameter:
-    Type: AWS::SSM::Parameter
+  OpenAIApiKeySecret:
+    Type: AWS::SecretsManager::Secret
     Properties:
-      Type: SecureString
       Name: '/eighty-twenty/openai-api-key'
-      Value: 'your-openai-api-key'
+      SecretString: 'your-openai-api-key'
       Tags:
-        eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
+        - Key: eighty-twenty:creationSource
+          Value: !Sub 'cloudformation/${AWS::StackId}'
 
 # Outputs for easy reference
 Outputs:
   ApiUrl:
-    Description: !Sub "API Gateway endpoint URL. For localstack. https://${EightyTwentyApi}.execute-api.localhost.localstack.cloud:4566/localstack"
+    Description: API Gateway endpoint URL for local development and production.
     Value: !Sub https://${EightyTwentyApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/
 
   ApiId:
     Description: API Gateway ID
     Value: !Ref EightyTwentyApi
-
-  DynamoDBTableName:
-    Description: DynamoDB table name
-    Value: !Ref SalaryCalculationsTable
-
-  DynamoDBUserSettingsTableName:
-    Description: DynamoDB User Settings table name
-    Value: !Ref UserSettingsTable
-
-  DynamoDBTableArn:
-    Description: DynamoDB table ARN
-    Value: !GetAtt SalaryCalculationsTable.Arn
-
-  CreateCalculationFunctionArn:
-    Description: Create Calculation Lambda Function ARN
-    Value: !GetAtt CreateCalculationFunction.Arn
-
-  GetCalculationsFunctionArn:
-    Description: Get Calculations Lambda Function ARN
-    Value: !GetAtt GetCalculationsFunction.Arn
-
-  GetCalculationFunctionArn:
-    Description: Get Calculation Lambda Function ARN
-    Value: !GetAtt GetCalculationFunction.Arn
-
-  UpdateCalculationFunctionArn:
-    Description: Update Calculation Lambda Function ARN
-    Value: !GetAtt UpdateCalculationFunction.Arn
-
-  DeleteCalculationFunctionArn:
-    Description: Delete Calculation Lambda Function ARN
-    Value: !GetAtt DeleteCalculationFunction.Arn
-
-  S3ReportsBucketName:
-    Description: S3 Bucket for Reports
-    Value: !Ref ReportsBucket
-
-  Region:
-    Description: AWS Region
-    Value: !Ref AWS::Region
