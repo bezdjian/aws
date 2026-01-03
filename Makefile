@@ -48,12 +48,14 @@ deploy-guided: build
 	sam deploy --guided
 
 # Deploy to specific environments
-deploy-dev: build
+deploy-aws-dev: build
 	@echo "Deploying to dev environment..."
+	sam build
 	sam deploy --config-env dev
 
-deploy-prod: build
+deploy-aws-prod: build
 	@echo "Deploying to production environment..."
+	sam build
 	sam deploy --config-env prod --parameter-overrides Environment=prod
 
 # Test Lambda functions locally

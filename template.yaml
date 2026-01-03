@@ -137,7 +137,7 @@ Resources:
             Path: /calculations/{id}
             Method: GET
             RestApiId: !Ref EightyTwentyApi
- 
+
   # Lambda Function for Get Calculations By Email
   GetCalculationsByEmailFunction:
     Type: AWS::Serverless::Function
@@ -262,7 +262,7 @@ Resources:
       Description: Get Google Client ID for authentication
       Policies:
         - SSMParameterReadPolicy:
-            ParameterName: !Ref GoogleClientIdParameter
+            ParameterName: 'eighty-twenty/google-client-id'
       Events:
         GetGoogleClientId:
           Type: Api
@@ -606,13 +606,13 @@ Resources:
         eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
 
   GoogleClientSecretParameter:
-    Type: AWS::SSM::Parameter
+    Type: AWS::SecretsManager::Secret
     Properties:
-      Type: String
       Name: '/eighty-twenty/google-client-secret'
-      Value: 'your-google-client-secret'
+      SecretString: 'your-google-client-secret'
       Tags:
-        eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
+        - Key: eighty-twenty:creationSource
+          Value: !Sub 'cloudformation/${AWS::StackId}'
 
   OpenAIApiKeySecret:
     Type: AWS::SecretsManager::Secret

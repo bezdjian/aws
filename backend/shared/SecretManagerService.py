@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger(__name__)
 
 OPENAI_API_KEY_NAME = "/eighty-twenty/openai-api-key"
+GOOGLE_CLIENT_SECRET_NAME = "/eighty-twenty/google-client-secret"
 
 LOCALSTACK_URL = os.getenv("LOCALSTACK_URL")
 _CACHE = {}
@@ -24,11 +25,17 @@ def get_openai_api_key() -> str:
   logger.info("Getting OpenAI API key")
   return _get_parameter(OPENAI_API_KEY_NAME)
 
+def get_google_client_secret() -> str:
+  logger.info("Getting Google client secret")
+  return _get_parameter(GOOGLE_CLIENT_SECRET_NAME)
+
 
 def _fallback(name):
   # Fallback to .env variables for local development
   if "openai-api-key" in name:
     env_value = os.getenv("OPENAI_API_KEY")
+  elif "google-client-secret" in name:
+    env_value = os.getenv("GOOGLE_CLIENT_SECRET")
   else:
     raise RuntimeError(f"Secret {name} not found in .env fallback")
   return env_value if env_value else None
