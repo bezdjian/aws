@@ -91,28 +91,6 @@ frontend:
 	@echo "Starting React development server..."
 	cd frontend && npm run start
 
-# Default table name (can be overridden on command line)
-ENVIRONMENT := ""
-LOCALSTACK_URL ?= http://localhost:4566
-
-# View DynamoDB table info, localstack or dev
-db-info:
-	@echo "Fetching DynamoDB table info for $(ENVIRONMENT)..."
-	@if [ "$(ENVIRONMENT)" = "localstack" ]; then \
-		aws dynamodb describe-table --table-name eighty-twenty-calculations-$(ENVIRONMENT) --endpoint-url $(LOCALSTACK_URL) --query 'Table.{Name:TableName,Status:TableStatus,Items:ItemCount,Size:TableSizeBytes}' --output table; \
-	else \
-		aws dynamodb describe-table --table-name eighty-twenty-calculations-dev --query 'Table.{Name:TableName,Status:TableStatus,Items:ItemCount,Size:TableSizeBytes}' --output table; \
-	fi
-
-# List items in DynamoDB table, localstack or dev
-db-list:
-	@echo "Listing items in DynamoDB table $(ENVIRONMENT)..."
-	@if [ "$(ENVIRONMENT)" = "localstack" ]; then \
-		aws dynamodb scan --table-name eighty-twenty-calculations-$(ENVIRONMENT) --endpoint-url $(LOCALSTACK_URL) --max-items 10; \
-	else \
-		aws dynamodb scan --table-name eighty-twenty-calculations-dev --max-items 10; \
-	fi
-
 # Clean build artifacts
 clean:
 	@echo "Cleaning build artifacts..."
@@ -150,6 +128,7 @@ endpoints:
 	@echo "Listing API endpoints..."
 	sam list endpoints --stack-name eighty-twenty
 
+LOCALSTACK_URL ?= http://localhost:4566
 
 ### Localstack ###
 deploy-localstack:
@@ -184,3 +163,20 @@ delete-localstack:
 outputs-localstack:
 	@echo "Fetching stack outputs..."
 	samlocal list stack-outputs --stack-name eighty-twenty-localstack
+
+
+
+# CI/CD stuff, check later if needed
+ENVIRONMENT := ""
+
+# Fetch the API URL from the deployed stack
+get-api-url:
+	@aws cloudformation describe-stacks \
+		--stack-name eighty-twenty-${ENVIRONMENT} \
+		--query 'Stacks[0].Outputs[?OutputKey==`ApiUrl`].OutputValue' \
+		--output text
+
+
+build-frontend:
+	@export VITE_BACKEND_API_URL=$(aws cloudformation describe-stacks --stack-name eighty-twenty-${ENVIRONMENT} --query 'Stacks[0].Outputs[?OutputKey==`ApiUrl`].OutputValue' --output text) && \
+	cd frontend && npm install && npm run build
