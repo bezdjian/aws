@@ -170,13 +170,29 @@ outputs-localstack:
 ENVIRONMENT := ""
 
 # Fetch the API URL from the deployed stack
+# Usage: make get-api-url ENVIRONMENT=dev
 get-api-url:
 	@aws cloudformation describe-stacks \
 		--stack-name eighty-twenty-${ENVIRONMENT} \
 		--query 'Stacks[0].Outputs[?OutputKey==`ApiUrl`].OutputValue' \
 		--output text
 
-
+# Build the frontend with the API URL injected
+# Usage: make build-frontend ENVIRONMENT=dev
 build-frontend:
-	@export VITE_BACKEND_API_URL=$(aws cloudformation describe-stacks --stack-name eighty-twenty-${ENVIRONMENT} --query 'Stacks[0].Outputs[?OutputKey==`ApiUrl`].OutputValue' --output text) && \
-	cd frontend && npm install && npm run build
+	@echo "Fetching API URL for environment: ${ENVIRONMENT}..."
+	@API_URL=$$(aws cloudformation describe-stacks --stack-name eighty-twenty-${ENVIRONMENT} --query 'Stacks[0].Outputs[?OutputKey==`ApiUrl`].OutputValue' --output text) && \
+	echo "Building frontend with VITE_BACKEND_API_URL=$$API_URL" && \
+	cd frontend && npm install && VITE_BACKEND_API_URL=$$API_URL npm run build
+
+# Build and deploy frontend to S3 and invalidate CloudFront
+# Usage: make deploy-frontend ENVIRONMENT=dev
+deploy-frontend: build-frontend
+	@echo "Deploying frontend to S3 bucket..."
+	@FRONTEND_BUCKET=$$(aws cloudformation describe-stacks --stack-name eighty-twenty-${ENVIRONMENT} --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' --output text) && \
+	aws s3 sync frontend/dist/ s3://$$FRONTEND_BUCKET/ --delete && \
+	echo "Frontend deployed to s3://$$FRONTEND_BUCKET"
+	@echo "Invalidating CloudFront cache..."
+	@CF_DIST_ID=$$(aws cloudformation describe-stack-resources --stack-name eighty-twenty-${ENVIRONMENT} --query 'StackResources[?LogicalResourceId==`FrontendCloudFrontDistribution`].PhysicalResourceId' --output text) && \
+	aws cloudfront create-invalidation --distribution-id $$CF_DIST_ID --paths "/*" > /dev/null && \
+	echo "CloudFront invalidation triggered for $$CF_DIST_ID"
