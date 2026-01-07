@@ -34,12 +34,12 @@ validate:
 
 # Build SAM application
 ## Dev
-sam-build-dev:
+sam-build:
 	@echo "Building SAM for dev environment..."
-	sam build --config-env dev
+	sam build
 
 # Deploy with saved configuration
-sam-deploy-dev: sam-build-dev
+sam-deploy-dev: sam-build
 	@echo "Deploying to AWS..."
 	sam deploy --config-env dev
 
@@ -53,7 +53,7 @@ sam-deploy-prod: sam-build-prod
 	sam deploy --config-env prod
 
 # Test Lambda functions locally
-test-local: sam-build-dev
+test-local: sam-build
 	@echo "Testing CreateCalculationFunction..."
 	sam local invoke CreateCalculationFunction --event backend/lambda_app/events/create.json
 	@echo ""
@@ -61,7 +61,7 @@ test-local: sam-build-dev
 	sam local invoke GetCalculationsFunction --event backend/lambda_app/events/get-all.json
 
 # Start local API server
-start-api: sam-build-dev
+start-api: sam-build
 	@echo "Starting local API server on http://localhost:3000"
 	sam local start-api
 
@@ -93,34 +93,24 @@ clean:
 	find . -type f -name "*.pyc" -delete
 
 # Delete CloudFormation stack
-delete:
+sam-delete-dev:
 	@echo "Deleting CloudFormation stack..."
-	sam delete --stack-name eighty-twenty
+	sam delete --config-env dev
 
 # Show stack outputs
-outputs:
+outputs-dev:
 	@echo "Fetching stack outputs..."
-	sam list stack-outputs --stack-name eighty-twenty
-
-# Package for deployment
-package: build
-	@echo "Packaging application..."
-	sam package --output-template-file packaged.yaml
+	sam list stack-outputs --config-env dev
 
 # Sync for rapid development
-sync: build
+sync-dev: sam-build
 	@echo "Syncing changes to AWS..."
-	sam sync --stack-name eighty-twenty
-
-# View all resources in stack
-resources:
-	@echo "Listing stack resources..."
-	sam list resources --stack-name eighty-twenty
+	sam sync --config-env dev
 
 # View all endpoints
-endpoints:
+endpoints-dev:
 	@echo "Listing API endpoints..."
-	sam list endpoints --stack-name eighty-twenty
+	sam list endpoints --config-env dev
 
 LOCALSTACK_URL ?= http://localhost:4566
 
