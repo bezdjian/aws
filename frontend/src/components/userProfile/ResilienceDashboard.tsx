@@ -84,8 +84,8 @@ const ResilienceDashboard: React.FC<ResilienceDashboardProps> = ({
         <HeartPulse size={120} className={resilience.iconColor} />
       </div>
 
-      <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-10">
-        <div className="flex-1 space-y-6">
+      <div className="relative z-10 flex flex-col gap-8">
+        <div className="space-y-6">
           <div>
             <div className="flex items-center space-x-3 mb-2">
               <div
@@ -97,16 +97,16 @@ const ResilienceDashboard: React.FC<ResilienceDashboardProps> = ({
                 Buffer-as-an-Insurance Simulation
               </h3>
             </div>
-            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              Financial Resilience:{" "}
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+              Resilience:{" "}
               <span className={resilience.iconColor}>{resilience.level}</span>
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium max-w-2xl">
+            <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium leading-relaxed">
               {resilience.description}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+          <div className="space-y-6">
             <div className="space-y-2">
               <div className="flex justify-between font-black text-[10px] uppercase tracking-widest text-slate-400">
                 <span>Runway Coverage</span>
@@ -114,7 +114,7 @@ const ResilienceDashboard: React.FC<ResilienceDashboardProps> = ({
                   {resilience.runway.toFixed(1)} Months
                 </span>
               </div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden p-1 shadow-inner">
+              <div className="h-4 bg-white/50 dark:bg-slate-800/50 rounded-full overflow-hidden p-1 shadow-inner border border-white/20">
                 <div
                   className={`h-full rounded-full transition-all duration-1000 ease-out relative shadow-sm ${
                     resilience.runway >= 6
@@ -132,17 +132,17 @@ const ResilienceDashboard: React.FC<ResilienceDashboardProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center space-x-6">
-              <div className="bg-white dark:bg-slate-900 px-6 py-3 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm flex-1">
-                <span className="block text-[10px] font-black uppercase text-slate-400 mb-1">
-                  Monthly Cost (Incl. Fees)
+            <div className="bg-white/60 dark:bg-slate-900/60 p-4 rounded-2xl border border-white/50 dark:border-slate-800/50 shadow-sm flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="block text-[10px] font-black uppercase text-slate-400">
+                  Monthly Burn
                 </span>
                 <span className="text-lg font-mono font-black text-slate-900 dark:text-white">
                   {CalculationUtils.formatCurrency(resilience.totalMonthlyCost)}
                 </span>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center justify-center text-brand-500">
-                <Zap size={20} className="animate-pulse" />
+              <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center text-brand-500">
+                <Zap size={18} className="animate-pulse" />
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Calculator,
   Calendar,
@@ -8,6 +8,9 @@ import {
   TrendingUp,
   Save,
   ChevronRight,
+  Shield,
+  Zap,
+  AlertTriangle,
 } from "lucide-react";
 import Header from "./Header";
 import CalculationUtils from "../utils/CalculationUtils";
@@ -109,6 +112,12 @@ const Home: React.FC = () => {
     formData.save_to_buffer,
     formData.pension_saving,
   ]);
+
+  const taxEfficiency = useMemo(() => {
+    return CalculationUtils.calculateTaxEfficiency(
+      formData.remaining_for_gross_salary || 0
+    );
+  }, [formData.remaining_for_gross_salary]);
 
   // Reset tax result when form data changes
   useEffect(() => {
@@ -428,6 +437,36 @@ const Home: React.FC = () => {
                       {CalculationUtils.formatCurrency(
                         formData.remaining_for_gross_salary
                       )}
+                    </div>
+
+                    {/* Safe Zone Badge */}
+                    <div className="mt-4 flex justify-center">
+                      <div
+                        className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-wider ${
+                          taxEfficiency.status === "danger"
+                            ? "bg-red-500/20 border-red-500/30 text-red-200"
+                            : taxEfficiency.status === "warning"
+                            ? "bg-amber-500/20 border-amber-500/30 text-amber-200"
+                            : "bg-emerald-500/20 border-emerald-500/30 text-emerald-200"
+                        }`}
+                      >
+                        {taxEfficiency.status === "optimal" && (
+                          <Shield size={12} />
+                        )}
+                        {taxEfficiency.status === "warning" && (
+                          <Zap size={12} />
+                        )}
+                        {taxEfficiency.status === "danger" && (
+                          <AlertTriangle size={12} />
+                        )}
+                        <span>
+                          {taxEfficiency.status === "optimal"
+                            ? "Safe Zone"
+                            : taxEfficiency.status === "warning"
+                            ? "Near Limit"
+                            : "Tax Overload"}
+                        </span>
+                      </div>
                     </div>
                   </div>
 

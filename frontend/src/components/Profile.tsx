@@ -27,6 +27,7 @@ import ResilienceDashboard from "./userProfile/ResilienceDashboard";
 import UserSettingsForm from "./userProfile/UserSettingsForm";
 import UserPreferences from "./userProfile/UserPreferences";
 import VacationFundCard from "./userProfile/VacationFundCard";
+import TaxOptimizationCard from "./userProfile/TaxOptimizationCard";
 
 const UserProfileView: React.FC = () => {
   const {
@@ -297,23 +298,20 @@ const UserProfileView: React.FC = () => {
         </section>
 
         {/* STRATEGIC PLANNING */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 h-full">
-            <ResilienceDashboard
-              totalBuffer={stats.totalBuffer}
-              desiredGrossSalary={settings?.desired_gross_salary || 50000}
-              avgPension={stats.avgPension || 3000}
-            />
-          </div>
-          <div className="lg:col-span-1 h-full">
-            <VacationFundCard
-              totalBuffer={stats.totalBuffer}
-              desiredGrossSalary={settings?.desired_gross_salary || 50000}
-              avgPension={stats.avgPension || 3000}
-              targetVacationWeeks={settings?.target_vacation_weeks || 5}
-              publicHolidays={settings?.public_holidays || 12}
-            />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <ResilienceDashboard
+            totalBuffer={stats.totalBuffer}
+            desiredGrossSalary={settings?.desired_gross_salary || 50000}
+            avgPension={stats.avgPension || 3000}
+          />
+          <VacationFundCard
+            totalBuffer={stats.totalBuffer}
+            desiredGrossSalary={settings?.desired_gross_salary || 50000}
+            avgPension={stats.avgPension || 3000}
+            targetVacationWeeks={settings?.target_vacation_weeks || 5}
+            publicHolidays={settings?.public_holidays || 12}
+          />
+          <TaxOptimizationCard settings={settings} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">

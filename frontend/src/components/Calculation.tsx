@@ -246,7 +246,7 @@ const CalculationView: React.FC = () => {
                 <span className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 block ml-1">
                   Take-home Estimate
                 </span>
-                <div className="text-5xl md:text-7xl font-black font-mono tracking-tighter text-white">
+                <div className="text-5xl md:text-5xl font-black font-mono tracking-tighter text-white">
                   {CalculationUtils.formatCurrency(
                     taxData?.lonefterskatt ||
                       calculation.remaining_for_gross_salary ||

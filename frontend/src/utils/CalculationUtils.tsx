@@ -152,6 +152,46 @@ class CalculationUtils {
       totalDailyCost,
     };
   }
+
+  static calculateTaxEfficiency(grossSalary: number) {
+    // 2025 Swedish Tax Thresholds (approximate)
+    const STATE_TAX_THRESHOLD_MONTHLY = 52750; // 633,000 / 12
+    const PENSION_MAX_THRESHOLD_MONTHLY = 51000; // Roughly 8.07 * IBB
+
+    const isOverThreshold = grossSalary > STATE_TAX_THRESHOLD_MONTHLY;
+    const diffToThreshold = STATE_TAX_THRESHOLD_MONTHLY - grossSalary;
+
+    let status: "optimal" | "warning" | "danger" = "optimal";
+    let message = "";
+
+    if (isOverThreshold) {
+      status = "danger";
+      message = `You are ${CalculationUtils.formatCurrency(
+        -diffToThreshold
+      )} over the state tax threshold. You pay 20% extra tax on the portion above ${CalculationUtils.formatCurrency(
+        STATE_TAX_THRESHOLD_MONTHLY
+      )}.`;
+    } else if (Math.abs(diffToThreshold) < 3000) {
+      status = "warning";
+      message = `You are very close to the state tax threshold (${CalculationUtils.formatCurrency(
+        STATE_TAX_THRESHOLD_MONTHLY
+      )}). Consider increasing buffer savings or pension to stay in the safe zone.`;
+    } else {
+      status = "optimal";
+      message = `Your salary is in the "Safe Zone". You are ${CalculationUtils.formatCurrency(
+        diffToThreshold
+      )} below the state tax threshold.`;
+    }
+
+    return {
+      status,
+      message,
+      threshold: STATE_TAX_THRESHOLD_MONTHLY,
+      pensionThreshold: PENSION_MAX_THRESHOLD_MONTHLY,
+      isOverThreshold,
+      diffToThreshold,
+    };
+  }
 }
 
 export default CalculationUtils;
