@@ -605,15 +605,6 @@ Resources:
       Tags:
         eighty-twenty:creationSource: !Sub 'cloudformation/${AWS::StackId}'
 
-  GoogleClientSecretParameter:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Name: '/eighty-twenty/google-client-secret'
-      SecretString: 'your-google-client-secret'
-      Tags:
-        - Key: eighty-twenty:creationSource
-          Value: !Sub 'cloudformation/${AWS::StackId}'
-
   OpenAIApiKeySecret:
     Type: AWS::SecretsManager::Secret
     Properties:
