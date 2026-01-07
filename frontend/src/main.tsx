@@ -10,7 +10,7 @@ import History from "./components/History";
 import Calculation from "./components/Calculation";
 import Insights from "./components/Insights";
 import Profile from "./components/Profile";
-
+import UserSettings from "./components/UserSettings";
 import { ThemeProvider } from "./context/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -26,6 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <Route path="/calculation/:id" element={<Calculation />} />
               <Route path="/insights" element={<Insights />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/user-settings" element={<UserSettings />} />
             </Routes>
           </BrowserRouter>
         </ToastProvider>

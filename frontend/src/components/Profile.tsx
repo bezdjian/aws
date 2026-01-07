@@ -10,46 +10,24 @@ import {
   Clock,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
-import { useTheme } from "../context/ThemeContext";
 import { useToast } from "../context/ToastContext";
 import { useNavigate } from "react-router-dom";
-import {
-  getUserSettings,
-  updateUserSettings,
-  getCalculationsByEmail,
-} from "../backend/service";
+import { getUserSettings, getCalculationsByEmail } from "../backend/service";
 import { SalaryCalculation, UserSettings } from "../types";
 import CalculationUtils from "../utils/CalculationUtils";
 import Header from "./Header";
-import { municipalities, Municipality } from "../backend/municipalities";
-import { exportHistory } from "../utils/ExportUtils";
 import ResilienceDashboard from "./userProfile/ResilienceDashboard";
-import UserSettingsForm from "./userProfile/UserSettingsForm";
-import UserPreferences from "./userProfile/UserPreferences";
 import VacationFundCard from "./userProfile/VacationFundCard";
 import TaxOptimizationCard from "./userProfile/TaxOptimizationCard";
 
 const UserProfileView: React.FC = () => {
-  const {
-    user,
-    handleSignOut,
-    isLoading: isAuthLoading,
-    refreshUserSettings,
-  } = useUser();
-  const { theme, toggleTheme } = useTheme();
+  const { user, handleSignOut, isLoading: isAuthLoading } = useUser();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [calculations, setCalculations] = useState<SalaryCalculation[]>([]);
   const [isProfileLoading, setIsProfileLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [municipalityQuery, setMunicipalityQuery] = useState("");
-  const [municipalityCode, setMunicipalityCode] = useState("");
-  const [showMunicipalityList, setShowMunicipalityList] = useState(false);
-  const [allMunicipalities, setAllMunicipalities] = useState<Municipality[]>(
-    []
-  );
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -63,18 +41,13 @@ const UserProfileView: React.FC = () => {
     try {
       setIsProfileLoading(true);
       const email = user?.getEmail() || "";
-      const [settingsRes, calculationsRes, municipalitiesRes] =
-        await Promise.all([
-          getUserSettings(email),
-          getCalculationsByEmail(email),
-          municipalities(),
-        ]);
+      const [settingsRes, calculationsRes] = await Promise.all([
+        getUserSettings(email),
+        getCalculationsByEmail(email),
+      ]);
 
       setSettings(settingsRes.data);
       setCalculations(calculationsRes.data);
-      setMunicipalityQuery(settingsRes.data.municipality || "");
-      setAllMunicipalities(municipalitiesRes);
-      setMunicipalityCode(settingsRes.data.municipality_code || "");
     } catch (error) {
       console.error("Error fetching profile data:", error);
       showToast("Failed to load profile data", "error");
@@ -118,45 +91,6 @@ const UserProfileView: React.FC = () => {
       count: calculations.length,
     };
   }, [calculations]);
-
-  const filteredMunicipalities = useMemo(() => {
-    if (!municipalityQuery) return [];
-    return allMunicipalities
-      .filter((m) =>
-        m.namn.toLowerCase().includes(municipalityQuery.toLowerCase())
-      )
-      .slice(0, 5);
-  }, [municipalityQuery, allMunicipalities]);
-
-  const handleSaveSettings = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!settings) return;
-
-    try {
-      setIsSaving(true);
-      await updateUserSettings({
-        ...settings,
-        municipality: municipalityQuery,
-        municipality_code: String(municipalityCode),
-      });
-      await refreshUserSettings();
-      showToast("Settings updated successfully", "success");
-    } catch (error) {
-      showToast("Failed to update settings", "error");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleExportCSV = () => {
-    if (calculations.length === 0) {
-      showToast("No data to export", "error");
-      return;
-    }
-
-    exportHistory(calculations);
-    showToast("Exporting History as CSV...", "success");
-  };
 
   if (isAuthLoading || isProfileLoading) {
     return (
@@ -312,31 +246,6 @@ const UserProfileView: React.FC = () => {
             publicHolidays={settings?.public_holidays || 12}
           />
           <TaxOptimizationCard settings={settings} />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* CONFIGURATION COLUMN */}
-          <div className="lg:col-span-2 space-y-8">
-            <UserSettingsForm
-              settings={settings}
-              setSettings={setSettings}
-              isSaving={isSaving}
-              handleSaveSettings={handleSaveSettings}
-              municipalityQuery={municipalityQuery}
-              setMunicipalityQuery={setMunicipalityQuery}
-              setMunicipalityCode={setMunicipalityCode}
-              showMunicipalityList={showMunicipalityList}
-              setShowMunicipalityList={setShowMunicipalityList}
-              filteredMunicipalities={filteredMunicipalities}
-            />
-          </div>
-
-          {/* PREFERENCES & UTILS */}
-          <UserPreferences
-            theme={theme}
-            toggleTheme={toggleTheme}
-            handleExportCSV={handleExportCSV}
-          />
         </div>
       </main>
     </div>

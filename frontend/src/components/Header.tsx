@@ -1,5 +1,12 @@
 import React from "react";
-import { Calculator, LogOut, Settings, Sun, Moon } from "lucide-react";
+import {
+  Calculator,
+  LogOut,
+  Settings,
+  Sun,
+  Moon,
+  UserCircle,
+} from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
@@ -30,7 +37,7 @@ const Header: React.FC<HeaderProps> = () => {
               </span>
             </div>
 
-            <div className="flex items-center space-x-4 sm:space-x-6">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <button
                 onClick={toggleTheme}
                 className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer group"
@@ -49,6 +56,34 @@ const Header: React.FC<HeaderProps> = () => {
                 )}
               </button>
 
+              <button
+                onClick={() => navigate("/profile")}
+                className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer group"
+                title="Profile & Settings"
+              >
+                <UserCircle
+                  size={20}
+                  className="group-hover:rotate-45 transition-transform duration-500"
+                />
+              </button>
+              <button
+                onClick={() => navigate("/user-settings")}
+                className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer group"
+                title="Profile & Settings"
+              >
+                <Settings
+                  size={20}
+                  className="group-hover:rotate-45 transition-transform duration-500"
+                />
+              </button>
+
+              <button
+                onClick={handleSignOut}
+                className="text-slate-400 hover:text-red-500 transition-colors flex items-center cursor-pointer"
+                title="Sign Out"
+              >
+                <LogOut size={18} />
+              </button>
               <div className="flex items-center space-x-3">
                 <div className="text-right hidden sm:block">
                   <p className="text-xs font-black text-slate-900 dark:text-white leading-none mb-1 uppercase tracking-wider">
@@ -70,26 +105,6 @@ const Header: React.FC<HeaderProps> = () => {
                   onClick={() => navigate("/profile")}
                 />
               </div>
-              <button
-                onClick={() => navigate("/profile")}
-                className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer group"
-                title="Profile & Settings"
-              >
-                <Settings
-                  size={20}
-                  className="group-hover:rotate-45 transition-transform duration-500"
-                />
-              </button>
-              <button
-                onClick={handleSignOut}
-                className="text-slate-400 hover:text-red-500 transition-colors flex items-center space-x-2 cursor-pointer"
-                title="Sign Out"
-              >
-                <LogOut size={18} />
-                <span className="text-sm font-bold hidden sm:block">
-                  Sign Out
-                </span>
-              </button>
             </div>
           </div>
         </div>
