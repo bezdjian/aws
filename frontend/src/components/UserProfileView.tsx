@@ -7,6 +7,9 @@ import {
   DollarSign,
   Briefcase,
   Loader2,
+  UserIcon,
+  ArrowLeft,
+  Clock,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useTheme } from "../context/ThemeContext";
@@ -170,6 +173,29 @@ const UserProfileView: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-300 pb-20">
       <Header />
+      <header className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 sticky top-16 z-40 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center space-x-6"></div>
+
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate("/insights")}
+              className="hidden lg:flex items-center space-x-2 px-4 py-2 bg-slate-50 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-100 transition-all border border-slate-100 cursor-pointer"
+            >
+              <TrendingUp size={16} />
+              <span>Analytics</span>
+            </button>
+
+            <button
+              onClick={() => navigate("/history")}
+              className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-slate-900 dark:bg-brand-600 text-white rounded-2xl font-black text-sm hover:bg-slate-800 dark:hover:bg-brand-500 transition-all shadow-lg shadow-slate-900/10 print:hidden cursor-pointer"
+            >
+              <Clock size={16} />
+              <span>View History</span>
+            </button>
+          </div>
+        </div>
+      </header>
 
       <main className="max-w-6xl mx-auto w-full px-6 py-12 space-y-10">
         {/* PROFILE HEADER CARD */}
