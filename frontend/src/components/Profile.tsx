@@ -7,8 +7,6 @@ import {
   DollarSign,
   Briefcase,
   Loader2,
-  UserIcon,
-  ArrowLeft,
   Clock,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
