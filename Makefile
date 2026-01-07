@@ -33,33 +33,27 @@ validate:
 	sam validate
 
 # Build SAM application
-build:
-	@echo "Building SAM application..."
-	sam build
+## Dev
+sam-build-dev:
+	@echo "Building SAM for dev environment..."
+	sam build --config-env dev
 
 # Deploy with saved configuration
-deploy: build
+sam-deploy-dev: sam-build-dev
 	@echo "Deploying to AWS..."
-	sam deploy
-
-# Deploy with guided prompts (first time)
-deploy-guided: build
-	@echo "Starting guided deployment..."
-	sam deploy --guided
-
-# Deploy to specific environments
-deploy-aws-dev: build
-	@echo "Deploying to dev environment..."
-	sam build
 	sam deploy --config-env dev
 
-deploy-aws-prod: build
+## Prod
+sam-build-prod:
+	@echo "Building SAM for production environment..."
+	sam build --config-env prod
+
+sam-deploy-prod: sam-build-prod
 	@echo "Deploying to production environment..."
-	sam build
-	sam deploy --config-env prod --parameter-overrides Environment=prod
+	sam deploy --config-env prod
 
 # Test Lambda functions locally
-test-local: build
+test-local: sam-build-dev
 	@echo "Testing CreateCalculationFunction..."
 	sam local invoke CreateCalculationFunction --event backend/lambda_app/events/create.json
 	@echo ""
@@ -67,7 +61,7 @@ test-local: build
 	sam local invoke GetCalculationsFunction --event backend/lambda_app/events/get-all.json
 
 # Start local API server
-start-api: build
+start-api: sam-build-dev
 	@echo "Starting local API server on http://localhost:3000"
 	sam local start-api
 
