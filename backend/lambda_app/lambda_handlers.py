@@ -235,6 +235,35 @@ def delete_calculation(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     return create_response(500, {"error": "Internal server error"})
 
 
+def delete_calculations_by_email(event: Dict[str, Any], context: Any) -> Dict[
+  str, Any]:
+  """
+  Lambda handler for deleting all salary calculations for a specific email
+  DELETE /calculations/history/{email}
+  """
+  try:
+    path_params = event.get("pathParameters") or {}
+    email = path_params.get("email")
+
+    if not email:
+      return create_response(400, {"error": "Missing email"})
+
+    success = service.delete_salary_calculations_by_email(email)
+
+    if not success:
+      return create_response(
+          500, {"error": f"Failed to delete history for {email}"}
+      )
+
+    return create_response(
+        200, {"message": f"History for {email} deleted successfully"}
+    )
+
+  except Exception as e:
+    print(f"Error deleting calculations by email: {str(e)}")
+    return create_response(500, {"error": "Internal server error"})
+
+
 def get_settings(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
   """
   Lambda handler for getting user settings

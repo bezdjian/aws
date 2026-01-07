@@ -302,6 +302,32 @@ def delete_salary_calculation(calculation_id: str) -> bool:
     return False
 
 
+def delete_salary_calculations_by_email(email: str) -> bool:
+  """Delete all salary calculations for a specific email from DynamoDB"""
+  table = database.get_table()
+
+  try:
+    # Scan for items with matching email
+    response = table.scan(
+        FilterExpression=Attr("email").eq(email), ProjectionExpression="id"
+    )
+    items = response.get("Items", [])
+
+    if not items:
+      return True
+
+    # Batch delete items
+    with table.batch_writer() as batch:
+      for item in items:
+        batch.delete_item(Key={"id": item["id"]})
+
+    return True
+
+  except ClientError as e:
+    print(f"Error deleting items by email: {e.response['Error']['Message']}")
+    return False
+
+
 def verify_token(token: str) -> Dict[str, Any]:
   """Verify the provided token with Google and return user info"""
   from fastapi import HTTPException

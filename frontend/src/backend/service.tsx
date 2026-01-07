@@ -79,6 +79,10 @@ export const deleteCalculation = async (id: string) => {
   return axios.delete(`${BASE_URL}/calculations/${id}`);
 };
 
+export const deleteCalculationHistory = async (email: string) => {
+  return axios.delete(`${BASE_URL}/calculations/history/${email}`);
+};
+
 export const getUserSettings = async (email: string) => {
   return axios.get<UserSettings>(`${BASE_URL}/settings/${email}`);
 };

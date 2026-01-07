@@ -249,6 +249,26 @@ async def delete_calculation(calculation_id: str):
   )
 
 
+@app.delete("/calculations/email/{email}",
+            tags=["Calculations"])
+async def delete_calculations_by_email(email: str):
+  """
+  Delete all salary calculations for a specific user email.
+
+  - **email**: The email of the consultant to delete calculations for
+  """
+  success = service.delete_salary_calculations_by_email(email=email)
+  if not success:
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail=f"Error while deleting calculations for email {email}",
+    )
+
+  return schemas.MessageResponse(
+      message=f"History for {email} deleted successfully"
+  )
+
+
 @app.post("/compute-tax", tags=["Calculations"])
 async def compute_tax(tax_request: schemas.TaxCalculationRequest):
   """

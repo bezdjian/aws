@@ -8,6 +8,7 @@ import {
   getUserSettings,
   updateUserSettings,
   getCalculationsByEmail,
+  deleteCalculationHistory,
 } from "../backend/service";
 import { SalaryCalculation, UserSettings } from "../types";
 import Header from "./Header";
@@ -15,6 +16,7 @@ import { municipalities, Municipality } from "../backend/municipalities";
 import { exportHistory } from "../utils/ExportUtils";
 import UserSettingsForm from "./userProfile/UserSettingsForm";
 import UserPreferences from "./userProfile/UserPreferences";
+import ConfirmationModal from "./ConfirmationModal";
 
 const UserProfileView: React.FC = () => {
   const { user, isLoading: isAuthLoading, refreshUserSettings } = useUser();
@@ -32,6 +34,8 @@ const UserProfileView: React.FC = () => {
   const [allMunicipalities, setAllMunicipalities] = useState<Municipality[]>(
     []
   );
+  const [showDeleteHistoryModal, setShowDeleteHistoryModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -104,6 +108,29 @@ const UserProfileView: React.FC = () => {
     showToast("Exporting History as CSV...", "success");
   };
 
+  const handleDeleteHistory = async () => {
+    if (calculations.length === 0) {
+      showToast("No data to delete", "error");
+      return;
+    }
+    setShowDeleteHistoryModal(true);
+  };
+
+  const confirmDeleteHistory = async () => {
+    try {
+      setIsDeleting(true);
+      const email = user?.getEmail() || "";
+      await deleteCalculationHistory(email);
+      setCalculations([]);
+      showToast("History deleted successfully", "success");
+    } catch (error) {
+      showToast("Failed to delete history", "error");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteHistoryModal(false);
+    }
+  };
+
   if (isAuthLoading || isProfileLoading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center transition-colors">
@@ -142,6 +169,16 @@ const UserProfileView: React.FC = () => {
         </div>
       </header>
 
+      <ConfirmationModal
+        isOpen={showDeleteHistoryModal}
+        onClose={() => setShowDeleteHistoryModal(false)}
+        onConfirm={confirmDeleteHistory}
+        title="Delete Calculation History"
+        message="Are you sure you want to delete your entire calculation history? This action cannot be undone."
+        confirmText="Delete"
+        isProcessing={isDeleting}
+      />
+
       <main className="max-w-6xl mx-auto w-full px-6 py-12 space-y-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* CONFIGURATION COLUMN */}
@@ -163,8 +200,10 @@ const UserProfileView: React.FC = () => {
           {/* PREFERENCES & UTILS */}
           <UserPreferences
             theme={theme}
+            calculations_count={calculations.length}
             toggleTheme={toggleTheme}
             handleExportCSV={handleExportCSV}
+            handleDeleteHistory={handleDeleteHistory}
           />
         </div>
       </main>

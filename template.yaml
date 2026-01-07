@@ -214,6 +214,25 @@ Resources:
             Method: DELETE
             RestApiId: !Ref EightyTwentyApi
 
+  # Lambda Function for Delete Calculations By Email
+  DeleteCalculationsByEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub eighty-twenty-delete-calculations-by-email-${Environment}
+      CodeUri: backend/
+      Handler: lambda_app.lambda_handlers.delete_calculations_by_email
+      Description: Delete all salary calculations for a specific user email
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SalaryCalculationsTable
+      Events:
+        DeleteCalculationsByEmail:
+          Type: Api
+          Properties:
+            Path: /calculations/history/{email}
+            Method: DELETE
+            RestApiId: !Ref EightyTwentyApi
+
   # Lambda Function for Get Settings
   GetSettingsFunction:
     Type: AWS::Serverless::Function
@@ -432,6 +451,22 @@ Resources:
               responses:
                 "200":
                   description: List of user calculations
+          /calculations/history/{email}:
+            delete:
+              summary: Delete all calculations for a specific user email
+              parameters:
+                - name: email
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteCalculationsByEmailFunction.Arn}/invocations
+              responses:
+                "200":
+                  description: User history deleted
           /reports/presigned-url:
             get:
               summary: Generate a presigned URL for an existing report file

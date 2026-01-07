@@ -7,18 +7,23 @@ import {
   Database,
   Download,
   CheckCircle2,
+  Trash2Icon,
 } from "lucide-react";
 
 interface UserPreferencesProps {
   theme: string;
+  calculations_count: number;
   toggleTheme: () => void;
   handleExportCSV: () => void;
+  handleDeleteHistory: () => void;
 }
 
 const UserPreferences: React.FC<UserPreferencesProps> = ({
   theme,
+  calculations_count,
   toggleTheme,
   handleExportCSV,
+  handleDeleteHistory,
 }) => {
   return (
     <div className="space-y-8">
@@ -78,18 +83,33 @@ const UserPreferences: React.FC<UserPreferencesProps> = ({
             </h3>
           </div>
 
-          <button
-            onClick={handleExportCSV}
-            className="w-full flex items-center justify-between px-6 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-sm group hover:scale-[1.02] transition-all active:scale-95 shadow-lg shadow-slate-900/10"
-          >
-            <div className="flex items-center space-x-3">
-              <Download size={18} />
-              <span>Export History</span>
-            </div>
-            <span className="text-[10px] bg-white/10 dark:bg-slate-900/10 px-2 py-1 rounded-md uppercase">
-              CSV
-            </span>
-          </button>
+          <div className="items-center space-y-4">
+            <button
+              onClick={handleExportCSV}
+              className="w-full flex items-center justify-between px-6 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-sm group hover:scale-[1.02] transition-all active:scale-95 shadow-lg shadow-slate-900/10"
+            >
+              <div className="flex items-center space-x-3">
+                <Download size={18} />
+                <span>Export History</span>
+              </div>
+              <span className="text-[10px] bg-white/10 dark:bg-slate-900/10 px-2 py-1 rounded-md uppercase">
+                CSV
+              </span>
+            </button>
+
+            <button
+              onClick={handleDeleteHistory}
+              className="w-full flex items-center justify-between px-6 py-4 bg-red-900 dark:bg-red-900 text-white dark:text-white rounded-2xl font-black text-sm group hover:scale-[1.02] transition-all active:scale-95 shadow-lg shadow-slate-900/10"
+            >
+              <div className="flex items-center space-x-3">
+                <Trash2Icon size={18} />
+                <span>Delete History</span>
+              </div>
+              <span className="text-[10px] bg-white/10 dark:bg-slate-900/10 px-2 py-1 rounded-md uppercase">
+                {calculations_count}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
