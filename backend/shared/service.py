@@ -77,6 +77,7 @@ def create_salary_calculation(
         calculation.remaining_for_gross_salary
     ),
     "employer_fee": float_to_decimal(calculation.employer_fee),
+    "pension_saving": float_to_decimal(calculation.pension_saving),
     "notes": calculation.notes,
     "date": calculation.date,
     "created_at": datetime.now(),

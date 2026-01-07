@@ -286,17 +286,17 @@ const History: React.FC = () => {
                     </div>
                     <div className="space-y-1">
                       <span className="text-[9px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider block">
-                        Gross
+                        Before employer fee
                       </span>
                       <p className="text-sm font-black text-slate-900 dark:text-white font-mono italic">
                         {CalculationUtils.formatCurrency(
-                          calc.gross_salary || 0
+                          calc.remaining_salary || 0
                         )}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <span className="text-[9px] font-black uppercase text-emerald-500/70 dark:text-emerald-400/70 tracking-wider block font-black">
-                        Net Salary
+                        Gross Salary
                       </span>
                       <p className="text-base font-black text-emerald-600 dark:text-emerald-400 font-mono">
                         {CalculationUtils.formatCurrency(
