@@ -100,21 +100,11 @@ sam-delete-dev:
 # Show stack outputs
 outputs-dev:
 	@echo "Fetching stack outputs..."
-	sam list stack-outputs --config-env dev
+	sam list stack-outputs --config-env dev --stack-name eighty-twenty-dev
 
-# Sync for rapid development
-sync-dev: sam-build
-	@echo "Syncing changes to AWS..."
-	sam sync --config-env dev
-
-# View all endpoints
-endpoints-dev:
-	@echo "Listing API endpoints..."
-	sam list endpoints --config-env dev
-
-LOCALSTACK_URL ?= http://localhost:4566
 
 ### Localstack ###
+LOCALSTACK_URL ?= http://localhost:4566
 deploy-localstack:
 	@echo "Deploying to localstack environment..."
 	samlocal build
