@@ -122,12 +122,24 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     if (window.google?.accounts?.id && user && clientId) {
       try {
-        // We call local sign out immediately for better UX,
-        // while attempting to revoke in the background
         const email = user.getEmail();
         performLocalSignOut();
+
+        // Disable auto-select to prevent the browser from automatically
+        // signing the user back in during the next visit.
+        window.google.accounts.id.disableAutoSelect();
+
+        // Revoke the OAuth2 grant. Note: This may return false if no persistent
+        // grant exists, which is normal for simple ID token sign-ins.
         window.google.accounts.id.revoke(email, (done: any) => {
-          console.log("Google session revoked:", done.successful);
+          if (!done.successful) {
+            console.warn(
+              "Google session revocation skipped or failed:",
+              done.error || "No active grant to revoke"
+            );
+          } else {
+            console.log("Google session revoked successfully");
+          }
         });
       } catch (e) {
         console.error("Error during Google revoke:", e);
