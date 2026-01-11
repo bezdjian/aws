@@ -103,11 +103,6 @@ const LandingPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submission Data:", formData);
-  };
-
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white dark:bg-slate-950 transition-colors duration-300">
       {/* LEFT SECTION: Branding & Auth */}
@@ -208,153 +203,151 @@ const LandingPage: React.FC = () => {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-              {/* Input Fields */}
-              <div className="space-y-1">
-                <label className="input-label flex items-center capitalize">
-                  {calculationMode === "DIRECT" ? (
-                    <>
-                      <Coins size={12} className="mr-1" /> Hourly Rate (SEK)
-                    </>
-                  ) : (
-                    <>
-                      <Target size={12} className="mr-1" /> Target Gross Salary
-                      (SEK)
-                    </>
-                  )}
-                </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            {/* Input Fields */}
+            <div className="space-y-1">
+              <label className="input-label flex items-center capitalize">
                 {calculationMode === "DIRECT" ? (
-                  <div className="relative">
-                    <input
-                      type="number"
-                      name="hourly_rate"
-                      value={formData.hourly_rate}
-                      onChange={handleChange}
-                      className="input-field font-mono"
-                    />
-                  </div>
+                  <>
+                    <Coins size={12} className="mr-1" /> Hourly Rate (SEK)
+                  </>
                 ) : (
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={targetGross}
-                      onChange={(e) =>
-                        setTargetGross(parseFloat(e.target.value) || 0)
-                      }
-                      placeholder="e.g. 50000"
-                      className="input-field font-mono border-brand-200 dark:border-brand-900/50 bg-brand-50/20 dark:bg-brand-900/10 text-brand-900 dark:text-brand-400 focus:border-brand-500"
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-brand-100 dark:border-brand-900/50 text-[12px] font-black text-brand-600 dark:text-brand-400 uppercase tracking-tighter transition-colors">
-                      Required: {formData.hourly_rate} kr/h
-                    </div>
-                  </div>
+                  <>
+                    <Target size={12} className="mr-1" /> Target Gross Salary
+                    (SEK)
+                  </>
                 )}
-              </div>
-              <div className="space-y-1">
-                <label className="input-label flex items-center">
-                  <Clock size={12} className="mr-1" /> Monthly Hours
-                </label>
+              </label>
+              {calculationMode === "DIRECT" ? (
+                <div className="relative">
+                  <input
+                    type="number"
+                    name="hourly_rate"
+                    value={formData.hourly_rate}
+                    onChange={handleChange}
+                    className="input-field font-mono"
+                  />
+                </div>
+              ) : (
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={targetGross}
+                    onChange={(e) =>
+                      setTargetGross(parseFloat(e.target.value) || 0)
+                    }
+                    placeholder="e.g. 50000"
+                    className="input-field font-mono border-brand-200 dark:border-brand-900/50 bg-brand-50/20 dark:bg-brand-900/10 text-brand-900 dark:text-brand-400 focus:border-brand-500"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 px-2 py-1 rounded-lg border border-brand-100 dark:border-brand-900/50 text-[12px] font-black text-brand-600 dark:text-brand-400 uppercase tracking-tighter transition-colors">
+                    Required: {formData.hourly_rate} kr/h
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="space-y-1">
+              <label className="input-label flex items-center">
+                <Clock size={12} className="mr-1" /> Monthly Hours
+              </label>
+              <input
+                type="number"
+                name="hours_worked"
+                value={formData.hours_worked}
+                onChange={handleChange}
+                className="input-field font-mono"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="input-label flex items-center">
+                <PiggyBank size={12} className="mr-1" /> Buffer Savings
+              </label>
+              <div className="relative">
                 <input
                   type="number"
-                  name="hours_worked"
-                  value={formData.hours_worked}
+                  name="save_to_buffer"
+                  value={formData.save_to_buffer}
                   onChange={handleChange}
-                  className="input-field font-mono"
+                  className="input-field font-mono text-brand-600"
                 />
               </div>
+            </div>
 
-              <div className="space-y-1">
-                <label className="input-label flex items-center">
-                  <PiggyBank size={12} className="mr-1" /> Buffer Savings
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="save_to_buffer"
-                    value={formData.save_to_buffer}
-                    onChange={handleChange}
-                    className="input-field font-mono text-brand-600"
-                  />
-                </div>
+            <div className="space-y-1">
+              <label className="input-label flex items-center">
+                <TrendingUp size={12} className="mr-1" /> Pension Saving
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  name="pension_saving"
+                  value={formData.pension_saving}
+                  onChange={handleChange}
+                  className="input-field font-mono text-slate-500"
+                />
               </div>
+            </div>
 
-              <div className="space-y-1">
-                <label className="input-label flex items-center">
-                  <TrendingUp size={12} className="mr-1" /> Pension Saving
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    name="pension_saving"
-                    value={formData.pension_saving}
-                    onChange={handleChange}
-                    className="input-field font-mono text-slate-500"
-                  />
-                </div>
-              </div>
-
-              {/* Dynamic Stats Row */}
-              <div className="col-span-full grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-                <div className="p-5 rounded-2xl bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-100 dark:border-brand-800/50 transition-colors">
-                  <span className="text-[10px] font-black uppercase text-brand-400 dark:text-brand-500 block mb-1">
-                    Invoiced Amount
-                  </span>
-                  <div className="text-xl font-bold font-mono leading-none">
-                    {CalculationUtils.formatCurrency(formData.invoiced_amount)}
-                  </div>
-                </div>
-                <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800 transition-colors text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700">
-                  <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 block mb-1">
-                    After Deduction (80%)
-                  </span>
-                  <div className="text-xl font-bold font-mono text-slate-400 dark:text-slate-500 leading-none">
-                    {CalculationUtils.formatCurrency(formData.after_deduction)}
-                  </div>
-                </div>
-                <div className="p-5 rounded-2xl bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-100 dark:border-brand-800/50 transition-colors">
-                  <span className="text-[10px] font-black uppercase text-brand-400 dark:text-brand-500 block mb-1">
-                    Gross Salary Basis
-                  </span>
-                  <div className="text-xl font-bold font-mono leading-none">
-                    {CalculationUtils.formatCurrency(formData.gross_salary)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Total Costs Results */}
-              <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50 transition-colors">
-                <span className="text-[10px] font-black uppercase text-emerald-500 dark:text-emerald-500/60 block mb-1">
-                  Remaining Salary after fixed costs
+            {/* Dynamic Stats Row */}
+            <div className="col-span-full grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+              <div className="p-5 rounded-2xl bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-100 dark:border-brand-800/50 transition-colors">
+                <span className="text-[10px] font-black uppercase text-brand-400 dark:text-brand-500 block mb-1">
+                  Invoiced Amount
                 </span>
                 <div className="text-xl font-bold font-mono leading-none">
-                  {CalculationUtils.formatCurrency(formData.remaining_salary)}
+                  {CalculationUtils.formatCurrency(formData.invoiced_amount)}
                 </div>
               </div>
-
-              <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 transition-colors">
-                <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-500/60 block mb-1">
-                  Employer Fee
+              <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800 transition-colors text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700">
+                <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 block mb-1">
+                  After Deduction (80%)
                 </span>
                 <div className="text-xl font-bold font-mono text-slate-400 dark:text-slate-500 leading-none">
-                  {CalculationUtils.formatCurrency(formData.employer_fee)}
+                  {CalculationUtils.formatCurrency(formData.after_deduction)}
                 </div>
               </div>
-
-              <div className="col-span-full grid grid-cols-1 gap-4 pt-4">
-                <div className="p-5 rounded-2xl text-center bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50 w-full transition-colors">
-                  <span className="text-[10px] font-black uppercase text-emerald-500 dark:text-emerald-500/60 block mb-1">
-                    Remaining Salary for Gross Salary
-                  </span>
-                  <div className="text-xl font-bold font-mono leading-none">
-                    {CalculationUtils.formatCurrency(
-                      formData.remaining_for_gross_salary
-                    )}
-                  </div>
+              <div className="p-5 rounded-2xl bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-400 border border-brand-100 dark:border-brand-800/50 transition-colors">
+                <span className="text-[10px] font-black uppercase text-brand-400 dark:text-brand-500 block mb-1">
+                  Gross Salary Basis
+                </span>
+                <div className="text-xl font-bold font-mono leading-none">
+                  {CalculationUtils.formatCurrency(formData.gross_salary)}
                 </div>
               </div>
             </div>
-          </form>
+
+            {/* Total Costs Results */}
+            <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50 transition-colors">
+              <span className="text-[10px] font-black uppercase text-emerald-500 dark:text-emerald-500/60 block mb-1">
+                Remaining Salary after fixed costs
+              </span>
+              <div className="text-xl font-bold font-mono leading-none">
+                {CalculationUtils.formatCurrency(formData.remaining_salary)}
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 transition-colors">
+              <span className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-500/60 block mb-1">
+                Employer Fee
+              </span>
+              <div className="text-xl font-bold font-mono text-slate-400 dark:text-slate-500 leading-none">
+                {CalculationUtils.formatCurrency(formData.employer_fee)}
+              </div>
+            </div>
+
+            <div className="col-span-full grid grid-cols-1 gap-4 pt-4">
+              <div className="p-5 rounded-2xl text-center bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/50 w-full transition-colors">
+                <span className="text-[10px] font-black uppercase text-emerald-500 dark:text-emerald-500/60 block mb-1">
+                  Remaining Salary for Gross Salary
+                </span>
+                <div className="text-xl font-bold font-mono leading-none">
+                  {CalculationUtils.formatCurrency(
+                    formData.remaining_for_gross_salary
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
 
           <p className="mt-8 text-center text-xs text-slate-400 font-bold uppercase tracking-[0.2em]">
             Precision Financial Modeling v1.0
