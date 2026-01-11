@@ -245,7 +245,10 @@ const UserProfileView: React.FC = () => {
             targetVacationWeeks={settings?.target_vacation_weeks || 5}
             publicHolidays={settings?.public_holidays || 12}
           />
-          <TaxOptimizationCard settings={settings} />
+          <TaxOptimizationCard
+            settings={settings}
+            calculations={calculations}
+          />
         </div>
       </main>
     </div>

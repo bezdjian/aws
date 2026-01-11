@@ -1,16 +1,37 @@
 import React, { useMemo } from "react";
 import { Shield, Zap, AlertTriangle, TrendingDown } from "lucide-react";
 import CalculationUtils from "../../utils/CalculationUtils";
-import { UserSettings } from "../../types";
+import { SalaryCalculation, UserSettings } from "../../types";
 
 interface TaxOptimizationCardProps {
   settings: UserSettings | null;
+  calculations: SalaryCalculation[];
 }
 
 const TaxOptimizationCard: React.FC<TaxOptimizationCardProps> = ({
   settings,
+  calculations,
 }) => {
-  const desiredGross = settings?.desired_gross_salary || 50000;
+  const { desiredGross, isAverage, recordCount } = useMemo(() => {
+    if (calculations && calculations.length > 0) {
+      // Get the last 5 records
+      const lastFive = calculations.slice(0, 5);
+      const sum = lastFive.reduce(
+        (acc, calc) => acc + (calc.remaining_for_gross_salary || 0),
+        0
+      );
+      return {
+        desiredGross: sum / lastFive.length,
+        isAverage: true,
+        recordCount: lastFive.length,
+      };
+    }
+    return {
+      desiredGross: settings?.desired_gross_salary || 50000,
+      isAverage: false,
+      recordCount: 0,
+    };
+  }, [calculations, settings]);
 
   const taxInfo = useMemo(() => {
     return CalculationUtils.calculateTaxEfficiency(desiredGross);
@@ -78,7 +99,25 @@ const TaxOptimizationCard: React.FC<TaxOptimizationCardProps> = ({
             Tax Optimizer
           </h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Analyzing salary vs. threshold efficiency
+            {isAverage ? (
+              <>
+                Based on average gross salary from past{" "}
+                <span className="font-bold text-slate-700 dark:text-slate-300">
+                  {recordCount}
+                </span>{" "}
+                records:{" "}
+                <span className="font-bold text-slate-700 dark:text-slate-300">
+                  {CalculationUtils.formatCurrency(desiredGross)}
+                </span>
+              </>
+            ) : (
+              <>
+                Based on your desired gross salary of{" "}
+                <span className="font-bold text-slate-700 dark:text-slate-300">
+                  {CalculationUtils.formatCurrency(desiredGross)}
+                </span>
+              </>
+            )}
           </p>
         </div>
 
